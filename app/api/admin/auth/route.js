@@ -6,6 +6,19 @@ export const dynamic = 'force-dynamic'
 const VALID_PASSWORD = process.env.ADMIN_SECRET_PASSWORD || 'icadisty2026'
 const VALID_PIN = process.env.NEXT_PUBLIC_ADMIN_PIN || '2026'
 
+// Verify active session
+export async function GET() {
+  try {
+    const cookieStore = await cookies()
+    const session = cookieStore.get('icadisty_admin_session')?.value
+    const isAuthenticated = session === 'authenticated'
+    return NextResponse.json({ authenticated: isAuthenticated })
+  } catch (err) {
+    return NextResponse.json({ authenticated: false, error: err.message }, { status: 500 })
+  }
+}
+
+// Log in and create session
 export async function POST(request) {
   try {
     const { password } = await request.json()
@@ -29,6 +42,7 @@ export async function POST(request) {
   }
 }
 
+// Log out and destroy session
 export async function DELETE() {
   const cookieStore = await cookies()
   cookieStore.delete('icadisty_admin_session')

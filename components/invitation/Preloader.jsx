@@ -70,7 +70,7 @@ export default function Preloader({ groomName, brideName, guestName, onOpen, isO
             textAlign: 'center',
             marginTop: 10
           }}>
-            Saturday, 20 December 2026
+            Wednesday, 11 November 2026
           </p>
         </div>
       </div>

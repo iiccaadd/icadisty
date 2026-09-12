@@ -2,13 +2,13 @@
 import { useState } from 'react'
 
 const menuItems = [
-  { label: 'Home', href: '#opening' },
-  { label: 'Groom & Bride', href: '#couple' },
-  { label: 'Love Story', href: '#lovestory' },
-  { label: 'Event Details', href: '#events' },
-  { label: 'RSVP & Wishes', href: '#rsvp' },
-  { label: 'Gallery', href: '#gallery' },
-  { label: 'Wedding Gift', href: '#closing' },
+  { num: '01', label: 'COVER', href: '#opening' },
+  { num: '02', label: 'THE WEDDING', href: '#couple' },
+  { num: '03', label: 'OUR STORY', href: '#lovestory' },
+  { num: '04', label: 'SPECIAL EVENTS', href: '#events' },
+  { num: '05', label: 'RESERVATION', href: '#rsvp' },
+  { num: '06', label: 'WEDDING GIFT', href: '#closing' },
+  { num: '07', label: 'WISHES FOR US', href: '#rsvp' },
 ]
 
 export default function NavMenu() {
@@ -39,7 +39,8 @@ export default function NavMenu() {
         {menuItems.map((item, i) => (
           <li key={i} className="nav-menu-item">
             <a href={item.href} onClick={(e) => handleLink(e, item.href)}>
-              {item.label}
+              <span className="menu-num">{item.num} |</span>
+              <span className="menu-label">{item.label}</span>
             </a>
           </li>
         ))}

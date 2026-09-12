@@ -234,14 +234,35 @@
 
 .nav-menu-item a {
   font-family: 'Playfair Display', serif;
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 400;
   color: #fff;
-  display: block;
-  padding: 4px 0;
-  transition: transform 0.2s ease;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 6px 0;
+  text-decoration: none;
+  transition: transform 0.2s ease, color 0.2s ease;
 }
-.nav-menu.open .nav-menu-item a:hover { transform: translateX(5px); }
+.nav-menu-item a:hover {
+  transform: translateX(6px);
+  color: var(--gold);
+}
+
+.menu-num {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--gold);
+  letter-spacing: 1px;
+  opacity: 0.85;
+  flex-shrink: 0;
+}
+
+.menu-label {
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
 
 .nav-menu-caption {
   position: absolute;
@@ -590,21 +611,77 @@
 /* ─── Mobile Responsive ─── */
 @media (max-width: 767px) {
   .nav-menu.open {
-    width: 90vw;
-    height: 500px;
-    padding: 60px 20px 0 0;
+    width: calc(100vw - 24px);
+    max-width: 360px;
+    height: auto;
+    max-height: calc(100dvh - 32px);
+    padding: 64px 20px 32px 20px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 20px;
   }
-  .nav-menu-item a { font-size: 28px; letter-spacing: 1px; }
-  .hero-name { font-size: 56px; }
-  .ghost-text { font-size: 3.6rem; }
-  .name-display { font-size: 3.5rem; }
-  .section-heading { font-size: 28px; }
-  .countdown-digits { font-size: 36px; }
-  .word-reveal { font-size: 36px; }
+  .nav-menu-item a {
+    font-size: clamp(20px, 5.5vw, 24px);
+    padding: 5px 0;
+  }
+  .menu-num {
+    font-size: 11px;
+  }
+  .menu-label {
+    letter-spacing: 1.5px;
+  }
+  .hero-name {
+    font-size: clamp(38px, 10vw, 54px);
+  }
+  .ghost-text {
+    font-size: clamp(2.8rem, 12vw, 3.8rem);
+  }
+  .name-display {
+    font-size: clamp(2.6rem, 10vw, 3.6rem);
+  }
+  .section-heading {
+    font-size: clamp(24px, 7vw, 32px);
+  }
+  .countdown-digits {
+    font-size: clamp(28px, 8vw, 36px);
+  }
+  .word-reveal {
+    font-size: clamp(26px, 8vw, 38px);
+  }
+
+  /* Safe inputs on mobile to eliminate iOS auto-zoom */
+  .rsvp-input, .rsvp-textarea {
+    font-size: 16px !important;
+  }
+
+  /* Mobile touch chips for RSVP */
+  .rsvp-radio-group {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+  .rsvp-radio-option {
+    flex: 1;
+  }
+  .rsvp-radio-option label {
+    padding: 12px 6px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+
+  /* Floating music button safe area */
+  .music-btn {
+    bottom: calc(18px + env(safe-area-inset-bottom, 10px));
+    right: calc(18px + env(safe-area-inset-right, 10px));
+    width: 46px;
+    height: 46px;
+    font-size: 19px;
+  }
 }
 
 @media (max-width: 480px) {
-  .hero-name { font-size: 48px; }
+  .hero-name { font-size: clamp(34px, 9vw, 44px); }
+  .section-content { padding-left: 18px !important; padding-right: 18px !important; }
 }
 
 /* ═══════════════════════════════════════════════

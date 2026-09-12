@@ -283,103 +283,186 @@ Salam hangat,
             <p style={{ fontSize: 12 }}>Gunakan form di atas untuk menambahkan tamu pertama.</p>
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th>Nama Tamu</th>
-                  <th>No WhatsApp</th>
-                  <th>Status Dibuka</th>
-                  <th>Link Undangan</th>
-                  <th style={{ textAlign: 'center' }}>Aksi Kirim</th>
-                  <th style={{ textAlign: 'center' }}>Hapus</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((guest, idx) => (
-                  <tr key={guest.id}>
-                    <td style={{ color: 'var(--admin-muted)', fontSize: 12 }}>{idx + 1}</td>
-                    <td style={{ fontWeight: 600, color: '#fff' }}>{guest.name}</td>
-                    <td>
-                      {guest.phone ? (
-                        <span style={{ color: '#81c784' }}>📱 {guest.phone}</span>
-                      ) : (
-                        <span style={{ color: 'rgba(255,255,255,0.3)' }}>-</span>
-                      )}
-                    </td>
-                    <td>
-                      {guest.has_opened ? (
-                        <span className="badge badge-success">✓ Sudah Dibuka</span>
-                      ) : (
-                        <span className="badge" style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)' }}>
-                          Belum Dibuka
-                        </span>
-                      )}
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <button
-                          onClick={() => copyGuestLink(guest)}
-                          className="btn-admin-outline"
-                          style={{ padding: '4px 10px', fontSize: 11 }}
-                        >
-                          {copiedId === guest.id ? '✓ Disalin' : '📋 Salin Link'}
-                        </button>
+          <>
+            {/* Desktop Table View */}
+            <div className="admin-table-container" style={{ overflowX: 'auto' }}>
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <th>Nama Tamu</th>
+                    <th>No WhatsApp</th>
+                    <th>Status Dibuka</th>
+                    <th>Link Undangan</th>
+                    <th style={{ textAlign: 'center' }}>Aksi Kirim</th>
+                    <th style={{ textAlign: 'center' }}>Hapus</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((guest, idx) => (
+                    <tr key={guest.id}>
+                      <td style={{ color: 'var(--admin-muted)', fontSize: 12 }}>{idx + 1}</td>
+                      <td style={{ fontWeight: 600, color: '#fff' }}>{guest.name}</td>
+                      <td>
+                        {guest.phone ? (
+                          <span style={{ color: '#81c784' }}>📱 {guest.phone}</span>
+                        ) : (
+                          <span style={{ color: 'rgba(255,255,255,0.3)' }}>-</span>
+                        )}
+                      </td>
+                      <td>
+                        {guest.has_opened ? (
+                          <span className="badge badge-success">✓ Sudah Dibuka</span>
+                        ) : (
+                          <span className="badge" style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)' }}>
+                            Belum Dibuka
+                          </span>
+                        )}
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <button
+                            onClick={() => copyGuestLink(guest)}
+                            className="btn-admin-outline"
+                            style={{ padding: '4px 10px', fontSize: 11 }}
+                          >
+                            {copiedId === guest.id ? '✓ Disalin' : '📋 Salin Link'}
+                          </button>
+                          <a
+                            href={getGuestUrl(guest)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: 'var(--admin-gold)', fontSize: 11, textDecoration: 'none' }}
+                            title="Buka Undangan Tamu Ini"
+                          >
+                            ↗ Preview
+                          </a>
+                        </div>
+                      </td>
+                      <td style={{ textAlign: 'center' }}>
                         <a
-                          href={getGuestUrl(guest)}
+                          href={getWhatsAppLink(guest)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          style={{ color: 'var(--admin-gold)', fontSize: 11, textDecoration: 'none' }}
-                          title="Buka Undangan Tamu Ini"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            background: '#25D366',
+                            color: '#fff',
+                            padding: '6px 12px',
+                            borderRadius: 6,
+                            fontSize: 11,
+                            fontWeight: 600,
+                            textDecoration: 'none',
+                          }}
                         >
-                          ↗ Preview
+                          💬 Share WA
                         </a>
-                      </div>
-                    </td>
-                    <td style={{ textAlign: 'center' }}>
-                      <a
-                        href={getWhatsAppLink(guest)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 4,
-                          background: '#25D366',
-                          color: '#fff',
-                          padding: '6px 12px',
-                          borderRadius: 6,
-                          fontSize: 11,
-                          fontWeight: 600,
-                          textDecoration: 'none',
-                        }}
-                      >
-                        💬 Share WA
-                      </a>
-                    </td>
-                    <td style={{ textAlign: 'center' }}>
-                      <button
-                        onClick={() => handleDelete(guest.id)}
-                        style={{
-                          background: 'rgba(211, 47, 47, 0.15)',
-                          color: '#e57373',
-                          border: '1px solid rgba(211, 47, 47, 0.3)',
-                          borderRadius: 6,
-                          padding: '4px 8px',
-                          cursor: 'pointer',
-                          fontSize: 11,
-                        }}
-                        title="Hapus Tamu"
-                      >
-                        🗑️
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      </td>
+                      <td style={{ textAlign: 'center' }}>
+                        <button
+                          onClick={() => handleDelete(guest.id)}
+                          style={{
+                            background: 'rgba(211, 47, 47, 0.15)',
+                            color: '#e57373',
+                            border: '1px solid rgba(211, 47, 47, 0.3)',
+                            borderRadius: 6,
+                            padding: '4px 8px',
+                            cursor: 'pointer',
+                            fontSize: 11,
+                          }}
+                          title="Hapus Tamu"
+                        >
+                          🗑️
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Cards View (< 768px) */}
+            <div className="admin-cards-container">
+              {filtered.map((guest, idx) => (
+                <div key={guest.id} className="mobile-data-card">
+                  <div className="mobile-data-card-header">
+                    <div>
+                      <span style={{ fontSize: 11, color: 'var(--admin-muted)', display: 'block' }}>#{idx + 1}</span>
+                      <strong style={{ color: '#fff', fontSize: '1.1rem' }}>{guest.name}</strong>
+                      {guest.phone && (
+                        <span style={{ fontSize: 12, color: '#81c784', display: 'block', marginTop: 2 }}>
+                          📱 {guest.phone}
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      {guest.has_opened ? (
+                        <span className="badge badge-success">✓ Dibuka</span>
+                      ) : (
+                        <span className="badge" style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.5)' }}>
+                          Belum
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Actions Bar */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 4 }}>
+                    <a
+                      href={getWhatsAppLink(guest)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-admin"
+                      style={{
+                        background: 'linear-gradient(135deg, #25D366, #128C7E)',
+                        color: '#fff',
+                        justifyContent: 'center',
+                        fontSize: 12,
+                        padding: '10px',
+                      }}
+                    >
+                      💬 Kirim WA
+                    </a>
+
+                    <button
+                      onClick={() => copyGuestLink(guest)}
+                      className="btn-admin-outline"
+                      style={{ justifyContent: 'center', fontSize: 12, padding: '10px' }}
+                    >
+                      {copiedId === guest.id ? '✓ Disalin' : '📋 Salin Link'}
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 2, paddingTop: 6, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                    <a
+                      href={getGuestUrl(guest)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: 'var(--admin-gold)', fontSize: 12, textDecoration: 'none' }}
+                    >
+                      👁️ Preview Undangan Tamu ↗
+                    </a>
+                    <button
+                      onClick={() => handleDelete(guest.id)}
+                      style={{
+                        background: 'rgba(211, 47, 47, 0.15)',
+                        color: '#e57373',
+                        border: '1px solid rgba(211, 47, 47, 0.3)',
+                        borderRadius: 6,
+                        padding: '4px 10px',
+                        cursor: 'pointer',
+                        fontSize: 11,
+                      }}
+                    >
+                      🗑️ Hapus
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>
