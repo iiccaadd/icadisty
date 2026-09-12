@@ -24,13 +24,26 @@ export default function InvitationPage() {
   const rootRef = useRef(null)
 
   useEffect(() => {
-    // Fetch custom photos & background settings
-    fetch('/api/settings')
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.data) setSettings(json.data)
-      })
-      .catch((e) => console.warn('Notice: settings fetch fallback:', e))
+    // Fetch custom photos & background settings with cache-busting
+    const loadSettings = () => {
+      fetch('/api/settings?t=' + Date.now(), { cache: 'no-store' })
+        .then((res) => res.json())
+        .then((json) => {
+          if (json.data) setSettings(json.data)
+        })
+        .catch((e) => console.warn('Notice: settings fetch fallback:', e))
+    }
+
+    loadSettings()
+
+    // Re-fetch when user returns to tab / app
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        loadSettings()
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibility)
+    return () => document.removeEventListener('visibilitychange', handleVisibility)
   }, [])
 
   useEffect(() => {

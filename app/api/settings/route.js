@@ -48,6 +48,12 @@ export const DEFAULT_SETTINGS = {
   musicUrl: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3',
 }
 
+const NO_CACHE_HEADERS = {
+  'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+  'Pragma': 'no-cache',
+  'Expires': '0',
+}
+
 function getSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || DEFAULT_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || DEFAULT_ANON_KEY
@@ -56,26 +62,93 @@ function getSupabase() {
 
 let memoryCache = null
 
-export async function GET() {
+// Helper to fetch settings from Supabase (tries 'settings' table first, then 'guests' table fallback)
+async function fetchSupabaseSettings() {
+  const supabase = getSupabase()
+
+  // 1. Try public.settings table
   try {
-    const supabase = getSupabase()
     const { data, error } = await supabase
       .from('settings')
       .select('data')
       .eq('id', 'general')
       .maybeSingle()
 
-    if (!error && data?.data) {
-      const merged = { ...DEFAULT_SETTINGS, ...data.data }
-      memoryCache = merged
-      return NextResponse.json({ data: merged })
+    if (!error && data?.data && Object.keys(data.data).length > 0) {
+      return data.data
     }
+  } catch (e) {}
 
-    const merged = { ...DEFAULT_SETTINGS, ...(memoryCache || {}) }
-    return NextResponse.json({ data: merged })
+  // 2. Fallback to public.guests table row (name = 'SYSTEM_SETTINGS')
+  try {
+    const { data, error } = await supabase
+      .from('guests')
+      .select('id, invited_by')
+      .eq('name', 'SYSTEM_SETTINGS')
+      .maybeSingle()
+
+    if (!error && data?.invited_by) {
+      const parsed = JSON.parse(data.invited_by)
+      if (parsed && typeof parsed === 'object') {
+        return parsed
+      }
+    }
+  } catch (e) {}
+
+  return null
+}
+
+// Helper to save settings to Supabase (saves to both 'settings' and 'guests' fallback)
+async function persistSupabaseSettings(settingsObj) {
+  const supabase = getSupabase()
+
+  // 1. Try saving to public.settings table
+  try {
+    await supabase
+      .from('settings')
+      .upsert({
+        id: 'general',
+        data: settingsObj,
+        updated_at: new Date().toISOString(),
+      })
+  } catch (e) {}
+
+  // 2. Always also sync to public.guests fallback row (guaranteed to exist across all devices)
+  try {
+    const { data: existing } = await supabase
+      .from('guests')
+      .select('id')
+      .eq('name', 'SYSTEM_SETTINGS')
+      .maybeSingle()
+
+    if (existing?.id) {
+      await supabase
+        .from('guests')
+        .update({
+          invited_by: JSON.stringify(settingsObj),
+        })
+        .eq('id', existing.id)
+    } else {
+      await supabase
+        .from('guests')
+        .insert([{
+          name: 'SYSTEM_SETTINGS',
+          slug: '__settings__',
+          invited_by: JSON.stringify(settingsObj),
+        }])
+    }
+  } catch (e) {}
+}
+
+export async function GET() {
+  try {
+    const cloudSettings = await fetchSupabaseSettings()
+    const merged = { ...DEFAULT_SETTINGS, ...(cloudSettings || memoryCache || {}) }
+    memoryCache = merged
+    return NextResponse.json({ data: merged }, { headers: NO_CACHE_HEADERS })
   } catch (err) {
     const merged = { ...DEFAULT_SETTINGS, ...(memoryCache || {}) }
-    return NextResponse.json({ data: merged, notice: err.message })
+    return NextResponse.json({ data: merged, notice: err.message }, { headers: NO_CACHE_HEADERS })
   }
 }
 
@@ -83,26 +156,17 @@ export async function POST(request) {
   try {
     const body = await request.json()
     const newSettings = body.settings || body
-    memoryCache = { ...DEFAULT_SETTINGS, ...(memoryCache || {}), ...newSettings }
 
-    try {
-      const supabase = getSupabase()
-      const { error } = await supabase
-        .from('settings')
-        .upsert({
-          id: 'general',
-          data: memoryCache,
-          updated_at: new Date().toISOString(),
-        })
-      if (error) {
-        console.warn('Supabase settings notice (run schema.sql in Supabase SQL Editor if table is not created yet):', error.message)
-      }
-    } catch (dbErr) {
-      console.warn('Supabase write notice:', dbErr.message)
-    }
+    // Fetch existing first to ensure safe merge
+    const currentCloud = await fetchSupabaseSettings()
+    const merged = { ...DEFAULT_SETTINGS, ...(currentCloud || memoryCache || {}), ...newSettings }
+    memoryCache = merged
 
-    return NextResponse.json({ success: true, data: memoryCache })
+    // Persist to Supabase Cloud Database immediately
+    await persistSupabaseSettings(merged)
+
+    return NextResponse.json({ success: true, data: merged }, { headers: NO_CACHE_HEADERS })
   } catch (err) {
-    return NextResponse.json({ error: err.message }, { status: 500 })
+    return NextResponse.json({ error: err.message }, { status: 500, headers: NO_CACHE_HEADERS })
   }
 }

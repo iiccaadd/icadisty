@@ -30,6 +30,7 @@ export async function GET() {
     const { data, error } = await supabase
       .from('guests')
       .select('*')
+      .neq('name', 'SYSTEM_SETTINGS')
       .order('created_at', { ascending: false })
 
     if (error) {

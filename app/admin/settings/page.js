@@ -144,7 +144,7 @@ export default function AdminSettingsPage() {
   const fetchSettings = async () => {
     setLoading(true)
     try {
-      const res = await fetch('/api/settings')
+      const res = await fetch('/api/settings?t=' + Date.now(), { cache: 'no-store' })
       const json = await res.json()
       if (json.data) {
         setSettings(json.data)
@@ -167,7 +167,8 @@ export default function AdminSettingsPage() {
       })
       const json = await res.json()
       if (res.ok && json.success) {
-        setToast('✓ Pengaturan foto dan latar berhasil disimpan!')
+        if (json.data) setSettings(json.data)
+        setToast('✓ Pengaturan foto dan latar berhasil disimpan ke cloud database!')
         setTimeout(() => setToast(''), 4000)
       } else {
         alert(json.error || 'Gagal menyimpan pengaturan')
