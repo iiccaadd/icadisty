@@ -3,12 +3,14 @@ import { useState } from 'react'
 
 const menuItems = [
   { num: '01', label: 'COVER', href: '#opening' },
-  { num: '02', label: 'THE WEDDING', href: '#couple' },
-  { num: '03', label: 'OUR STORY', href: '#lovestory' },
-  { num: '04', label: 'SPECIAL EVENTS', href: '#events' },
-  { num: '05', label: 'RESERVATION', href: '#rsvp' },
-  { num: '06', label: 'WEDDING GIFT', href: '#closing' },
-  { num: '07', label: 'WISHES FOR US', href: '#rsvp' },
+  { num: '02', label: 'THE GROOM', href: '#groom' },
+  { num: '03', label: 'THE BRIDE', href: '#bride' },
+  { num: '04', label: 'OUR STORY', href: '#lovestory' },
+  { num: '05', label: 'SPECIAL EVENTS', href: '#events' },
+  { num: '06', label: 'COUNTDOWN', href: '#countdown' },
+  { num: '07', label: 'MOMENTS', href: '#gallery' },
+  { num: '08', label: 'RSVP & WISHES', href: '#rsvp' },
+  { num: '09', label: 'WEDDING GIFT', href: '#closing' },
 ]
 
 export default function NavMenu() {

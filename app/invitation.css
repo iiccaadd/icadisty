@@ -167,6 +167,95 @@
   text-shadow: 0 2px 4px rgba(0,0,0,0.8);
 }
 
+/* ─── Single Profile Scene (Groom & Bride Separate Scenes) ─── */
+.single-profile-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+  width: 100%;
+  max-width: 860px;
+}
+
+.single-profile-container.reverse {
+  flex-direction: row-reverse;
+}
+
+.single-profile-info {
+  flex: 1;
+}
+
+.single-profile-stage {
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.single-3d-card {
+  width: clamp(200px, 32vw, 300px);
+  height: clamp(280px, 45vw, 420px);
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85),
+              0 0 0 1px rgba(241, 193, 147, 0.35);
+  position: relative;
+  will-change: transform, filter;
+  transition: transform 0.08s ease-out;
+  background: #110c08;
+}
+
+.single-3d-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.single-3d-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(10,5,2,0.85) 100%);
+  pointer-events: none;
+}
+
+.single-3d-card-badge {
+  position: absolute;
+  bottom: 14px;
+  left: 12px;
+  right: 12px;
+  font-family: 'Metropolis', sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-transform: uppercase;
+  text-align: center;
+  pointer-events: none;
+  font-weight: 500;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+@media (max-width: 768px) {
+  .single-profile-container,
+  .single-profile-container.reverse {
+    flex-direction: column-reverse;
+    text-align: center;
+    gap: 20px;
+  }
+  .single-profile-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .single-3d-card {
+    width: clamp(170px, 48vw, 240px);
+    height: clamp(230px, 64vw, 320px);
+    border-radius: 22px;
+  }
+}
+
 /* ─── Section Heading ─── */
 .section-heading {
   font-family: 'Playfair Display', serif;

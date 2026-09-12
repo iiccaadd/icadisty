@@ -6,7 +6,8 @@ import NavMenu from '@/components/invitation/NavMenu'
 import MusicButton from '@/components/invitation/MusicButton'
 import Preloader from '@/components/invitation/Preloader'
 import HeroSection from '@/components/invitation/HeroSection'
-import CoupleSection from '@/components/invitation/CoupleSection'
+import GroomSection from '@/components/invitation/GroomSection'
+import BrideSection from '@/components/invitation/BrideSection'
 import LoveStorySection from '@/components/invitation/LoveStorySection'
 import EventSection from '@/components/invitation/EventSection'
 import CountdownSection from '@/components/invitation/CountdownSection'
@@ -115,7 +116,8 @@ export default function InvitationPage() {
 
         {/* Sections */}
         <HeroSection id="opening" groomName={GROOM} brideName={BRIDE} guestName={guestName} settings={settings} />
-        <CoupleSection id="couple" groomName={GROOM} brideName={BRIDE} settings={settings} />
+        <GroomSection id="groom" groomName={GROOM} settings={settings} />
+        <BrideSection id="bride" brideName={BRIDE} settings={settings} />
         <LoveStorySection id="lovestory" settings={settings} />
         <EventSection id="events" settings={settings} />
         <CountdownSection id="countdown" settings={settings} />
