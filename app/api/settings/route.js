@@ -25,7 +25,7 @@ export const DEFAULT_SETTINGS = {
   moment1Photo: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop',
   moment1Title: 'Pertama Bertemu',
   moment1Date: 'November 2020',
-  moment1Desc: 'Sebuah perjumpaan tak terduga di Muara Tewah yang menjadi awal mula lembaran kisah kasih kami.',
+  moment1Desc: 'Sebuah perjumpaan tak terduga di Muara Teweh yang menjadi awal mula lembaran kisah kasih kami.',
 
   moment2Photo: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop',
   moment2Title: 'Merajut Janji',
@@ -40,7 +40,7 @@ export const DEFAULT_SETTINGS = {
   moment4Photo: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=800&auto=format&fit=crop',
   moment4Title: 'Hari Bahagia',
   moment4Date: '11 November 2026',
-  moment4Desc: 'Masjid H. Muhammad Sidik Islamic Center Muara Tewah, mengikat janji suci seumur hidup.',
+  moment4Desc: 'Masjid H. Muhammad Sidik Islamic Center Muara Teweh, mengikat janji suci seumur hidup.',
 
   // Background & Ambience
   bgOverlayDarkness: 60, // 40 - 95 %

@@ -1,9 +1,9 @@
 'use client'
 import SectionBackground from './SectionBackground'
 
-const VENUE_NAME = process.env.NEXT_PUBLIC_VENUE_NAME || 'Masjid H. Muhammad Sidik Islamic Center Muara Tewah'
-const VENUE_ADDRESS = process.env.NEXT_PUBLIC_VENUE_ADDRESS || 'Muara Tewah, Kabupaten Barito Utara, Kalimantan Tengah'
-const VENUE_MAPS = process.env.NEXT_PUBLIC_VENUE_MAPS || 'https://maps.google.com/?q=Masjid+H+Muhammad+Sidik+Muara+Tewah'
+const VENUE_NAME = process.env.NEXT_PUBLIC_VENUE_NAME || 'Masjid H. Muhammad Sidik Islamic Center Muara Teweh'
+const VENUE_ADDRESS = process.env.NEXT_PUBLIC_VENUE_ADDRESS || 'Muara Teweh, Kabupaten Barito Utara, Kalimantan Tengah'
+const VENUE_MAPS = process.env.NEXT_PUBLIC_VENUE_MAPS || 'https://maps.google.com/?q=Masjid+H+Muhammad+Sidik+Muara+Teweh'
 
 export default function EventSection({ id, settings }) {
   const bgPhoto = settings?.eventsBgPhoto || 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?q=80&w=1600&auto=format&fit=crop'

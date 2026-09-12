@@ -243,12 +243,12 @@ export default function ClosingSection({ id, groomName, brideName, settings }) {
             marginBottom: 30,
           }}
         >
-          #IcaDistyWedding • 11.11.2026
+          #IrsyAdoreAdisty • 11.11.2026
         </p>
 
         <footer style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 20, width: '100%' }}>
           <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.15em' }}>
-            DIGITAL WEDDING INVITATION • MUARA TEWAH
+            DIGITAL WEDDING INVITATION • MUARA TEWEH
           </p>
         </footer>
       </div>

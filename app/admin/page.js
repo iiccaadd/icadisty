@@ -92,7 +92,7 @@ Tanpa mengurangi rasa hormat, perkenankan kami mengundang Anda untuk menghadiri 
 
 *${groom} & ${bride}*
 Rabu, 11 November 2026
-Masjid H. Muhammad Sidik Islamic Center Muara Tewah
+Masjid H. Muhammad Sidik Islamic Center Muara Teweh
 
 Detail acara & konfirmasi kehadiran dapat diakses melalui tautan undangan berikut:
 ${generatedUrl}
