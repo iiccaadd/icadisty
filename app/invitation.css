@@ -1145,3 +1145,110 @@
   }
 }
 
+/* ─── React Bits Stack Component (Our Story & Moments) ─── */
+.gallery-stack-stage {
+  perspective: 900px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 440px;
+  width: 100%;
+}
+
+.gallery-stack-wrapper {
+  position: relative;
+  width: clamp(260px, 32vw, 340px);
+  height: clamp(340px, 42vw, 440px);
+}
+
+.stack-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  perspective: 600px;
+}
+
+.card-rotate {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+.card-rotate:active {
+  cursor: grabbing;
+}
+
+.card-rotate-disabled {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.card {
+  border-radius: 26px;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 25px 55px rgba(0, 0, 0, 0.85),
+              0 0 0 1px rgba(241, 193, 147, 0.35);
+  background: #110c08;
+}
+
+.card img {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.gallery-stack-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.gallery-stack-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(10,5,2,0.85) 100%);
+  pointer-events: none;
+}
+
+.gallery-stack-badge {
+  position: absolute;
+  bottom: 16px;
+  left: 12px;
+  right: 12px;
+  font-family: 'Metropolis', sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-transform: uppercase;
+  text-align: center;
+  pointer-events: none;
+  font-weight: 500;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+@media (max-width: 768px) {
+  .gallery-stack-stage {
+    height: 330px;
+  }
+  .gallery-stack-wrapper {
+    width: clamp(220px, 66vw, 290px);
+    height: clamp(290px, 86vw, 380px);
+  }
+}

@@ -1,99 +1,71 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef, useMemo } from 'react'
 import SectionBackground from './SectionBackground'
+import Stack from './Stack'
 
 export default function GallerySection({ id, settings }) {
   const bgPhoto = settings?.galleryBgPhoto || 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1600&auto=format&fit=crop'
-  const moments = [
-    {
-      id: 1,
-      date: settings?.moment1Date || 'November 2020',
-      title: settings?.moment1Title || 'Pertama Bertemu',
-      desc: settings?.moment1Desc || 'Sebuah perjumpaan tak terduga di Muara Teweh yang menjadi awal mula lembaran kisah kasih kami.',
-      src: settings?.moment1Photo || 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop',
-      alt: 'Irsyad & Adisty - Pertama Bertemu',
-    },
-    {
-      id: 2,
-      date: settings?.moment2Date || 'Agustus 2022',
-      title: settings?.moment2Title || 'Merajut Janji',
-      desc: settings?.moment2Desc || 'Melangkah bersama melewati ragam cerita, bertumbuh dalam cinta, saling menjaga dan menguatkan.',
-      src: settings?.moment2Photo || 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop',
-      alt: 'Irsyad & Adisty - Merajut Janji',
-    },
-    {
-      id: 3,
-      date: settings?.moment3Date || 'Mei 2024',
-      title: settings?.moment3Title || 'Restu Keluarga',
-      desc: settings?.moment3Desc || 'Dua keluarga besar bersatu dalam doa dan restu yang tulus menyongsong mahligai suci.',
-      src: settings?.moment3Photo || 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=800&auto=format&fit=crop',
-      alt: 'Irsyad & Adisty - Restu Keluarga',
-    },
-    {
-      id: 4,
-      date: settings?.moment4Date || '11 November 2026',
-      title: settings?.moment4Title || 'Hari Bahagia',
-      desc: settings?.moment4Desc || 'Masjid H. Muhammad Sidik Islamic Center Muara Teweh, mengikat janji suci seumur hidup.',
-      src: settings?.moment4Photo || 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=800&auto=format&fit=crop',
-      alt: 'Irsyad & Adisty - Hari Bahagia',
-    },
-  ]
+  const stackRef = useRef(null)
+
+  // Compute moments list from settings (dynamic array from admin, or fallback to legacy moments)
+  const moments = useMemo(() => {
+    if (Array.isArray(settings?.galleryMoments) && settings.galleryMoments.length > 0) {
+      return settings.galleryMoments.map((m, i) => ({
+        id: m.id || i + 1,
+        date: m.date || 'Moment',
+        title: m.title || `Kenangan 0${i + 1}`,
+        desc: m.desc || '',
+        src: m.photo || 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop',
+        alt: m.title || `Irsyad & Adisty - Moment ${i + 1}`,
+      }))
+    }
+
+    return [
+      {
+        id: 1,
+        date: settings?.moment1Date || 'November 2020',
+        title: settings?.moment1Title || 'Pertama Bertemu',
+        desc: settings?.moment1Desc || 'Sebuah perjumpaan tak terduga di Muara Teweh yang menjadi awal mula lembaran kisah kasih kami.',
+        src: settings?.moment1Photo || 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop',
+        alt: 'Irsyad & Adisty - Pertama Bertemu',
+      },
+      {
+        id: 2,
+        date: settings?.moment2Date || 'Agustus 2022',
+        title: settings?.moment2Title || 'Merajut Janji',
+        desc: settings?.moment2Desc || 'Melangkah bersama melewati ragam cerita, bertumbuh dalam cinta, saling menjaga dan menguatkan.',
+        src: settings?.moment2Photo || 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop',
+        alt: 'Irsyad & Adisty - Merajut Janji',
+      },
+      {
+        id: 3,
+        date: settings?.moment3Date || 'Mei 2024',
+        title: settings?.moment3Title || 'Restu Keluarga',
+        desc: settings?.moment3Desc || 'Dua keluarga besar bersatu dalam doa dan restu yang tulus menyongsong mahligai suci.',
+        src: settings?.moment3Photo || 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=800&auto=format&fit=crop',
+        alt: 'Irsyad & Adisty - Restu Keluarga',
+      },
+      {
+        id: 4,
+        date: settings?.moment4Date || '11 November 2026',
+        title: settings?.moment4Title || 'Hari Bahagia',
+        desc: settings?.moment4Desc || 'Masjid H. Muhammad Sidik Islamic Center Muara Teweh, mengikat janji suci seumur hidup.',
+        src: settings?.moment4Photo || 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=800&auto=format&fit=crop',
+        alt: 'Irsyad & Adisty - Hari Bahagia',
+      },
+    ]
+  }, [settings])
 
   const [currentIdx, setCurrentIdx] = useState(0)
-  const [animState, setAnimState] = useState('idle') // idle | transitioning
-  const [touchStart, setTouchStart] = useState(0)
-  const [isPaused, setIsPaused] = useState(false)
-  const autoPlayRef = useRef(null)
-
-  const activeItem = moments[currentIdx]
-
-  const goToSlide = (nextIndex) => {
-    if (animState === 'transitioning' || nextIndex === currentIdx) return
-    setAnimState('transitioning')
-
-    // Wait for razor-slice exit animation, then swap active index and enter
-    setTimeout(() => {
-      setCurrentIdx(nextIndex)
-      setAnimState('idle')
-    }, 550)
-  }
+  const activeItem = moments[currentIdx] || moments[0] || {}
 
   const handleNext = () => {
-    const next = (currentIdx + 1) % moments.length
-    goToSlide(next)
+    stackRef.current?.next()
   }
 
   const handlePrev = () => {
-    const prev = (currentIdx - 1 + moments.length) % moments.length
-    goToSlide(prev)
-  }
-
-  // Auto-play timer (similar to video showcase)
-  useEffect(() => {
-    if (isPaused) return
-    autoPlayRef.current = setInterval(() => {
-      handleNext()
-    }, 4500)
-
-    return () => {
-      if (autoPlayRef.current) clearInterval(autoPlayRef.current)
-    }
-  }, [currentIdx, isPaused, animState])
-
-  // Touch Swipe Handlers for Mobile
-  const handleTouchStart = (e) => {
-    setTouchStart(e.targetTouches[0].clientX)
-  }
-
-  const handleTouchEnd = (e) => {
-    const touchEnd = e.changedTouches[0].clientX
-    if (touchStart - touchEnd > 50) {
-      handleNext() // Swiped left -> next
-    }
-    if (touchStart - touchEnd < -50) {
-      handlePrev() // Swiped right -> prev
-    }
+    stackRef.current?.prev()
   }
 
   return (
@@ -107,10 +79,6 @@ export default function GallerySection({ id, settings }) {
         justifyContent: 'center',
         overflow: 'hidden',
       }}
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
     >
       {/* Full-bleed Photo Background */}
       <SectionBackground
@@ -141,7 +109,7 @@ export default function GallerySection({ id, settings }) {
           </p>
         </div>
 
-        {/* 3D Perspective Tilt & Slice Showcase */}
+        {/* 3D Perspective Showcase Container */}
         <div className="slice-showcase-container">
           {/* Left Column: Kinetic Editorial Info */}
           <div className="slice-info-col">
@@ -150,14 +118,9 @@ export default function GallerySection({ id, settings }) {
               <span>{activeItem.date}</span>
             </span>
 
-            {/* Kinetic Title with Overflow Mask */}
+            {/* Kinetic Title */}
             <div className="slice-title-mask">
-              <h3
-                className={`slice-title ${
-                  animState === 'transitioning' ? 'exit-up' : 'enter-down'
-                }`}
-                key={activeItem.id}
-              >
+              <h3 className="slice-title enter-down" key={activeItem.id || currentIdx}>
                 {activeItem.title}
               </h3>
             </div>
@@ -186,7 +149,7 @@ export default function GallerySection({ id, settings }) {
                   ‹
                 </button>
                 <span className="slice-counter">
-                  0{currentIdx + 1} / 0{moments.length}
+                  {String(currentIdx + 1).padStart(2, '0')} / {String(moments.length).padStart(2, '0')}
                 </span>
                 <button
                   className="slice-nav-btn"
@@ -199,35 +162,40 @@ export default function GallerySection({ id, settings }) {
             </div>
           </div>
 
-          {/* Right Column: 3D Stage & Tilting Sliced Card */}
-          <div className="slice-stage">
-            <div className="slice-card-wrapper">
-              {moments.map((item, idx) => {
-                const isActive = idx === currentIdx
-                let cardClass = 'slice-card'
-
-                if (isActive) {
-                  cardClass += animState === 'transitioning' ? ' slice-exit' : ' slice-active'
-                } else {
-                  cardClass += ' slice-enter'
-                }
-
-                return (
-                  <div
-                    key={item.id}
-                    className={cardClass}
-                    style={{
-                      display: isActive || animState === 'transitioning' ? 'block' : 'none',
-                    }}
-                  >
+          {/* Right Column: React Bits <Stack /> 3D Component */}
+          <div className="gallery-stack-stage">
+            <div className="gallery-stack-wrapper">
+              <Stack
+                ref={stackRef}
+                randomRotation={settings?.galleryRandomRotation ?? true}
+                sensitivity={180}
+                sendToBackOnClick={true}
+                autoplay={settings?.galleryAutoplay ?? true}
+                autoplayDelay={settings?.galleryAutoplayDelay ?? 3500}
+                pauseOnHover={true}
+                mobileClickOnly={false}
+                onTopCardChange={(idx) => {
+                  if (idx >= 0 && idx < moments.length) {
+                    setCurrentIdx(idx)
+                  }
+                }}
+                cards={moments.map((item, i) => (
+                  <div key={item.id || i} className="gallery-stack-card-inner">
                     <img
                       src={item.src}
                       alt={item.alt}
+                      className="card-image"
                       loading="lazy"
                     />
+                    <div className="gallery-stack-overlay" />
+                    {item.title && (
+                      <div className="gallery-stack-badge">
+                        ✦ {item.title.toUpperCase()} ✦
+                      </div>
+                    )}
                   </div>
-                )
-              })}
+                ))}
+              />
             </div>
           </div>
         </div>

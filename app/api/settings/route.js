@@ -23,7 +23,7 @@ export const DEFAULT_SETTINGS = {
   rsvpBgPhoto: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?q=80&w=1600&auto=format&fit=crop',
   closingBgPhoto: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop',
 
-  // 4 Gallery Moments (3D Perspective Slice Carousel)
+  // 4 Gallery Moments (3D Perspective Slice Carousel Fallback)
   moment1Photo: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop',
   moment1Title: 'Pertama Bertemu',
   moment1Date: 'November 2020',
@@ -43,6 +43,55 @@ export const DEFAULT_SETTINGS = {
   moment4Title: 'Hari Bahagia',
   moment4Date: '11 November 2026',
   moment4Desc: 'Masjid H. Muhammad Sidik Islamic Center Muara Teweh, mengikat janji suci seumur hidup.',
+
+  // Gallery Moments (Dynamic Multi-Image Stack from React Bits)
+  galleryMoments: [
+    {
+      id: 1,
+      photo: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop',
+      title: 'Pertama Bertemu',
+      date: 'November 2020',
+      desc: 'Sebuah perjumpaan tak terduga di Muara Teweh yang menjadi awal mula lembaran kisah kasih kami.',
+    },
+    {
+      id: 2,
+      photo: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop',
+      title: 'Merajut Janji',
+      date: 'Agustus 2022',
+      desc: 'Melangkah bersama melewati ragam cerita, bertumbuh dalam cinta, saling menjaga dan menguatkan.',
+    },
+    {
+      id: 3,
+      photo: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=800&auto=format&fit=crop',
+      title: 'Restu Keluarga',
+      date: 'Mei 2024',
+      desc: 'Dua keluarga besar bersatu dalam doa dan restu yang tulus menyongsong mahligai suci.',
+    },
+    {
+      id: 4,
+      photo: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=800&auto=format&fit=crop',
+      title: 'Hari Bahagia',
+      date: '11 November 2026',
+      desc: 'Masjid H. Muhammad Sidik Islamic Center Muara Teweh, mengikat janji suci seumur hidup.',
+    },
+    {
+      id: 5,
+      photo: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=800&auto=format&fit=crop',
+      title: 'Cahaya Cinta',
+      date: 'Januari 2025',
+      desc: 'Menatap masa depan bersama dengan penuh keyakinan dan kehangatan doa.',
+    },
+    {
+      id: 6,
+      photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop',
+      title: 'Menuju Sakral',
+      date: '26 Juni 2026',
+      desc: 'Langkah suci menggenapkan separuh agama dalam ikatan suci pernikahan.',
+    },
+  ],
+  galleryAutoplay: true,
+  galleryAutoplayDelay: 3500,
+  galleryRandomRotation: true,
 
   // Background & Ambience
   bgOverlayDarkness: 60, // 40 - 95 %
@@ -146,6 +195,41 @@ export async function GET() {
   try {
     const cloudSettings = await fetchSupabaseSettings()
     const merged = { ...DEFAULT_SETTINGS, ...(cloudSettings || memoryCache || {}) }
+
+    // Backward compatibility: If cloud had legacy moment1-4 but no galleryMoments array, synthesize it
+    if (!Array.isArray(merged.galleryMoments) || merged.galleryMoments.length === 0) {
+      merged.galleryMoments = [
+        {
+          id: 1,
+          photo: merged.moment1Photo || DEFAULT_SETTINGS.moment1Photo,
+          title: merged.moment1Title || DEFAULT_SETTINGS.moment1Title,
+          date: merged.moment1Date || DEFAULT_SETTINGS.moment1Date,
+          desc: merged.moment1Desc || DEFAULT_SETTINGS.moment1Desc,
+        },
+        {
+          id: 2,
+          photo: merged.moment2Photo || DEFAULT_SETTINGS.moment2Photo,
+          title: merged.moment2Title || DEFAULT_SETTINGS.moment2Title,
+          date: merged.moment2Date || DEFAULT_SETTINGS.moment2Date,
+          desc: merged.moment2Desc || DEFAULT_SETTINGS.moment2Desc,
+        },
+        {
+          id: 3,
+          photo: merged.moment3Photo || DEFAULT_SETTINGS.moment3Photo,
+          title: merged.moment3Title || DEFAULT_SETTINGS.moment3Title,
+          date: merged.moment3Date || DEFAULT_SETTINGS.moment3Date,
+          desc: merged.moment3Desc || DEFAULT_SETTINGS.moment3Desc,
+        },
+        {
+          id: 4,
+          photo: merged.moment4Photo || DEFAULT_SETTINGS.moment4Photo,
+          title: merged.moment4Title || DEFAULT_SETTINGS.moment4Title,
+          date: merged.moment4Date || DEFAULT_SETTINGS.moment4Date,
+          desc: merged.moment4Desc || DEFAULT_SETTINGS.moment4Desc,
+        },
+      ]
+    }
+
     memoryCache = merged
     return NextResponse.json({ data: merged }, { headers: NO_CACHE_HEADERS })
   } catch (err) {
@@ -162,6 +246,18 @@ export async function POST(request) {
     // Fetch existing first to ensure safe merge
     const currentCloud = await fetchSupabaseSettings()
     const merged = { ...DEFAULT_SETTINGS, ...(currentCloud || memoryCache || {}), ...newSettings }
+
+    // Sync first 4 galleryMoments back to legacy keys for seamless fallback
+    if (Array.isArray(merged.galleryMoments) && merged.galleryMoments.length > 0) {
+      merged.galleryMoments.slice(0, 4).forEach((item, index) => {
+        const num = index + 1
+        if (item.photo) merged[`moment${num}Photo`] = item.photo
+        if (item.title) merged[`moment${num}Title`] = item.title
+        if (item.date) merged[`moment${num}Date`] = item.date
+        if (item.desc) merged[`moment${num}Desc`] = item.desc
+      })
+    }
+
     memoryCache = merged
 
     // Persist to Supabase Cloud Database immediately

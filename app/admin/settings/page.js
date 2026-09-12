@@ -63,6 +63,14 @@ const PHOTO_PRESETS = {
     { label: 'Sparkler Celebration', url: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?q=80&w=1200&auto=format&fit=crop' },
     { label: 'Gentle Candle Prayer', url: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1200&auto=format&fit=crop' },
   ],
+  galleryMoment: [
+    { label: 'Cincin & Bunga', url: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=800&auto=format&fit=crop' },
+    { label: 'Genggam Tangan', url: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=800&auto=format&fit=crop' },
+    { label: 'Pelukan Sunset', url: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop' },
+    { label: 'Lentera Malam', url: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=800&auto=format&fit=crop' },
+    { label: 'Senyum Bahagia', url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop' },
+    { label: 'Akad Khidmat', url: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=800&auto=format&fit=crop' },
+  ],
 }
 
 const SCROLL_SEGMENTS = [
@@ -203,6 +211,71 @@ export default function AdminSettingsPage() {
     setSettings((prev) => ({ ...prev, [key]: value }))
   }
 
+  const getMoments = () => {
+    if (Array.isArray(settings?.galleryMoments) && settings.galleryMoments.length > 0) {
+      return settings.galleryMoments
+    }
+    return [
+      {
+        id: 1,
+        photo: settings?.moment1Photo || 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop',
+        title: settings?.moment1Title || 'Pertama Bertemu',
+        date: settings?.moment1Date || 'November 2020',
+        desc: settings?.moment1Desc || 'Sebuah perjumpaan tak terduga di Muara Teweh yang menjadi awal mula lembaran kisah kasih kami.',
+      },
+      {
+        id: 2,
+        photo: settings?.moment2Photo || 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop',
+        title: settings?.moment2Title || 'Merajut Janji',
+        date: settings?.moment2Date || 'Agustus 2022',
+        desc: settings?.moment2Desc || 'Melangkah bersama melewati ragam cerita, bertumbuh dalam cinta, saling menjaga dan menguatkan.',
+      },
+      {
+        id: 3,
+        photo: settings?.moment3Photo || 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=800&auto=format&fit=crop',
+        title: settings?.moment3Title || 'Restu Keluarga',
+        date: settings?.moment3Date || 'Mei 2024',
+        desc: settings?.moment3Desc || 'Dua keluarga besar bersatu dalam doa dan restu yang tulus menyongsong mahligai suci.',
+      },
+      {
+        id: 4,
+        photo: settings?.moment4Photo || 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=800&auto=format&fit=crop',
+        title: settings?.moment4Title || 'Hari Bahagia',
+        date: settings?.moment4Date || '11 November 2026',
+        desc: 'Masjid H. Muhammad Sidik Islamic Center Muara Teweh, mengikat janji suci seumur hidup.',
+      },
+    ]
+  }
+
+  const updateMoment = (index, field, value) => {
+    const list = [...getMoments()]
+    list[index] = { ...list[index], [field]: value }
+    setSettings((prev) => ({ ...prev, galleryMoments: list }))
+  }
+
+  const addMomentSlot = () => {
+    const list = [...getMoments()]
+    const nextNum = list.length + 1
+    list.push({
+      id: Date.now(),
+      photo: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=800&auto=format&fit=crop',
+      title: `Kenangan 0${nextNum}`,
+      date: '2026',
+      desc: 'Momen berharga dalam perjalanan cinta kami.',
+    })
+    setSettings((prev) => ({ ...prev, galleryMoments: list }))
+  }
+
+  const removeMomentSlot = (index) => {
+    const list = [...getMoments()]
+    if (list.length <= 1) {
+      alert('Minimal harus ada 1 foto di dalam galeri!')
+      return
+    }
+    list.splice(index, 1)
+    setSettings((prev) => ({ ...prev, galleryMoments: list }))
+  }
+
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--admin-muted)' }}>
@@ -280,7 +353,7 @@ export default function AdminSettingsPage() {
           className={`btn-admin-outline ${activeTab === 'moments' ? 'active' : ''}`}
           style={{ background: activeTab === 'moments' ? 'rgba(241, 193, 147, 0.2)' : 'transparent' }}
         >
-          🎞️ Galeri Momen 3D Slice
+          🎞️ Galeri Foto &amp; Momen (Stack 3D)
         </button>
         <button
           onClick={() => setActiveTab('background')}
@@ -432,74 +505,218 @@ export default function AdminSettingsPage() {
         </div>
       )}
 
-      {/* TAB 2: GALERI MOMEN 3D SLICE */}
+      {/* TAB 2: GALERI FOTO & MOMEN (STACK 3D) */}
       {activeTab === 'moments' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
-          {[1, 2, 3, 4].map((num) => (
-            <div key={num} className="admin-card">
-              <h4 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', margin: '0 0 12px', fontSize: '1.15rem' }}>
-                Momen 0{num} (Slide {num})
-              </h4>
-
-              <div style={{ marginBottom: 10 }}>
-                <label style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 4 }}>
-                  Judul Momen
-                </label>
-                <input
-                  type="text"
-                  value={settings?.[`moment${num}Title`] || ''}
-                  onChange={(e) => updateField(`moment${num}Title`, e.target.value)}
-                  className="admin-input"
-                />
-              </div>
-
-              <div style={{ marginBottom: 10 }}>
-                <label style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 4 }}>
-                  Tanggal / Babak
-                </label>
-                <input
-                  type="text"
-                  value={settings?.[`moment${num}Date`] || ''}
-                  onChange={(e) => updateField(`moment${num}Date`, e.target.value)}
-                  className="admin-input"
-                />
-              </div>
-
-              <div style={{ marginBottom: 10 }}>
-                <label style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 4 }}>
-                  Deskripsi Singkat
-                </label>
-                <textarea
-                  rows={2}
-                  value={settings?.[`moment${num}Desc`] || ''}
-                  onChange={(e) => updateField(`moment${num}Desc`, e.target.value)}
-                  className="admin-input"
-                  style={{ fontSize: 12 }}
-                />
-              </div>
-
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          {/* Top Control Panel: Stack Behavior & Add Button */}
+          <div className="admin-card" style={{ background: 'rgba(22, 16, 12, 0.7)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 16 }}>
               <div>
-                <label style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 4 }}>
-                  URL Foto Momen
-                </label>
+                <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', margin: '0 0 6px', fontSize: '1.25rem' }}>
+                  🎞️ Galeri Tumpukan Kartu 3D (React Bits Stack)
+                </h3>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--admin-muted)' }}>
+                  Total <strong>{getMoments().length} Slot Foto</strong> terpasang. Tamu dapat menggeser/men-drag kartu, mengklik, atau membiarkannya berputar otomatis.
+                </p>
+              </div>
+
+              <button
+                onClick={addMomentSlot}
+                className="btn-admin"
+                style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 18px' }}
+              >
+                <span>➕</span>
+                <span>Tambah Slot Gambar Baru</span>
+              </button>
+            </div>
+
+            {/* Stack Behavior Controls */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+              {/* Autoplay toggle */}
+              <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
                 <input
-                  type="text"
-                  value={settings?.[`moment${num}Photo`] || ''}
-                  onChange={(e) => updateField(`moment${num}Photo`, e.target.value)}
-                  className="admin-input"
-                  style={{ fontSize: 12 }}
+                  type="checkbox"
+                  checked={settings?.galleryAutoplay ?? true}
+                  onChange={(e) => updateField('galleryAutoplay', e.target.checked)}
+                  style={{ width: 18, height: 18, accentColor: '#F1C193' }}
+                />
+                <span style={{ fontSize: 13, color: '#fff' }}>Autoplay Kartu (Otomatis Berpindah)</span>
+              </label>
+
+              {/* Autoplay Delay */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                  <span style={{ fontSize: 11, color: 'var(--admin-muted)' }}>Durasi Transisi:</span>
+                  <span style={{ fontSize: 12, color: '#F1C193', fontWeight: 600 }}>
+                    {((settings?.galleryAutoplayDelay || 3500) / 1000).toFixed(1)} detik
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min={1500}
+                  max={8000}
+                  step={500}
+                  value={settings?.galleryAutoplayDelay || 3500}
+                  onChange={(e) => updateField('galleryAutoplayDelay', Number(e.target.value))}
+                  style={{ width: '100%', accentColor: '#F1C193' }}
                 />
               </div>
 
-              <div style={{ marginTop: 12, height: 110, borderRadius: 10, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <img
-                  src={settings?.[`moment${num}Photo`]}
-                  alt={`Moment ${num}`}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              {/* Random Rotation toggle */}
+              <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={settings?.galleryRandomRotation ?? true}
+                  onChange={(e) => updateField('galleryRandomRotation', e.target.checked)}
+                  style={{ width: 18, height: 18, accentColor: '#F1C193' }}
                 />
-              </div>
+                <span style={{ fontSize: 13, color: '#fff' }}>Acak Kemiringan (Messy 3D Stack)</span>
+              </label>
             </div>
-          ))}
+          </div>
+
+          {/* Grid of Dynamic Moment Slots */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20 }}>
+            {getMoments().map((moment, idx) => (
+              <div key={moment.id || idx} className="admin-card" style={{ position: 'relative' }}>
+                {/* Card Header */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                  <span style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', fontSize: '1.1rem', fontWeight: 600 }}>
+                    Foto #{String(idx + 1).padStart(2, '0')}
+                  </span>
+                  <button
+                    onClick={() => removeMomentSlot(idx)}
+                    className="btn-admin-outline"
+                    style={{
+                      padding: '4px 10px',
+                      fontSize: 11,
+                      borderColor: 'rgba(239, 83, 80, 0.4)',
+                      color: '#ef5350',
+                    }}
+                    title="Hapus slot foto ini"
+                  >
+                    🗑️ Hapus
+                  </button>
+                </div>
+
+                {/* Photo URL */}
+                <div style={{ marginBottom: 10 }}>
+                  <label style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 4 }}>
+                    URL Gambar Foto
+                  </label>
+                  <input
+                    type="text"
+                    value={moment.photo || ''}
+                    onChange={(e) => updateMoment(idx, 'photo', e.target.value)}
+                    placeholder="https://images.unsplash.com/..."
+                    className="admin-input"
+                    style={{ fontSize: 12 }}
+                  />
+                </div>
+
+                {/* Preset Buttons */}
+                <div style={{ marginBottom: 12 }}>
+                  <span style={{ fontSize: 10, color: 'var(--admin-muted)', display: 'block', marginBottom: 4 }}>
+                    Pilihan Foto Preset:
+                  </span>
+                  <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                    {PHOTO_PRESETS.galleryMoment.map((preset, pIdx) => (
+                      <button
+                        key={pIdx}
+                        onClick={() => updateMoment(idx, 'photo', preset.url)}
+                        className="btn-admin-outline"
+                        style={{ padding: '3px 7px', fontSize: 10 }}
+                      >
+                        {preset.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Thumbnail Preview */}
+                <div
+                  style={{
+                    height: 150,
+                    borderRadius: 14,
+                    overflow: 'hidden',
+                    marginBottom: 14,
+                    border: '1px solid rgba(241, 193, 147, 0.3)',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
+                    background: '#0d0906',
+                  }}
+                >
+                  <img
+                    src={moment.photo}
+                    alt={moment.title || `Foto ${idx + 1}`}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    onError={(e) => {
+                      e.target.src = 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop'
+                    }}
+                  />
+                </div>
+
+                {/* Title */}
+                <div style={{ marginBottom: 10 }}>
+                  <label style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 4 }}>
+                    Judul Momen / Teks Badge
+                  </label>
+                  <input
+                    type="text"
+                    value={moment.title || ''}
+                    onChange={(e) => updateMoment(idx, 'title', e.target.value)}
+                    placeholder="Contoh: Merajut Janji"
+                    className="admin-input"
+                  />
+                </div>
+
+                {/* Date */}
+                <div style={{ marginBottom: 10 }}>
+                  <label style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 4 }}>
+                    Tanggal / Fase
+                  </label>
+                  <input
+                    type="text"
+                    value={moment.date || ''}
+                    onChange={(e) => updateMoment(idx, 'date', e.target.value)}
+                    placeholder="Contoh: Agustus 2022"
+                    className="admin-input"
+                  />
+                </div>
+
+                {/* Description */}
+                <div>
+                  <label style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 4 }}>
+                    Deskripsi Singkat Kisah
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={moment.desc || ''}
+                    onChange={(e) => updateMoment(idx, 'desc', e.target.value)}
+                    placeholder="Ceritakan sekelumit momen ini..."
+                    className="admin-input"
+                    style={{ fontSize: 12 }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Big Add Slot Button at Bottom */}
+          <div style={{ textAlign: 'center', padding: '16px 0 24px' }}>
+            <button
+              onClick={addMomentSlot}
+              className="btn-admin-outline"
+              style={{
+                padding: '12px 28px',
+                fontSize: 14,
+                borderColor: 'var(--gold)',
+                color: 'var(--gold)',
+                background: 'rgba(241, 193, 147, 0.08)',
+              }}
+            >
+              ➕ Tambah Slot Gambar Lainnya
+            </button>
+          </div>
         </div>
       )}
 
