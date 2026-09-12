@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useMemo } from 'react'
+import { useState, useRef, useMemo, useCallback } from 'react'
 import SectionBackground from './SectionBackground'
 import Stack from './Stack'
 
@@ -8,7 +8,7 @@ export default function GallerySection({ id, settings }) {
   const bgPhoto = settings?.galleryBgPhoto || 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1600&auto=format&fit=crop'
   const stackRef = useRef(null)
 
-  // Compute moments list from settings (dynamic array from admin, or fallback to legacy moments)
+  // Compute moments list from settings (dynamic array from admin, or fallback to default moments)
   const moments = useMemo(() => {
     if (Array.isArray(settings?.galleryMoments) && settings.galleryMoments.length > 0) {
       return settings.galleryMoments.map((m, i) => ({
@@ -60,6 +60,12 @@ export default function GallerySection({ id, settings }) {
   const [currentIdx, setCurrentIdx] = useState(0)
   const activeItem = moments[currentIdx] || moments[0] || {}
 
+  const handleTopCardChange = useCallback((idx) => {
+    if (idx >= 0 && idx < moments.length) {
+      setCurrentIdx((prev) => (prev === idx ? prev : idx))
+    }
+  }, [moments.length])
+
   const handleNext = () => {
     stackRef.current?.next()
   }
@@ -67,6 +73,26 @@ export default function GallerySection({ id, settings }) {
   const handlePrev = () => {
     stackRef.current?.prev()
   }
+
+  // Memoize cards elements to prevent creating new array references on every render
+  const cardElements = useMemo(() => {
+    return moments.map((item, i) => (
+      <div key={`moment-card-${item.id || i}`} className="gallery-stack-card-inner">
+        <img
+          src={item.src}
+          alt={item.alt}
+          className="card-image"
+          loading="lazy"
+        />
+        <div className="gallery-stack-overlay" />
+        {item.title && (
+          <div className="gallery-stack-badge">
+            ✦ {item.title.toUpperCase()} ✦
+          </div>
+        )}
+      </div>
+    ))
+  }, [moments])
 
   return (
     <section
@@ -168,33 +194,14 @@ export default function GallerySection({ id, settings }) {
               <Stack
                 ref={stackRef}
                 randomRotation={settings?.galleryRandomRotation ?? true}
-                sensitivity={180}
+                sensitivity={140}
                 sendToBackOnClick={true}
                 autoplay={settings?.galleryAutoplay ?? true}
                 autoplayDelay={settings?.galleryAutoplayDelay ?? 3500}
                 pauseOnHover={true}
                 mobileClickOnly={false}
-                onTopCardChange={(idx) => {
-                  if (idx >= 0 && idx < moments.length) {
-                    setCurrentIdx(idx)
-                  }
-                }}
-                cards={moments.map((item, i) => (
-                  <div key={item.id || i} className="gallery-stack-card-inner">
-                    <img
-                      src={item.src}
-                      alt={item.alt}
-                      className="card-image"
-                      loading="lazy"
-                    />
-                    <div className="gallery-stack-overlay" />
-                    {item.title && (
-                      <div className="gallery-stack-badge">
-                        ✦ {item.title.toUpperCase()} ✦
-                      </div>
-                    )}
-                  </div>
-                ))}
+                onTopCardChange={handleTopCardChange}
+                cards={cardElements}
               />
             </div>
           </div>
