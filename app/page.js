@@ -33,6 +33,27 @@ export default function InvitationPage() {
     }
   }, [])
 
+  useEffect(() => {
+    if (!opened) return
+
+    const elements = document.querySelectorAll('.reanimate')
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view')
+          } else {
+            entry.target.classList.remove('in-view')
+          }
+        })
+      },
+      { root: null, rootMargin: '-10px 0px -10px 0px', threshold: 0.05 }
+    )
+
+    elements.forEach((el) => observer.observe(el))
+    return () => observer.disconnect()
+  }, [opened])
+
   const handleOpen = () => {
     setOpened(true)
 

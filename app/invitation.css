@@ -606,3 +606,61 @@
 @media (max-width: 480px) {
   .hero-name { font-size: 48px; }
 }
+
+/* ═══════════════════════════════════════════════
+   SORA ROYAL MOTION ENGINE (.reanimate System)
+   ═══════════════════════════════════════════════ */
+
+.fade {
+  opacity: 0;
+  transition: opacity 2s ease;
+}
+.fade.reanimate.in-view {
+  opacity: 1;
+  transition: opacity 2s ease;
+}
+
+.left {
+  transform: translateX(-80px);
+  opacity: 0;
+  transition: opacity 1.5s ease, transform 2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.left.reanimate.in-view {
+  transform: translateX(0);
+  opacity: 1;
+  transition: opacity 1.5s ease, transform 2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.right {
+  transform: translateX(80px);
+  opacity: 0;
+  transition: opacity 1s ease, transform 2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.right.reanimate.in-view {
+  transform: translateX(0);
+  opacity: 1;
+  transition: opacity 1s ease, transform 2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.up {
+  transform: translateY(30px);
+  opacity: 0;
+  transition: opacity 1s ease, transform 2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.up.reanimate.in-view {
+  transform: translateY(0);
+  opacity: 1;
+  transition: opacity 1s ease, transform 2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.delay100ms { transition-delay: 0.1s !important; }
+.delay200ms { transition-delay: 0.2s !important; }
+.delay300ms { transition-delay: 0.3s !important; }
+.delay400ms { transition-delay: 0.4s !important; }
+.delay500ms { transition-delay: 0.5s !important; }
+.delay600ms { transition-delay: 0.6s !important; }
+.delay700ms { transition-delay: 0.7s !important; }
+.delay800ms { transition-delay: 0.8s !important; }
+.delay1000ms { transition-delay: 1.0s !important; }
+.delay1200ms { transition-delay: 1.2s !important; }
+
