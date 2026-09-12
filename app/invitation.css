@@ -96,10 +96,75 @@
 /* ─── Couple Name (big display) ─── */
 .name-display {
   font-family: 'Playfair Display', serif;
-  font-size: 80px;
+  font-size: clamp(2.4rem, 5.5vw, 5rem);
   font-weight: 400;
   color: #fff;
-  line-height: 1.05;
+  line-height: 1.08;
+}
+
+/* ─── Couple 3D Perspective Card & Rows ─── */
+.couple-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  width: 100%;
+}
+
+.couple-info {
+  flex: 1;
+}
+
+.couple-card-stage {
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.couple-3d-card {
+  width: clamp(140px, 22vw, 230px);
+  height: clamp(190px, 29vw, 310px);
+  border-radius: 26px;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85),
+              0 0 0 1px rgba(241, 193, 147, 0.3);
+  position: relative;
+  will-change: transform, filter;
+  transition: transform 0.08s ease-out;
+  background: #110c08;
+}
+
+.couple-3d-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.couple-3d-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(10,5,2,0.85) 100%);
+  pointer-events: none;
+}
+
+.couple-3d-card-badge {
+  position: absolute;
+  bottom: 12px;
+  left: 10px;
+  right: 10px;
+  font-family: 'Metropolis', sans-serif;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--gold);
+  text-transform: uppercase;
+  text-align: center;
+  pointer-events: none;
+  font-weight: 500;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
 }
 
 /* ─── Section Heading ─── */
@@ -637,7 +702,20 @@
     font-size: clamp(2.8rem, 12vw, 3.8rem);
   }
   .name-display {
-    font-size: clamp(2.6rem, 10vw, 3.6rem);
+    font-size: clamp(1.8rem, 6.5vw, 2.6rem);
+  }
+  .couple-row {
+    gap: 14px;
+  }
+  .couple-3d-card {
+    width: clamp(105px, 28vw, 140px);
+    height: clamp(145px, 38vw, 190px);
+    border-radius: 18px;
+  }
+  .couple-3d-card-badge {
+    font-size: 8.5px;
+    bottom: 6px;
+    letter-spacing: 0.8px;
   }
   .section-heading {
     font-size: clamp(24px, 7vw, 32px);
