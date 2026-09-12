@@ -1,14 +1,13 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 
 const menuItems = [
   { label: 'Home', href: '#opening' },
   { label: 'Groom & Bride', href: '#couple' },
   { label: 'Love Story', href: '#lovestory' },
   { label: 'Event Details', href: '#events' },
-  { label: 'Countdown', href: '#countdown' },
-  { label: 'Gallery', href: '#gallery' },
   { label: 'RSVP & Wishes', href: '#rsvp' },
+  { label: 'Gallery', href: '#gallery' },
   { label: 'Wedding Gift', href: '#closing' },
 ]
 
