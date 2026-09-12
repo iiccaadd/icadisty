@@ -741,3 +741,240 @@
 .delay1000ms { transition-delay: 1.0s !important; }
 .delay1200ms { transition-delay: 1.2s !important; }
 
+/* ═══════════════════════════════════════════════
+   3D PERSPECTIVE TILT & SLICE CAROUSEL
+   (Learned from original-298827feef88ce70afd33943a237efd7.mp4)
+   ═══════════════════════════════════════════════ */
+
+.slice-showcase-container {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  align-items: center;
+  gap: 40px;
+  min-height: 480px;
+  position: relative;
+}
+
+/* Left: Kinetic Editorial Info */
+.slice-info-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 2;
+}
+
+.slice-meta {
+  font-family: 'Metropolis', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.slice-title-mask {
+  overflow: hidden;
+  position: relative;
+  min-height: 80px;
+  margin-bottom: 16px;
+}
+
+.slice-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+  font-weight: 400;
+  line-height: 1.08;
+  color: #ffffff;
+  margin: 0;
+  transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease;
+}
+
+.slice-title.exit-up {
+  transform: translateY(-110%);
+  opacity: 0;
+}
+
+.slice-title.enter-down {
+  transform: translateY(110%);
+  opacity: 0;
+}
+
+.slice-desc {
+  font-family: 'Metropolis', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 420px;
+  margin-bottom: 20px;
+  transition: opacity 0.4s ease;
+}
+
+.slice-divider {
+  width: 100%;
+  max-width: 320px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  margin-bottom: 24px;
+}
+
+.slice-action-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.slice-more-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-family: 'Metropolis', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.slice-more-btn:hover {
+  color: var(--gold);
+  transform: translateX(4px);
+}
+
+.slice-nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.slice-nav-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.slice-nav-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(241, 193, 147, 0.1);
+}
+
+.slice-counter {
+  font-family: monospace;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 1px;
+}
+
+/* Right: 3D Stage & Tilting Card */
+.slice-stage {
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 440px;
+}
+
+.slice-card-wrapper {
+  position: relative;
+  width: 320px;
+  height: 400px;
+  transform-style: preserve-3d;
+}
+
+.slice-card {
+  position: absolute;
+  inset: 0;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8),
+              0 0 0 1px rgba(241, 193, 147, 0.2);
+  transform: perspective(1200px) rotateX(0deg) rotateY(-6deg) rotateZ(6deg) scale(1);
+  transition: transform 0.85s cubic-bezier(0.25, 1, 0.5, 1),
+              opacity 0.75s cubic-bezier(0.25, 1, 0.5, 1),
+              filter 0.75s ease;
+  will-change: transform, opacity;
+}
+
+.slice-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 3D Razor Slice Collapse (Outgoing) */
+.slice-card.slice-exit {
+  transform: perspective(1200px) rotateX(84deg) rotateY(12deg) rotateZ(-14deg) scaleY(0.04) scaleX(0.85) translateY(-60px);
+  opacity: 0;
+  filter: blur(2px);
+  pointer-events: none;
+}
+
+/* 3D Razor Slice Unfold (Incoming) */
+.slice-card.slice-enter {
+  transform: perspective(1200px) rotateX(-80deg) rotateY(-10deg) rotateZ(14deg) scaleY(0.04) scaleX(0.85) translateY(60px);
+  opacity: 0;
+  filter: blur(2px);
+}
+
+.slice-card.slice-active {
+  transform: perspective(1200px) rotateX(0deg) rotateY(-6deg) rotateZ(6deg) scale(1);
+  opacity: 1;
+  filter: blur(0px);
+  z-index: 5;
+}
+
+/* Mobile Responsive for 3D Slice Showcase */
+@media (max-width: 768px) {
+  .slice-showcase-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0 16px;
+    min-height: auto;
+  }
+  .slice-stage {
+    height: 300px;
+  }
+  .slice-card-wrapper {
+    width: 240px;
+    height: 290px;
+  }
+  .slice-title-mask {
+    min-height: 60px;
+    margin-bottom: 8px;
+  }
+  .slice-title {
+    font-size: clamp(1.8rem, 6vw, 2.4rem);
+  }
+  .slice-desc {
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+  .slice-divider {
+    margin-bottom: 16px;
+  }
+}
+
