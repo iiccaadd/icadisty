@@ -15,11 +15,11 @@ const buildKeyframes = (from, steps) => {
 
 const BlurText = ({
   text = '',
-  delay = 200,
+  delay = 160,
   className = '',
   animateBy = 'words',
   direction = 'top',
-  threshold = 0.1,
+  threshold = 0.2,
   rootMargin = '0px',
   animationFrom,
   animationTo,
@@ -31,41 +31,74 @@ const BlurText = ({
 }) => {
   const elements = animateBy === 'words' ? text.split(' ') : text.split('')
   const [inView, setInView] = useState(false)
+  const [activeDirection, setActiveDirection] = useState(direction)
   const ref = useRef(null)
+  const lastScrollYRef = useRef(0)
 
+  // Track scroll direction (detect scroll up vs scroll down)
+  useEffect(() => {
+    const scrollContainer = document.querySelector('.invitation-root') || window
+
+    const handleScroll = () => {
+      const currentScrollY = scrollContainer === window ? window.scrollY : scrollContainer.scrollTop
+      if (currentScrollY > lastScrollYRef.current + 4) {
+        // Scrolling down
+        setActiveDirection('top')
+      } else if (currentScrollY < lastScrollYRef.current - 4) {
+        // Scrolling up -> trigger upwards entrance animation
+        setActiveDirection('bottom')
+      }
+      lastScrollYRef.current = currentScrollY
+    }
+
+    scrollContainer.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      scrollContainer.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
+  // Observe entering and leaving view so animation triggers on BOTH scroll down and scroll up
   useEffect(() => {
     if (!ref.current) return
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setInView(true)
-          observer.unobserve(ref.current)
+        } else {
+          // Reset when out of view so it re-triggers every time the user scrolls back
+          setInView(false)
         }
       },
       { threshold, rootMargin }
     )
+
     observer.observe(ref.current)
     return () => observer.disconnect()
   }, [threshold, rootMargin])
 
+  const effectiveDirection = animationFrom ? direction : activeDirection
+
   const defaultFrom = useMemo(
     () =>
-      direction === 'top'
-        ? { filter: 'blur(10px)', opacity: 0, y: -50 }
-        : { filter: 'blur(10px)', opacity: 0, y: 50 },
-    [direction]
+      effectiveDirection === 'top'
+        ? { filter: 'blur(10px)', opacity: 0, y: -45 }
+        : { filter: 'blur(10px)', opacity: 0, y: 45 },
+    [effectiveDirection]
   )
 
   const defaultTo = useMemo(
     () => [
       {
-        filter: 'blur(5px)',
-        opacity: 0.5,
-        y: direction === 'top' ? 5 : -5,
+        filter: 'blur(4px)',
+        opacity: 0.6,
+        y: effectiveDirection === 'top' ? 4 : -4,
       },
       { filter: 'blur(0px)', opacity: 1, y: 0 },
     ],
-    [direction]
+    [effectiveDirection]
   )
 
   const fromSnapshot = animationFrom ?? defaultFrom
