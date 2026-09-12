@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import SectionBackground from './SectionBackground'
 
 const TARGET_DATE = new Date(
   process.env.NEXT_PUBLIC_WEDDING_DATE || '2026-12-20T09:00:00+07:00'
@@ -17,8 +18,9 @@ function getCountdown() {
   }
 }
 
-export default function CountdownSection({ id }) {
+export default function CountdownSection({ id, settings }) {
   const [time, setTime] = useState(getCountdown())
+  const bgPhoto = settings?.countdownBgPhoto || 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?q=80&w=1600&auto=format&fit=crop'
 
   useEffect(() => {
     const timer = setInterval(() => setTime(getCountdown()), 1000)
@@ -29,9 +31,28 @@ export default function CountdownSection({ id }) {
 
   return (
     <section id={id} className="section" style={{ background: '#000' }}>
-      <div className="section-bg" style={{
-        background: 'radial-gradient(ellipse at center, #1a0800 0%, #000 70%)',
-      }} />
+      {/* Full-bleed Photo Background */}
+      <SectionBackground
+        photo={bgPhoto}
+        settings={settings}
+        brightnessMultiplier={0.8}
+        position="center"
+      />
+
+      {/* Ghost text */}
+      <span
+        className="ghost-text"
+        style={{
+          top: '25%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          fontSize: 'clamp(3rem, 10vw, 6rem)',
+          opacity: 0.1,
+          letterSpacing: '0.15em',
+        }}
+      >
+        COUNTDOWN
+      </span>
 
       <div className="section-content" style={{
         justifyContent: 'center',
@@ -41,8 +62,8 @@ export default function CountdownSection({ id }) {
         gap: 32,
       }}>
         <div>
-          <p className="label-gold">✦ Menuju Hari Bahagia ✦</p>
-          <h2 className="section-heading" style={{ marginTop: 8 }}>Countdown</h2>
+          <p className="label-gold" style={{ fontSize: 11, letterSpacing: '0.25em' }}>✦ Menuju Hari Bahagia ✦</p>
+          <h2 className="section-heading" style={{ marginTop: 8, textShadow: '0 2px 16px rgba(0,0,0,0.8)' }}>Countdown</h2>
         </div>
 
         <div className="countdown-wrapper">

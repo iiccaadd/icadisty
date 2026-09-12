@@ -16,13 +16,119 @@ const PHOTO_PRESETS = {
   heroBg: [
     { label: 'Night Romantic Lights', url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1600&auto=format&fit=crop' },
     { label: 'Cinematic Sunset Glow', url: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1600&auto=format&fit=crop' },
-    { label: 'Royal Arch Backdrop', url: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?q=80&w=1600&auto=format&fit=crop' },
+    { label: 'Floral Royal Arch', url: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?q=80&w=1600&auto=format&fit=crop' },
+  ],
+  coupleBg: [
+    { label: 'Romantic Silhouette', url: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=1600&auto=format&fit=crop' },
+    { label: 'Candlelight Shadows', url: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1600&auto=format&fit=crop' },
+    { label: 'Golden Hour Embrace', url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1600&auto=format&fit=crop' },
+  ],
+  loveStoryBg: [
+    { label: 'Holding Hands Walk', url: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=1600&auto=format&fit=crop' },
+    { label: 'Sunset Forest Trail', url: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1600&auto=format&fit=crop' },
+    { label: 'Warm Evening Whisper', url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1600&auto=format&fit=crop' },
+  ],
+  eventsBg: [
+    { label: 'Cathedral / Hall Arch', url: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?q=80&w=1600&auto=format&fit=crop' },
+    { label: 'Evening Candle Altar', url: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=1600&auto=format&fit=crop' },
+    { label: 'Starry Mosque / Venue', url: 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?q=80&w=1600&auto=format&fit=crop' },
+  ],
+  countdownBg: [
+    { label: 'Starry Venue Lights', url: 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?q=80&w=1600&auto=format&fit=crop' },
+    { label: 'Warm Bokeh Lamps', url: 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=1600&auto=format&fit=crop' },
+    { label: 'Golden Sunset Aura', url: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=1600&auto=format&fit=crop' },
+  ],
+  galleryBg: [
+    { label: 'Canopy Fairy Lights', url: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1600&auto=format&fit=crop' },
+    { label: 'Moody Night Glow', url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1600&auto=format&fit=crop' },
+    { label: 'Golden Amber Bokeh', url: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=1600&auto=format&fit=crop' },
+  ],
+  rsvpBg: [
+    { label: 'Sparkler Celebration', url: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?q=80&w=1600&auto=format&fit=crop' },
+    { label: 'Intimate Dinner Lights', url: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1600&auto=format&fit=crop' },
+    { label: 'Warm Party Ambience', url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1600&auto=format&fit=crop' },
   ],
   closingBg: [
     { label: 'Luxury Lanterns Night', url: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop' },
     { label: 'Sparkler Celebration', url: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?q=80&w=1200&auto=format&fit=crop' },
+    { label: 'Gentle Candle Prayer', url: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1200&auto=format&fit=crop' },
   ],
 }
+
+const SCROLL_SEGMENTS = [
+  {
+    key: 'heroBgPhoto',
+    num: '01',
+    badge: 'SEGMEN 01 • COVER & HERO',
+    title: 'Cover / Pembuka Undangan',
+    desc: 'Latar belakang utama saat tamu pertama kali membuka undangan digital.',
+    presetKey: 'heroBg',
+    defaultUrl: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1600&auto=format&fit=crop',
+  },
+  {
+    key: 'coupleBgPhoto',
+    num: '02',
+    badge: 'SEGMEN 02 • THE COUPLE',
+    title: 'Profil Mempelai (Pria & Wanita)',
+    desc: 'Latar belakang di balik nama pengantin dan kartu 3D berputar.',
+    presetKey: 'coupleBg',
+    defaultUrl: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=1600&auto=format&fit=crop',
+  },
+  {
+    key: 'loveStoryBgPhoto',
+    num: '03',
+    badge: 'SEGMEN 03 • OUR JOURNEY',
+    title: 'Kisah Cinta (Love Story)',
+    desc: 'Latar belakang layar penuh di balik linimasa cerita cinta pengantin.',
+    presetKey: 'loveStoryBg',
+    defaultUrl: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=1600&auto=format&fit=crop',
+  },
+  {
+    key: 'eventsBgPhoto',
+    num: '04',
+    badge: 'SEGMEN 04 • SAVE THE DATE',
+    title: 'Waktu & Lokasi (Akad & Resepsi)',
+    desc: 'Latar belakang di balik kartu jadwal acara dan petunjuk Google Maps.',
+    presetKey: 'eventsBg',
+    defaultUrl: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?q=80&w=1600&auto=format&fit=crop',
+  },
+  {
+    key: 'countdownBgPhoto',
+    num: '05',
+    badge: 'SEGMEN 05 • COUNTDOWN',
+    title: 'Hitung Mundur Waktu & Doa',
+    desc: 'Latar belakang di balik jam hitung mundur dan kutipan ayat suci QS Ar-Rum.',
+    presetKey: 'countdownBg',
+    defaultUrl: 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?q=80&w=1600&auto=format&fit=crop',
+  },
+  {
+    key: 'galleryBgPhoto',
+    num: '06',
+    badge: 'SEGMEN 06 • OUR MOMENTS',
+    title: 'Galeri Momen 3D Perspective Slice',
+    desc: 'Latar belakang sinematik di balik carousel foto 3D slice berputar.',
+    presetKey: 'galleryBg',
+    defaultUrl: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1600&auto=format&fit=crop',
+  },
+  {
+    key: 'rsvpBgPhoto',
+    num: '07',
+    badge: 'SEGMEN 07 • RSVP & WISHES',
+    title: 'Konfirmasi Kehadiran & Doa Tamu',
+    desc: 'Latar belakang di balik form kehadiran dan kartu daftar ucapan tamu.',
+    presetKey: 'rsvpBg',
+    defaultUrl: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?q=80&w=1600&auto=format&fit=crop',
+  },
+  {
+    key: 'closingBgPhoto',
+    num: '08',
+    badge: 'SEGMEN 08 • DIGITAL GIFT & CLOSING',
+    title: 'Penutup, Doa Restu & Amplop Digital',
+    desc: 'Latar belakang penutup di balik tanda kasih amplop digital dan ucapan terima kasih.',
+    presetKey: 'closingBg',
+    defaultUrl: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop',
+  },
+]
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState(null)
@@ -377,108 +483,68 @@ export default function AdminSettingsPage() {
         </div>
       )}
 
-      {/* TAB 3: LATAR & NUANSA */}
+      {/* TAB 3: FOTO LATAR 8 SEGMEN & TEMA */}
       {activeTab === 'background' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
-          {/* Hero Background */}
-          <div className="admin-card">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          {/* Global Ambience & Theme Card */}
+          <div className="admin-card" style={{ background: 'rgba(22, 16, 12, 0.7)' }}>
             <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', margin: '0 0 16px', fontSize: '1.25rem' }}>
-              🌟 Foto Latar Cover (Hero Section)
+              ✨ Pengaturan Nuansa Warna &amp; Musik Latar
             </h3>
-            <p style={{ fontSize: '0.8rem', color: 'var(--admin-muted)', marginBottom: 14 }}>
-              Foto latar belakang utama di bagian pembuka undangan (Hero).
+            <p style={{ fontSize: '0.85rem', color: 'var(--admin-muted)', marginBottom: 20 }}>
+              Pengaturan global ini berlaku untuk seluruh segmen: mengatur tingkat kegelapan vignette foto agar teks tetap kontras, gradasi tema warna, dan backsound musik otomatis.
             </p>
 
-            <div style={{ marginBottom: 14 }}>
-              <label style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 6 }}>
-                URL Gambar Latar Cover
-              </label>
-              <input
-                type="text"
-                value={settings?.heroBgPhoto || ''}
-                onChange={(e) => updateField('heroBgPhoto', e.target.value)}
-                className="admin-input"
-              />
-            </div>
-
-            <div style={{ marginBottom: 14 }}>
-              <span style={{ fontSize: 11, color: 'var(--admin-muted)', display: 'block', marginBottom: 6 }}>
-                Pilihan Cepat:
-              </span>
-              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                {PHOTO_PRESETS.heroBg.map((p, i) => (
-                  <button
-                    key={i}
-                    onClick={() => updateField('heroBgPhoto', p.url)}
-                    className="btn-admin-outline"
-                    style={{ padding: '4px 8px', fontSize: 10 }}
-                  >
-                    {p.label}
-                  </button>
-                ))}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
+              {/* Darkness Slider */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                  <label style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', fontWeight: 600 }}>
+                    Tingkat Kegelapan Latar (Overlay Darkness)
+                  </label>
+                  <span style={{ fontSize: 13, color: '#F1C193', fontWeight: 700 }}>
+                    {settings?.bgOverlayDarkness || 60}%
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="30"
+                  max="95"
+                  step="5"
+                  value={settings?.bgOverlayDarkness || 60}
+                  onChange={(e) => updateField('bgOverlayDarkness', parseInt(e.target.value))}
+                  style={{ width: '100%', accentColor: '#F1C193', cursor: 'pointer', height: 6 }}
+                />
+                <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 6, lineHeight: 1.4 }}>
+                  Semakin tinggi nilainya, foto latar semakin gelap sehingga tulisan emas dan konten tetap kontras dan nyaman dibaca.
+                </p>
               </div>
-            </div>
 
-            <div style={{ height: 140, borderRadius: 12, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
-              <img
-                src={settings?.heroBgPhoto}
-                alt="Hero Background"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-            </div>
-          </div>
-
-          {/* Closing Background & Ambience */}
-          <div className="admin-card">
-            <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', margin: '0 0 16px', fontSize: '1.25rem' }}>
-              ✨ Foto Latar Doa &amp; Nuansa Warna
-            </h3>
-            <p style={{ fontSize: '0.8rem', color: 'var(--admin-muted)', marginBottom: 14 }}>
-              Foto penutup pada bagian ayat suci / amplop digital serta pengaturan kegelapan latar.
-            </p>
-
-            <div style={{ marginBottom: 14 }}>
-              <label style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 6 }}>
-                URL Gambar Latar Penutup (Closing)
-              </label>
-              <input
-                type="text"
-                value={settings?.closingBgPhoto || ''}
-                onChange={(e) => updateField('closingBgPhoto', e.target.value)}
-                className="admin-input"
-              />
-            </div>
-
-            {/* Darkness Slider */}
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                <label style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)' }}>
-                  Tingkat Kegelapan Latar (Overlay Darkness)
+              {/* Background Music Link */}
+              <div>
+                <label style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 8, fontWeight: 600 }}>
+                  URL File Musik / Lagu Latar (.mp3)
                 </label>
-                <span style={{ fontSize: 12, color: '#F1C193', fontWeight: 600 }}>
-                  {settings?.bgOverlayDarkness || 60}%
-                </span>
+                <input
+                  type="text"
+                  value={settings?.musicUrl || ''}
+                  onChange={(e) => updateField('musicUrl', e.target.value)}
+                  placeholder="https://...mp3"
+                  className="admin-input"
+                  style={{ fontSize: 13 }}
+                />
+                <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 6 }}>
+                  Musik akan otomatis diputar lembut saat tamu mengklik tombol "Buka Undangan".
+                </p>
               </div>
-              <input
-                type="range"
-                min="30"
-                max="95"
-                step="5"
-                value={settings?.bgOverlayDarkness || 60}
-                onChange={(e) => updateField('bgOverlayDarkness', parseInt(e.target.value))}
-                style={{ width: '100%', accentColor: '#F1C193', cursor: 'pointer' }}
-              />
-              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>
-                Semakin tinggi nilainya, latar foto semakin gelap dan tulisan emas semakin kontras.
-              </span>
             </div>
 
             {/* Background Theme Nuance */}
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 8 }}>
-                Pilihan Nuansa Warna Latar
+            <div style={{ marginTop: 20 }}>
+              <label style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 10, fontWeight: 600 }}>
+                Pilihan Gradasi Warna Tema Latar (Radial Tint)
               </label>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10 }}>
                 {[
                   { id: 'midnight', label: '🌑 Midnight Onyx', desc: 'Hitam murni & elegan' },
                   { id: 'amber', label: '🍂 Royal Amber', desc: 'Gradasi coklat keemasan' },
@@ -490,34 +556,162 @@ export default function AdminSettingsPage() {
                     onClick={() => updateField('bgTheme', t.id)}
                     className="btn-admin-outline"
                     style={{
-                      padding: '8px 10px',
+                      padding: '10px 12px',
                       flexDirection: 'column',
                       alignItems: 'flex-start',
-                      background: settings?.bgTheme === t.id ? 'rgba(241, 193, 147, 0.2)' : 'rgba(0,0,0,0.3)',
+                      background: settings?.bgTheme === t.id ? 'rgba(241, 193, 147, 0.22)' : 'rgba(0,0,0,0.35)',
                       borderColor: settings?.bgTheme === t.id ? 'var(--admin-gold)' : 'rgba(241, 193, 147, 0.2)',
+                      boxShadow: settings?.bgTheme === t.id ? '0 0 12px rgba(241, 193, 147, 0.2)' : 'none',
                     }}
                   >
-                    <span style={{ fontSize: 11, fontWeight: 600 }}>{t.label}</span>
-                    <span style={{ fontSize: 9, color: 'var(--admin-muted)' }}>{t.desc}</span>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: settings?.bgTheme === t.id ? '#F1C193' : '#fff' }}>{t.label}</span>
+                    <span style={{ fontSize: 10, color: 'var(--admin-muted)', marginTop: 2 }}>{t.desc}</span>
                   </button>
                 ))}
               </div>
             </div>
+          </div>
 
-            {/* Background Music Link */}
-            <div>
-              <label style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 6 }}>
-                URL File Lagu / Musik Latar (.mp3)
-              </label>
-              <input
-                type="text"
-                value={settings?.musicUrl || ''}
-                onChange={(e) => updateField('musicUrl', e.target.value)}
-                placeholder="https://...mp3"
-                className="admin-input"
-                style={{ fontSize: 12 }}
-              />
+          {/* Section 8-Segment Header */}
+          <div style={{ marginTop: 8, padding: '0 4px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+              <span style={{ fontSize: 18 }}>🖼️</span>
+              <h3 style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.4rem', color: '#F1C193', margin: 0 }}>
+                Foto Latar Penuh Per Segmen Skrol (8 Segmen)
+              </h3>
             </div>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--admin-muted)' }}>
+              Setiap segmen skrol halaman undangan dapat dikustomisasi dengan foto latar resolusi penuh (full-bleed) secara independen.
+            </p>
+          </div>
+
+          {/* 8 Scroll Segments Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 20 }}>
+            {SCROLL_SEGMENTS.map((seg) => {
+              const currentPhoto = settings?.[seg.key] || seg.defaultUrl
+              const presets = PHOTO_PRESETS[seg.presetKey] || []
+
+              return (
+                <div key={seg.key} className="admin-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    {/* Badge & Title */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                      <span
+                        style={{
+                          fontSize: 10,
+                          letterSpacing: '0.12em',
+                          color: '#F1C193',
+                          background: 'rgba(241, 193, 147, 0.12)',
+                          border: '1px solid rgba(241, 193, 147, 0.3)',
+                          padding: '3px 8px',
+                          borderRadius: 6,
+                          fontWeight: 600,
+                        }}
+                      >
+                        {seg.badge}
+                      </span>
+                      <span style={{ fontSize: 11, color: 'var(--admin-muted)' }}>
+                        Segmen {seg.num}
+                      </span>
+                    </div>
+
+                    <h4 style={{ fontFamily: '"Playfair Display", serif', color: '#fff', margin: '0 0 4px', fontSize: '1.15rem' }}>
+                      {seg.title}
+                    </h4>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--admin-muted)', marginBottom: 14, minHeight: 34 }}>
+                      {seg.desc}
+                    </p>
+
+                    {/* URL Input */}
+                    <div style={{ marginBottom: 12 }}>
+                      <label style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 4 }}>
+                        URL Foto Latar Segmen
+                      </label>
+                      <input
+                        type="text"
+                        value={settings?.[seg.key] || ''}
+                        onChange={(e) => updateField(seg.key, e.target.value)}
+                        placeholder={seg.defaultUrl}
+                        className="admin-input"
+                        style={{ fontSize: 12 }}
+                      />
+                    </div>
+
+                    {/* Presets */}
+                    {presets.length > 0 && (
+                      <div style={{ marginBottom: 14 }}>
+                        <span style={{ fontSize: 10, color: 'var(--admin-muted)', display: 'block', marginBottom: 6 }}>
+                          Pilihan Cepat (Presets):
+                        </span>
+                        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                          {presets.map((p, i) => (
+                            <button
+                              key={i}
+                              onClick={() => updateField(seg.key, p.url)}
+                              className="btn-admin-outline"
+                              style={{ padding: '4px 8px', fontSize: 10 }}
+                            >
+                              {p.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Thumbnail Preview */}
+                  <div style={{ marginTop: 8 }}>
+                    <div
+                      style={{
+                        height: 150,
+                        borderRadius: 12,
+                        overflow: 'hidden',
+                        position: 'relative',
+                        border: '1px solid rgba(241, 193, 147, 0.25)',
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
+                        background: '#0a0502',
+                      }}
+                    >
+                      <img
+                        src={currentPhoto}
+                        alt={`Preview ${seg.title}`}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        onError={(e) => {
+                          e.target.src = seg.defaultUrl
+                        }}
+                      />
+                      <div
+                        style={{
+                          position: 'absolute',
+                          inset: 0,
+                          background: 'linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%)',
+                          pointerEvents: 'none',
+                        }}
+                      />
+                      <div
+                        style={{
+                          position: 'absolute',
+                          bottom: 8,
+                          left: 10,
+                          right: 10,
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          pointerEvents: 'none',
+                        }}
+                      >
+                        <span style={{ fontSize: 10, color: '#F1C193', letterSpacing: '0.08em', fontWeight: 600, textShadow: '0 1px 4px rgba(0,0,0,0.9)' }}>
+                          {seg.title}
+                        </span>
+                        <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.7)', background: 'rgba(0,0,0,0.6)', padding: '2px 6px', borderRadius: 4 }}>
+                          100% Full-bleed
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
       )}

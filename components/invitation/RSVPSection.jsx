@@ -1,8 +1,10 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase'
+import SectionBackground from './SectionBackground'
 
-export default function RSVPSection({ id, guestName }) {
+export default function RSVPSection({ id, guestName, settings }) {
+  const bgPhoto = settings?.rsvpBgPhoto || 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?q=80&w=1600&auto=format&fit=crop'
   const [form, setForm] = useState({
     name: guestName || '',
     phone: '',
@@ -83,10 +85,26 @@ export default function RSVPSection({ id, guestName }) {
 
   return (
     <section id={id} className="section" style={{ background: '#000', overflowY: 'auto' }}>
-      <div className="section-bg" style={{
-        background: 'linear-gradient(180deg, #050200 0%, #000 100%)',
-      }} />
-      <div className="overlay-bottom" />
+      {/* Full-bleed Photo Background */}
+      <SectionBackground
+        photo={bgPhoto}
+        settings={settings}
+        brightnessMultiplier={0.72}
+        position="center"
+      />
+
+      {/* Ghost Background Typography */}
+      <span
+        className="ghost-text"
+        style={{
+          top: '18%',
+          right: '-15px',
+          fontSize: 'clamp(4rem, 14vw, 8rem)',
+          opacity: 0.12,
+        }}
+      >
+        RSVP
+      </span>
 
       <div
         className="section-content"
@@ -98,8 +116,8 @@ export default function RSVPSection({ id, guestName }) {
           maxHeight: '100%',
         }}
       >
-        <p className="label-gold" style={{ marginBottom: 4 }}>✦ Konfirmasi Kehadiran ✦</p>
-        <h2 className="section-heading" style={{ marginBottom: 20 }}>RSVP & Wishes</h2>
+        <p className="label-gold" style={{ fontSize: 11, letterSpacing: '0.25em', marginBottom: 4 }}>✦ Konfirmasi Kehadiran ✦</p>
+        <h2 className="section-heading" style={{ marginBottom: 20, textShadow: '0 2px 16px rgba(0,0,0,0.8)' }}>RSVP & Wishes</h2>
 
         {status === 'success' ? (
           <div style={{

@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import SectionBackground from './SectionBackground'
 
 export default function GallerySection({ id, settings }) {
+  const bgPhoto = settings?.galleryBgPhoto || 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1600&auto=format&fit=crop'
   const moments = [
     {
       id: 1,
@@ -110,14 +112,13 @@ export default function GallerySection({ id, settings }) {
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Background gradients */}
-      <div
-        className="section-bg"
-        style={{
-          background: 'radial-gradient(ellipse at 70% 50%, rgba(35, 18, 8, 0.45) 0%, #000 80%)',
-        }}
+      {/* Full-bleed Photo Background */}
+      <SectionBackground
+        photo={bgPhoto}
+        settings={settings}
+        brightnessMultiplier={0.65}
+        position="center 40%"
       />
-      <div className="overlay-bottom" />
 
       {/* Ghost Background Typography */}
       <span

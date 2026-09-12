@@ -1,21 +1,12 @@
 'use client'
 import { useState } from 'react'
+import SectionBackground from './SectionBackground'
 
 export default function ClosingSection({ id, groomName, brideName, settings }) {
   const [giftOpen, setGiftOpen] = useState(false)
   const [copiedBank, setCopiedBank] = useState(null)
 
   const closingBg = settings?.closingBgPhoto || 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop'
-  const theme = settings?.bgTheme || 'midnight'
-
-  const themeGradients = {
-    midnight: 'radial-gradient(ellipse at center, rgba(10,5,2,0.6) 0%, rgba(0,0,0,0.96) 80%)',
-    amber: 'radial-gradient(ellipse at center, rgba(40,20,8,0.7) 0%, rgba(10,5,2,0.96) 80%)',
-    espresso: 'radial-gradient(ellipse at center, rgba(30,16,10,0.7) 0%, rgba(8,4,2,0.96) 80%)',
-    velvet: 'radial-gradient(ellipse at center, rgba(35,10,15,0.65) 0%, rgba(5,2,3,0.96) 80%)',
-  }
-
-  const radialGradient = themeGradients[theme] || themeGradients.midnight
 
   const copyToClipboard = (text, bankKey) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -26,19 +17,13 @@ export default function ClosingSection({ id, groomName, brideName, settings }) {
 
   return (
     <section id={id} className="section" style={{ background: '#000', overflowY: 'auto' }}>
-      <div
-        className="section-bg"
-        style={{
-          backgroundImage: `
-            ${radialGradient},
-            url('${closingBg}')
-          `,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          filter: 'brightness(0.35) saturate(0.8)',
-        }}
+      {/* Full-bleed Photo Background */}
+      <SectionBackground
+        photo={closingBg}
+        settings={settings}
+        brightnessMultiplier={0.7}
+        position="center"
       />
-      <div className="overlay-bottom" />
 
       <div
         className="section-content"

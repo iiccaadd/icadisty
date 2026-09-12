@@ -1,12 +1,14 @@
 'use client'
 
 import { useRef, useEffect, useState } from 'react'
+import SectionBackground from './SectionBackground'
 
 export default function CoupleSection({ id, groomName, brideName, settings }) {
   const sectionRef = useRef(null)
 
   const groomImg = settings?.groomPhoto || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop'
   const brideImg = settings?.bridePhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop'
+  const bgPhoto = settings?.coupleBgPhoto || 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=1600&auto=format&fit=crop'
 
   // 3D dynamic transform states
   const [groomTransform, setGroomTransform] = useState(
@@ -85,14 +87,13 @@ export default function CoupleSection({ id, groomName, brideName, settings }) {
         overflowY: 'auto',
       }}
     >
-      {/* Background gradients */}
-      <div
-        className="section-bg"
-        style={{
-          background: 'radial-gradient(ellipse at 50% 50%, rgba(30, 15, 6, 0.5) 0%, #000 85%)',
-        }}
+      {/* Full-bleed Photo Background */}
+      <SectionBackground
+        photo={bgPhoto}
+        settings={settings}
+        brightnessMultiplier={0.65}
+        position="center 30%"
       />
-      <div className="overlay-bottom" />
 
       {/* Ghost background text */}
       <span

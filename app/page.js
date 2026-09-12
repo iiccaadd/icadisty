@@ -103,11 +103,11 @@ export default function InvitationPage() {
         {/* Sections */}
         <HeroSection id="opening" groomName={GROOM} brideName={BRIDE} guestName={guestName} settings={settings} />
         <CoupleSection id="couple" groomName={GROOM} brideName={BRIDE} settings={settings} />
-        <LoveStorySection id="lovestory" />
-        <EventSection id="events" />
-        <CountdownSection id="countdown" />
+        <LoveStorySection id="lovestory" settings={settings} />
+        <EventSection id="events" settings={settings} />
+        <CountdownSection id="countdown" settings={settings} />
         <GallerySection id="gallery" settings={settings} />
-        <RSVPSection id="rsvp" guestName={guestName} />
+        <RSVPSection id="rsvp" guestName={guestName} settings={settings} />
         <ClosingSection id="closing" groomName={GROOM} brideName={BRIDE} settings={settings} />
       </div>
     </>
