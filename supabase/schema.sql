@@ -20,7 +20,7 @@ create table if not exists public.rsvp (
 create table if not exists public.guests (
   id uuid default gen_random_uuid() primary key,
   name text not null,
-  slug text,
+  slug text unique,
   phone text,
   invited_by text default 'Keluarga Irsyad & Adisty',
   has_opened boolean default false,
@@ -32,18 +32,19 @@ create table if not exists public.guests (
 alter table public.rsvp enable row level security;
 alter table public.guests enable row level security;
 
--- Drop existing policies if rerun
+-- Drop all existing policies before recreating (Safe Re-run)
 drop policy if exists "Public insert rsvp" on public.rsvp;
 drop policy if exists "Public select rsvp" on public.rsvp;
+drop policy if exists "Public delete rsvp" on public.rsvp;
 drop policy if exists "Public all rsvp" on public.rsvp;
 
-drop policy if exists "Public insert guests" on public.guests;
 drop policy if exists "Public select guests" on public.guests;
+drop policy if exists "Public insert guests" on public.guests;
 drop policy if exists "Public update guests" on public.guests;
+drop policy if exists "Public delete guests" on public.guests;
 drop policy if exists "Public all guests" on public.guests;
 
--- Policies for rsvp:
--- Allow anyone to submit RSVP and read wishes
+-- Recreate policies for rsvp
 create policy "Public insert rsvp" on public.rsvp
   for insert with check (true);
 
@@ -53,8 +54,7 @@ create policy "Public select rsvp" on public.rsvp
 create policy "Public delete rsvp" on public.rsvp
   for delete using (true);
 
--- Policies for guests:
--- Allow reading, inserting, and updating guest opened status
+-- Recreate policies for guests
 create policy "Public select guests" on public.guests
   for select using (true);
 
@@ -67,9 +67,9 @@ create policy "Public update guests" on public.guests
 create policy "Public delete guests" on public.guests
   for delete using (true);
 
--- Initial sample guests (optional)
+-- Initial sample guests (Safe Insert)
 insert into public.guests (name, slug, phone)
 values 
   ('Keluarga Besar Bpk. Ahmad', 'keluarga-besar-bpk-ahmad', '081234567890'),
   ('Sahabat & Rekan Kantor', 'sahabat-rekan-kantor', '081298765432')
-on conflict do nothing;
+on conflict (slug) do update set name = excluded.name;
