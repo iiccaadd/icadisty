@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react'
 import SectionBackground from './SectionBackground'
+import BlurText from './BlurText'
 
 export default function BrideSection({ id = 'bride', brideName, settings }) {
   const sectionRef = useRef(null)
@@ -106,9 +107,15 @@ export default function BrideSection({ id = 'bride', brideName, settings }) {
             <p className="label-gold" style={{ fontSize: 11, letterSpacing: 3, marginBottom: 8 }}>
               ✦ THE BRIDE ✦
             </p>
-            <h2 className="name-display" style={{ margin: '0 0 12px', textShadow: '0 2px 20px rgba(0,0,0,0.8)' }}>
-              {brideName}
-            </h2>
+            <BlurText
+              text={brideName}
+              delay={150}
+              animateBy="words"
+              direction="top"
+              as="h2"
+              className="name-display"
+              style={{ margin: '0 0 12px', textShadow: '0 2px 20px rgba(0,0,0,0.8)' }}
+            />
             <div
               style={{
                 width: 60,
