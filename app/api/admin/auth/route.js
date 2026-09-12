@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 
+export const dynamic = 'force-dynamic'
+
 const VALID_PASSWORD = process.env.ADMIN_SECRET_PASSWORD || 'icadisty2026'
 const VALID_PIN = process.env.NEXT_PUBLIC_ADMIN_PIN || '2026'
 
