@@ -14,11 +14,6 @@ export default function HeroSection({ id, groomName, brideName, settings }) {
         brightnessMultiplier={1.05}
       />
 
-      {/* Ghost Text */}
-      <span className="ghost-text" style={{ top: '25%', left: '-10px', fontSize: '6rem' }}>
-        {groomName}
-      </span>
-
       {/* Hero Content */}
       <div className="hero-content">
         <p className="hero-label">✦ The Wedding of ✦</p>
