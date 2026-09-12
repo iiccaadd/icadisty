@@ -20,7 +20,18 @@ const BRIDE = process.env.NEXT_PUBLIC_BRIDE_NAME || 'Adisty Vana Lestari'
 export default function InvitationPage() {
   const [opened, setOpened] = useState(false)
   const [guestName, setGuestName] = useState('')
+  const [settings, setSettings] = useState(null)
   const rootRef = useRef(null)
+
+  useEffect(() => {
+    // Fetch custom photos & background settings
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.data) setSettings(json.data)
+      })
+      .catch((e) => console.warn('Notice: settings fetch fallback:', e))
+  }, [])
 
   useEffect(() => {
     // Get guest name from URL: ?to=NamaTamu or ?u=NamaTamu
@@ -87,17 +98,17 @@ export default function InvitationPage() {
       >
         {/* Floating UI */}
         <NavMenu />
-        <MusicButton />
+        <MusicButton musicUrl={settings?.musicUrl} />
 
         {/* Sections */}
-        <HeroSection id="opening" groomName={GROOM} brideName={BRIDE} guestName={guestName} />
-        <CoupleSection id="couple" groomName={GROOM} brideName={BRIDE} />
+        <HeroSection id="opening" groomName={GROOM} brideName={BRIDE} guestName={guestName} settings={settings} />
+        <CoupleSection id="couple" groomName={GROOM} brideName={BRIDE} settings={settings} />
         <LoveStorySection id="lovestory" />
         <EventSection id="events" />
         <CountdownSection id="countdown" />
-        <GallerySection id="gallery" />
+        <GallerySection id="gallery" settings={settings} />
         <RSVPSection id="rsvp" guestName={guestName} />
-        <ClosingSection id="closing" groomName={GROOM} brideName={BRIDE} />
+        <ClosingSection id="closing" groomName={GROOM} brideName={BRIDE} settings={settings} />
       </div>
     </>
   )

@@ -2,8 +2,11 @@
 
 import { useRef, useEffect, useState } from 'react'
 
-export default function CoupleSection({ id, groomName, brideName }) {
+export default function CoupleSection({ id, groomName, brideName, settings }) {
   const sectionRef = useRef(null)
+
+  const groomImg = settings?.groomPhoto || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop'
+  const brideImg = settings?.bridePhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop'
 
   // 3D dynamic transform states
   const [groomTransform, setGroomTransform] = useState(
@@ -156,7 +159,7 @@ export default function CoupleSection({ id, groomName, brideName }) {
               }}
             >
               <img
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop"
+                src={groomImg}
                 alt={groomName}
                 loading="lazy"
               />
@@ -203,7 +206,7 @@ export default function CoupleSection({ id, groomName, brideName }) {
               }}
             >
               <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop"
+                src={brideImg}
                 alt={brideName}
                 loading="lazy"
               />

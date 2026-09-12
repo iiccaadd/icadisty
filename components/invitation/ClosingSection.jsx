@@ -1,9 +1,21 @@
 'use client'
 import { useState } from 'react'
 
-export default function ClosingSection({ id, groomName, brideName }) {
+export default function ClosingSection({ id, groomName, brideName, settings }) {
   const [giftOpen, setGiftOpen] = useState(false)
   const [copiedBank, setCopiedBank] = useState(null)
+
+  const closingBg = settings?.closingBgPhoto || 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop'
+  const theme = settings?.bgTheme || 'midnight'
+
+  const themeGradients = {
+    midnight: 'radial-gradient(ellipse at center, rgba(10,5,2,0.6) 0%, rgba(0,0,0,0.96) 80%)',
+    amber: 'radial-gradient(ellipse at center, rgba(40,20,8,0.7) 0%, rgba(10,5,2,0.96) 80%)',
+    espresso: 'radial-gradient(ellipse at center, rgba(30,16,10,0.7) 0%, rgba(8,4,2,0.96) 80%)',
+    velvet: 'radial-gradient(ellipse at center, rgba(35,10,15,0.65) 0%, rgba(5,2,3,0.96) 80%)',
+  }
+
+  const radialGradient = themeGradients[theme] || themeGradients.midnight
 
   const copyToClipboard = (text, bankKey) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -18,8 +30,8 @@ export default function ClosingSection({ id, groomName, brideName }) {
         className="section-bg"
         style={{
           backgroundImage: `
-            radial-gradient(ellipse at center, rgba(10,5,2,0.6) 0%, rgba(0,0,0,0.95) 80%),
-            url('https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop')
+            ${radialGradient},
+            url('${closingBg}')
           `,
           backgroundSize: 'cover',
           backgroundPosition: 'center',

@@ -2,42 +2,42 @@
 
 import { useState, useEffect, useRef } from 'react'
 
-const moments = [
-  {
-    id: 1,
-    date: 'November 2020',
-    title: 'Pertama Bertemu',
-    desc: 'Sebuah perjumpaan tak terduga di Muara Tewah yang menjadi awal mula lembaran kisah kasih kami.',
-    src: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop',
-    alt: 'Irsyad & Adisty - Pertama Bertemu',
-  },
-  {
-    id: 2,
-    date: 'Agustus 2022',
-    title: 'Merajut Janji',
-    desc: 'Melangkah bersama melewati ragam cerita, bertumbuh dalam cinta, saling menjaga dan menguatkan.',
-    src: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop',
-    alt: 'Irsyad & Adisty - Merajut Janji',
-  },
-  {
-    id: 3,
-    date: 'Mei 2024',
-    title: 'Restu Keluarga',
-    desc: 'Dua keluarga besar bersatu dalam doa dan restu yang tulus menyongsong mahligai suci.',
-    src: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=800&auto=format&fit=crop',
-    alt: 'Irsyad & Adisty - Restu Keluarga',
-  },
-  {
-    id: 4,
-    date: '11 November 2026',
-    title: 'Hari Bahagia',
-    desc: 'Masjid H. Muhammad Sidik Islamic Center Muara Tewah, mengikat janji suci seumur hidup.',
-    src: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=800&auto=format&fit=crop',
-    alt: 'Irsyad & Adisty - Hari Bahagia',
-  },
-]
+export default function GallerySection({ id, settings }) {
+  const moments = [
+    {
+      id: 1,
+      date: settings?.moment1Date || 'November 2020',
+      title: settings?.moment1Title || 'Pertama Bertemu',
+      desc: settings?.moment1Desc || 'Sebuah perjumpaan tak terduga di Muara Tewah yang menjadi awal mula lembaran kisah kasih kami.',
+      src: settings?.moment1Photo || 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop',
+      alt: 'Irsyad & Adisty - Pertama Bertemu',
+    },
+    {
+      id: 2,
+      date: settings?.moment2Date || 'Agustus 2022',
+      title: settings?.moment2Title || 'Merajut Janji',
+      desc: settings?.moment2Desc || 'Melangkah bersama melewati ragam cerita, bertumbuh dalam cinta, saling menjaga dan menguatkan.',
+      src: settings?.moment2Photo || 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop',
+      alt: 'Irsyad & Adisty - Merajut Janji',
+    },
+    {
+      id: 3,
+      date: settings?.moment3Date || 'Mei 2024',
+      title: settings?.moment3Title || 'Restu Keluarga',
+      desc: settings?.moment3Desc || 'Dua keluarga besar bersatu dalam doa dan restu yang tulus menyongsong mahligai suci.',
+      src: settings?.moment3Photo || 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=800&auto=format&fit=crop',
+      alt: 'Irsyad & Adisty - Restu Keluarga',
+    },
+    {
+      id: 4,
+      date: settings?.moment4Date || '11 November 2026',
+      title: settings?.moment4Title || 'Hari Bahagia',
+      desc: settings?.moment4Desc || 'Masjid H. Muhammad Sidik Islamic Center Muara Tewah, mengikat janji suci seumur hidup.',
+      src: settings?.moment4Photo || 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=800&auto=format&fit=crop',
+      alt: 'Irsyad & Adisty - Hari Bahagia',
+    },
+  ]
 
-export default function GallerySection({ id }) {
   const [currentIdx, setCurrentIdx] = useState(0)
   const [animState, setAnimState] = useState('idle') // idle | transitioning
   const [touchStart, setTouchStart] = useState(0)

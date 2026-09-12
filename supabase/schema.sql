@@ -28,9 +28,17 @@ create table if not exists public.guests (
   created_at timestamptz default now()
 );
 
+-- 3. Table: settings (Pengaturan Foto & Latar Undangan)
+create table if not exists public.settings (
+  id text primary key default 'general',
+  data jsonb not null default '{}'::jsonb,
+  updated_at timestamptz default now()
+);
+
 -- Enable Row Level Security (RLS)
 alter table public.rsvp enable row level security;
 alter table public.guests enable row level security;
+alter table public.settings enable row level security;
 
 -- Drop all existing policies before recreating (Safe Re-run)
 drop policy if exists "Public insert rsvp" on public.rsvp;
@@ -43,6 +51,11 @@ drop policy if exists "Public insert guests" on public.guests;
 drop policy if exists "Public update guests" on public.guests;
 drop policy if exists "Public delete guests" on public.guests;
 drop policy if exists "Public all guests" on public.guests;
+
+drop policy if exists "Public select settings" on public.settings;
+drop policy if exists "Public insert settings" on public.settings;
+drop policy if exists "Public update settings" on public.settings;
+drop policy if exists "Public all settings" on public.settings;
 
 -- Recreate policies for rsvp
 create policy "Public insert rsvp" on public.rsvp
@@ -66,6 +79,16 @@ create policy "Public update guests" on public.guests
 
 create policy "Public delete guests" on public.guests
   for delete using (true);
+
+-- Recreate policies for settings
+create policy "Public select settings" on public.settings
+  for select using (true);
+
+create policy "Public insert settings" on public.settings
+  for insert with check (true);
+
+create policy "Public update settings" on public.settings
+  for update using (true);
 
 -- Initial sample guests (Safe Insert)
 insert into public.guests (name, slug, phone)

@@ -108,6 +108,12 @@ export default function AdminLayout({ children }) {
           >
             👥 Buku Tamu
           </Link>
+          <Link
+            href="/admin/settings"
+            className={`admin-nav-link ${pathname === '/admin/settings' ? 'active' : ''}`}
+          >
+            ⚙️ Pengaturan Foto &amp; Latar
+          </Link>
           <a
             href="/"
             target="_blank"
@@ -153,15 +159,13 @@ export default function AdminLayout({ children }) {
           <span className="bottom-nav-icon">👥</span>
           <span className="bottom-nav-label">Tamu</span>
         </Link>
-        <a
-          href="/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bottom-nav-item"
+        <Link
+          href="/admin/settings"
+          className={`bottom-nav-item ${pathname === '/admin/settings' ? 'active' : ''}`}
         >
-          <span className="bottom-nav-icon">👁️</span>
-          <span className="bottom-nav-label">Preview</span>
-        </a>
+          <span className="bottom-nav-icon">⚙️</span>
+          <span className="bottom-nav-label">Setting</span>
+        </Link>
         <button
           onClick={handleLogout}
           className="bottom-nav-item"

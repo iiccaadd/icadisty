@@ -1,9 +1,11 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
 
-export default function MusicButton() {
+export default function MusicButton({ musicUrl }) {
   const [playing, setPlaying] = useState(false)
   const audioRef = useRef(null)
+
+  const activeSrc = musicUrl || 'https://cdn.pixabay.com/download/audio/2022/05/16/audio_c89e24ff71.mp3?filename=romantic-piano-112199.mp3'
 
   useEffect(() => {
     const handleStartMusic = () => {
@@ -34,10 +36,10 @@ export default function MusicButton() {
 
   return (
     <>
-      {/* Background audio - using soothing acoustic piano/orchestral track */}
+      {/* Background audio */}
       <audio
         ref={audioRef}
-        src="https://cdn.pixabay.com/download/audio/2022/05/16/audio_c89e24ff71.mp3?filename=romantic-piano-112199.mp3"
+        src={activeSrc}
         loop
         preload="auto"
       />

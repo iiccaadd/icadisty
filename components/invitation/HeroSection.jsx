@@ -1,6 +1,19 @@
 'use client'
 
-export default function HeroSection({ id, groomName, brideName }) {
+export default function HeroSection({ id, groomName, brideName, settings }) {
+  const heroBg = settings?.heroBgPhoto || 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1600&auto=format&fit=crop'
+  const darkness = settings?.bgOverlayDarkness ? (settings.bgOverlayDarkness / 100) : 0.4
+  const theme = settings?.bgTheme || 'midnight'
+
+  const themeGradients = {
+    midnight: 'radial-gradient(ellipse at 50% 30%, rgba(25, 12, 5, 0.45) 0%, rgba(0, 0, 0, 0.96) 85%)',
+    amber: 'radial-gradient(ellipse at 50% 30%, rgba(65, 32, 12, 0.55) 0%, rgba(12, 6, 2, 0.96) 85%)',
+    espresso: 'radial-gradient(ellipse at 50% 30%, rgba(42, 22, 16, 0.55) 0%, rgba(10, 5, 3, 0.96) 85%)',
+    velvet: 'radial-gradient(ellipse at 50% 30%, rgba(50, 15, 22, 0.5) 0%, rgba(8, 3, 4, 0.96) 85%)',
+  }
+
+  const radialGradient = themeGradients[theme] || themeGradients.midnight
+
   return (
     <section id={id} className="hero-section section">
       {/* Background - Luxury dark wedding aesthetic */}
@@ -8,17 +21,17 @@ export default function HeroSection({ id, groomName, brideName }) {
         className="section-bg"
         style={{
           backgroundImage: `
-            radial-gradient(ellipse at 50% 30%, rgba(30, 15, 5, 0.45) 0%, rgba(0, 0, 0, 0.95) 85%),
-            url('https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1600&auto=format&fit=crop')
+            ${radialGradient},
+            url('${heroBg}')
           `,
           backgroundSize: 'cover',
           backgroundPosition: 'center 40%',
-          filter: 'brightness(0.4) saturate(0.85)',
+          filter: `brightness(${1.1 - darkness}) saturate(0.85)`,
         }}
       />
 
       {/* Overlays */}
-      <div className="overlay overlay-dark" style={{ opacity: 0.3 }} />
+      <div className="overlay overlay-dark" style={{ opacity: darkness * 0.7 }} />
       <div className="overlay-bottom" />
 
       {/* Ghost Text */}
