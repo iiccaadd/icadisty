@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import '../invitation.css'
+import './invitation.css'
 import NavMenu from '@/components/invitation/NavMenu'
 import MusicButton from '@/components/invitation/MusicButton'
 import Preloader from '@/components/invitation/Preloader'

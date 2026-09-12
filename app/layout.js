@@ -11,7 +11,12 @@ export const metadata = {
     description: 'Undangan pernikahan digital',
     type: 'website',
   },
-  viewport: 'width=device-width, initial-scale=1.0, viewport-fit=cover',
+}
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({ children }) {
