@@ -60,15 +60,15 @@ export default function Preloader({ groomName, brideName, guestName, onOpen, isO
           <SpecularButton
             size="md"
             radius={28}
-            tint="#846244"
-            tintOpacity={0.92}
-            blur={10}
-            textColor="#0f0905"
-            lineColor="#F8DFC4"
-            baseColor="#453120"
-            intensity={1.35}
-            shineSize={16}
-            shineFade={35}
+            tint="#ffffff"
+            tintOpacity={0.12}
+            blur={16}
+            textColor="#ffffff"
+            lineColor="#ffffff"
+            baseColor="#555555"
+            intensity={1.5}
+            shineSize={18}
+            shineFade={38}
             thickness={1.5}
             speed={0.4}
             followMouse={true}
@@ -81,9 +81,10 @@ export default function Preloader({ groomName, brideName, guestName, onOpen, isO
               display: 'inline-flex',
               alignItems: 'center',
               gap: 10,
-              fontWeight: 700,
+              fontWeight: 600,
               fontSize: 15,
-              letterSpacing: '0.01em'
+              letterSpacing: '0.03em',
+              textShadow: '0 1px 4px rgba(0, 0, 0, 0.6)'
             }}>
               <span style={{ fontSize: 17, lineHeight: 1 }}>💌</span>
               <span>Buka Undangan</span>
