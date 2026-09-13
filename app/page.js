@@ -106,6 +106,7 @@ export default function InvitationPage() {
         guestName={guestName}
         onOpen={handleOpen}
         isOpened={opened}
+        settings={settings}
       />
 
       <div
