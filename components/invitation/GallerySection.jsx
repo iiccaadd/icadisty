@@ -4,58 +4,28 @@ import { useState, useRef, useMemo, useCallback } from 'react'
 import SectionBackground from './SectionBackground'
 import Stack from './Stack'
 
+import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
+
 export default function GallerySection({ id, settings }) {
-  const bgPhoto = settings?.galleryBgPhoto || 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1600&auto=format&fit=crop'
+  const effectiveSettings = settings || DEFAULT_SETTINGS
+  const bgPhoto = effectiveSettings?.galleryBgPhoto || DEFAULT_SETTINGS.galleryBgPhoto
   const stackRef = useRef(null)
 
-  // Compute moments list from settings (dynamic array from admin, or fallback to default moments)
+  // Compute moments list from settings (strictly user uploaded moments)
   const moments = useMemo(() => {
-    if (Array.isArray(settings?.galleryMoments) && settings.galleryMoments.length > 0) {
-      return settings.galleryMoments.map((m, i) => ({
-        id: m.id || i + 1,
-        date: m.date || 'Moment',
-        title: m.title || `Kenangan 0${i + 1}`,
-        desc: m.desc || '',
-        src: m.photo || 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop',
-        alt: m.title || `Irsyad & Adisty - Moment ${i + 1}`,
-      }))
-    }
+    const rawMoments = (Array.isArray(effectiveSettings?.galleryMoments) && effectiveSettings.galleryMoments.length > 0)
+      ? effectiveSettings.galleryMoments
+      : DEFAULT_SETTINGS.galleryMoments
 
-    return [
-      {
-        id: 1,
-        date: settings?.moment1Date || 'November 2020',
-        title: settings?.moment1Title || 'Pertama Bertemu',
-        desc: settings?.moment1Desc || 'Sebuah perjumpaan tak terduga di Muara Teweh yang menjadi awal mula lembaran kisah kasih kami.',
-        src: settings?.moment1Photo || 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop',
-        alt: 'Irsyad & Adisty - Pertama Bertemu',
-      },
-      {
-        id: 2,
-        date: settings?.moment2Date || 'Agustus 2022',
-        title: settings?.moment2Title || 'Merajut Janji',
-        desc: settings?.moment2Desc || 'Melangkah bersama melewati ragam cerita, bertumbuh dalam cinta, saling menjaga dan menguatkan.',
-        src: settings?.moment2Photo || 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop',
-        alt: 'Irsyad & Adisty - Merajut Janji',
-      },
-      {
-        id: 3,
-        date: settings?.moment3Date || 'Mei 2024',
-        title: settings?.moment3Title || 'Restu Keluarga',
-        desc: settings?.moment3Desc || 'Dua keluarga besar bersatu dalam doa dan restu yang tulus menyongsong mahligai suci.',
-        src: settings?.moment3Photo || 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=800&auto=format&fit=crop',
-        alt: 'Irsyad & Adisty - Restu Keluarga',
-      },
-      {
-        id: 4,
-        date: settings?.moment4Date || '11 November 2026',
-        title: settings?.moment4Title || 'Hari Bahagia',
-        desc: settings?.moment4Desc || 'Masjid H. Muhammad Sidik Islamic Center Muara Teweh, mengikat janji suci seumur hidup.',
-        src: settings?.moment4Photo || 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=800&auto=format&fit=crop',
-        alt: 'Irsyad & Adisty - Hari Bahagia',
-      },
-    ]
-  }, [settings])
+    return rawMoments.map((m, i) => ({
+      id: m.id || i + 1,
+      date: m.date || 'Moment',
+      title: m.title || `Kenangan 0${i + 1}`,
+      desc: m.desc || '',
+      src: m.photo || m.src || DEFAULT_SETTINGS.galleryMoments[0].photo,
+      alt: m.title || `Irsyad & Adisty - Moment ${i + 1}`,
+    }))
+  }, [effectiveSettings])
 
   const [currentIdx, setCurrentIdx] = useState(0)
   const activeItem = moments[currentIdx] || moments[0] || {}

@@ -5,18 +5,7 @@ import BlurText from './BlurText'
 import SpecularButton from './SpecularButton'
 import InfiniteSpiral from './InfiniteSpiral'
 
-const DEFAULT_SPIRAL_IMAGES = [
-  'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=600&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=600&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=600&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=600&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=600&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1537633552985-df8429e8048b?q=80&w=600&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?q=80&w=600&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=600&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?q=80&w=600&auto=format&fit=crop',
-]
+import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
 
 export default function Preloader({ groomName, brideName, guestName, onOpen, isOpened, settings }) {
   const [visible, setVisible] = useState(true)
@@ -26,34 +15,70 @@ export default function Preloader({ groomName, brideName, guestName, onOpen, isO
     setTimeout(() => setVisible(false), 1100)
   }
 
+  const effectiveSettings = settings || DEFAULT_SETTINGS
+
   const spiralItems = useMemo(() => {
     const list = []
-    if (settings?.groomPhoto) list.push(settings.groomPhoto)
-    if (settings?.bridePhoto) list.push(settings.bridePhoto)
-    if (settings?.coupleBgPhoto) list.push(settings.coupleBgPhoto)
-    if (settings?.heroBgPhoto) list.push(settings.heroBgPhoto)
-    if (Array.isArray(settings?.galleryPhotos)) {
-      settings.galleryPhotos.forEach((p) => {
+
+    // 1. All gallery moments uploaded by user
+    if (Array.isArray(effectiveSettings?.galleryMoments)) {
+      effectiveSettings.galleryMoments.forEach((m) => {
+        const src = typeof m === 'string' ? m : m?.photo || m?.src || m?.url
+        if (src) list.push(src)
+      })
+    }
+
+    // 2. Extra gallery photos if any
+    if (Array.isArray(effectiveSettings?.galleryPhotos)) {
+      effectiveSettings.galleryPhotos.forEach((p) => {
         const src = typeof p === 'string' ? p : p?.src || p?.url
         if (src) list.push(src)
       })
     }
-    if (settings?.moment1Photo) list.push(settings.moment1Photo)
-    if (settings?.moment2Photo) list.push(settings.moment2Photo)
-    if (settings?.moment3Photo) list.push(settings.moment3Photo)
-    if (settings?.moment4Photo) list.push(settings.moment4Photo)
 
-    const unique = Array.from(new Set(list.filter(Boolean)))
-    if (unique.length < 8) {
-      DEFAULT_SPIRAL_IMAGES.forEach((img) => {
-        if (unique.length < 12 && !unique.includes(img)) unique.push(img)
-      })
+    // 3. Individual moment photos
+    if (effectiveSettings?.moment1Photo) list.push(effectiveSettings.moment1Photo)
+    if (effectiveSettings?.moment2Photo) list.push(effectiveSettings.moment2Photo)
+    if (effectiveSettings?.moment3Photo) list.push(effectiveSettings.moment3Photo)
+    if (effectiveSettings?.moment4Photo) list.push(effectiveSettings.moment4Photo)
+
+    // 4. Key couple and wedding photos
+    if (effectiveSettings?.groomPhoto) list.push(effectiveSettings.groomPhoto)
+    if (effectiveSettings?.bridePhoto) list.push(effectiveSettings.bridePhoto)
+    if (effectiveSettings?.coupleBgPhoto) list.push(effectiveSettings.coupleBgPhoto)
+    if (effectiveSettings?.heroBgPhoto) list.push(effectiveSettings.heroBgPhoto)
+    if (effectiveSettings?.groomBgPhoto) list.push(effectiveSettings.groomBgPhoto)
+    if (effectiveSettings?.brideBgPhoto) list.push(effectiveSettings.brideBgPhoto)
+    if (effectiveSettings?.loveStoryBgPhoto) list.push(effectiveSettings.loveStoryBgPhoto)
+    if (effectiveSettings?.eventsBgPhoto) list.push(effectiveSettings.eventsBgPhoto)
+    if (effectiveSettings?.countdownBgPhoto) list.push(effectiveSettings.countdownBgPhoto)
+    if (effectiveSettings?.galleryBgPhoto) list.push(effectiveSettings.galleryBgPhoto)
+    if (effectiveSettings?.rsvpBgPhoto) list.push(effectiveSettings.rsvpBgPhoto)
+    if (effectiveSettings?.closingBgPhoto) list.push(effectiveSettings.closingBgPhoto)
+
+    // Filter out any unsplash template photos and empty values: strictly use uploaded photos!
+    const uploadedOnly = list
+      .filter(Boolean)
+      .filter((url) => typeof url === 'string' && !url.includes('images.unsplash.com'))
+
+    let unique = Array.from(new Set(uploadedOnly))
+
+    // If somehow empty, fallback to list items
+    if (unique.length === 0) {
+      unique = Array.from(new Set(list.filter(Boolean)))
     }
-    return unique.map((src, i) => ({
+
+    // Repeat user's uploaded photos if fewer than 8 so spiral is continuous and full
+    let finalPhotos = [...unique]
+    while (finalPhotos.length < 8 && unique.length > 0) {
+      finalPhotos = finalPhotos.concat(unique)
+    }
+
+    return finalPhotos.slice(0, 16).map((src, i) => ({
       src,
-      alt: `Wedding Memory ${i + 1}`,
+      alt: `Foto Pernikahan ${i + 1}`,
     }))
-  }, [settings])
+  }, [effectiveSettings])
 
   if (!visible) return null
 

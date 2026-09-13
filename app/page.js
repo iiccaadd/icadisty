@@ -14,6 +14,7 @@ import CountdownSection from '@/components/invitation/CountdownSection'
 import GallerySection from '@/components/invitation/GallerySection'
 import RSVPSection from '@/components/invitation/RSVPSection'
 import ClosingSection from '@/components/invitation/ClosingSection'
+import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
 
 const GROOM = process.env.NEXT_PUBLIC_GROOM_NAME || 'Muhammad Irsyad, S.T.'
 const BRIDE = process.env.NEXT_PUBLIC_BRIDE_NAME || 'Adisty Vana Lestari, S.Pd., M.Pd.'
@@ -21,7 +22,7 @@ const BRIDE = process.env.NEXT_PUBLIC_BRIDE_NAME || 'Adisty Vana Lestari, S.Pd.,
 export default function InvitationPage() {
   const [opened, setOpened] = useState(false)
   const [guestName, setGuestName] = useState('')
-  const [settings, setSettings] = useState(null)
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS)
   const rootRef = useRef(null)
 
   useEffect(() => {
