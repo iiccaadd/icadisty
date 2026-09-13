@@ -242,7 +242,7 @@ export async function DELETE(request) {
       return NextResponse.json({ error: 'ID is required' }, { status: 400 })
     }
 
-    const { error } = await supabase.from('guests').delete().eq('id', id)
+    const { error } = await supabase.from('guests').delete().eq('id', id).neq('name', 'SYSTEM_SETTINGS')
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 })

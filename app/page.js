@@ -24,7 +24,18 @@ export default function InvitationPage() {
   const [guestName, setGuestName] = useState('')
   const [isGuestInvalid, setIsGuestInvalid] = useState(false)
   const [invalidGuestName, setInvalidGuestName] = useState('')
-  const [settings, setSettings] = useState(DEFAULT_SETTINGS)
+  const [settings, setSettings] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const cached = localStorage.getItem('icadisty_client_settings')
+        if (cached) {
+          const parsed = JSON.parse(cached)
+          if (parsed && typeof parsed === 'object') return parsed
+        }
+      } catch (e) {}
+    }
+    return DEFAULT_SETTINGS
+  })
   const rootRef = useRef(null)
 
   useEffect(() => {
@@ -33,9 +44,23 @@ export default function InvitationPage() {
       fetch('/api/settings?t=' + Date.now(), { cache: 'no-store' })
         .then((res) => res.json())
         .then((json) => {
-          if (json.data) setSettings(json.data)
+          if (json.data) {
+            setSettings(json.data)
+            try {
+              localStorage.setItem('icadisty_client_settings', JSON.stringify(json.data))
+            } catch (e) {}
+          }
         })
-        .catch((e) => console.warn('Notice: settings fetch fallback:', e))
+        .catch((e) => {
+          console.warn('Notice: settings fetch fallback:', e)
+          try {
+            const cached = localStorage.getItem('icadisty_client_settings')
+            if (cached) {
+              const parsed = JSON.parse(cached)
+              if (parsed && typeof parsed === 'object') setSettings(parsed)
+            }
+          } catch (err) {}
+        })
     }
 
     loadSettings()
