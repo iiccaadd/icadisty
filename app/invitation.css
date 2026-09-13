@@ -1284,3 +1284,23 @@
     height: clamp(290px, 86vw, 380px);
   }
 }
+
+/* ─── Digital Gift / Gold Button ─── */
+.btn-gold {
+  background: rgba(241, 193, 147, 0.15) !important;
+  color: #F1C193 !important;
+  border: 1px solid rgba(241, 193, 147, 0.5) !important;
+  border-radius: 30px !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), 0 0 16px rgba(241, 193, 147, 0.2) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+.btn-gold:hover {
+  background: rgba(241, 193, 147, 0.28) !important;
+  border-color: rgba(241, 193, 147, 0.8) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 22px rgba(241, 193, 147, 0.35) !important;
+  transform: translateY(-2px);
+}

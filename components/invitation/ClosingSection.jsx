@@ -80,9 +80,9 @@ export default function ClosingSection({ id, groomName, brideName, settings }) {
         <p
           style={{
             fontFamily: '"Montserrat", sans-serif',
-            fontSize: '0.85rem',
+            fontSize: '0.88rem',
             lineHeight: 1.8,
-            color: 'rgba(255,255,255,0.65)',
+            color: 'rgba(255,255,255,0.88)',
             maxWidth: 520,
             margin: '0 auto 28px',
           }}
@@ -96,17 +96,36 @@ export default function ClosingSection({ id, groomName, brideName, settings }) {
             onClick={() => setGiftOpen(!giftOpen)}
             className="btn-gold"
             style={{
-              padding: '12px 28px',
-              fontSize: '0.85rem',
-              letterSpacing: '0.15em',
+              padding: '14px 32px',
+              fontSize: '0.9rem',
+              fontWeight: 600,
+              letterSpacing: '0.12em',
               display: 'inline-flex',
               alignItems: 'center',
               gap: 10,
               cursor: 'pointer',
+              color: '#F1C193',
+              background: 'rgba(241, 193, 147, 0.15)',
+              border: '1px solid rgba(241, 193, 147, 0.5)',
+              borderRadius: 30,
+              boxShadow: '0 8px 25px rgba(0, 0, 0, 0.6), 0 0 16px rgba(241, 193, 147, 0.2)',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              transition: 'all 0.25s ease',
             }}
           >
-            <span>🎁</span>
-            <span>{giftOpen ? 'Tutup Amplop Digital' : 'Kirim Amplop Digital'}</span>
+            <span style={{ fontSize: 18, lineHeight: 1 }}>🎁</span>
+            <span
+              style={{
+                color: '#F1C193',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                textShadow: '0 1px 4px rgba(0, 0, 0, 0.8)',
+                letterSpacing: '0.1em',
+              }}
+            >
+              {giftOpen ? 'Tutup Amplop Digital' : 'Kirim Amplop Digital'}
+            </span>
           </button>
         </div>
 
