@@ -1158,16 +1158,279 @@ export default function AdminSettingsPage() {
         </div>
       )}
 
-      {/* TAB 3: FOTO LATAR 8 SEGMEN & TEMA */}
+      {/* TAB 4: FOTO LATAR & NUANSA TEMA */}
       {activeTab === 'background' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          {/* Card 1: 🌑 Pengaturan Kegelapan Background Layar Pembuka / Cover */}
+          <div className="admin-card" style={{ background: 'rgba(22, 16, 12, 0.75)', border: '1px solid rgba(241, 193, 147, 0.3)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                  <span style={{ fontSize: 20 }}>🌑</span>
+                  <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', margin: 0, fontSize: '1.3rem' }}>
+                    Pengaturan Gelap Background Layar Pembuka (Cover)
+                  </h3>
+                </div>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--admin-muted)' }}>
+                  Atur seberapa gelap latar belakang dan kejelasan foto spiral 3D di layar pembuka (tampilan awal saat tamu membuka link undangan sebelum tombol <em>"Buka Undangan"</em> diklik).
+                </p>
+              </div>
+
+              <span
+                style={{
+                  fontSize: 11,
+                  padding: '4px 12px',
+                  borderRadius: 20,
+                  background: 'rgba(241, 193, 147, 0.15)',
+                  border: '1px solid rgba(241, 193, 147, 0.3)',
+                  color: '#F1C193',
+                  fontWeight: 600,
+                }}
+              >
+                Cover Screen Settings
+              </span>
+            </div>
+
+            {/* Two Column Layout: Controls on Left, Live Interactive Preview on Right */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24, alignItems: 'start' }}>
+              {/* Controls Column */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                {/* Slider 1: Cover Darkness */}
+                <div style={{ background: 'rgba(0,0,0,0.35)', padding: '16px 18px', borderRadius: 12, border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                    <label style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#F1C193', fontWeight: 700 }}>
+                      🌑 Kepekatan Gelap Latar Cover
+                    </label>
+                    <span style={{ fontSize: 15, color: '#F1C193', fontWeight: 700, fontFamily: 'monospace' }}>
+                      {settings?.coverDarkness ?? 75}%
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="10"
+                    max="100"
+                    step="5"
+                    value={settings?.coverDarkness ?? 75}
+                    onChange={(e) => updateField('coverDarkness', parseInt(e.target.value))}
+                    style={{ width: '100%', accentColor: '#F1C193', cursor: 'pointer', height: 8 }}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6, fontSize: 10, color: 'var(--admin-muted)' }}>
+                    <span>10% (Terang / Transparan)</span>
+                    <span style={{ color: '#F1C193' }}>
+                      {(() => {
+                        const val = settings?.coverDarkness ?? 75
+                        if (val >= 85) return 'Sangat Gelap & Kontras'
+                        if (val >= 65) return 'Gelap Ideal (Rekomendasi)'
+                        if (val >= 40) return 'Sedang (Foto Lebih Terang)'
+                        return 'Terang (Foto Sangat Menonjol)'
+                      })()}
+                    </span>
+                    <span>100% (Pekat Gelap)</span>
+                  </div>
+                  <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 8, lineHeight: 1.4, margin: '8px 0 0' }}>
+                    Geser ke kanan jika ingin latar lebih gelap agar teks nama mempelai dan tombol lebih kontras dan mudah dibaca.
+                  </p>
+                </div>
+
+                {/* Slider 2: Spiral Photos Opacity */}
+                <div style={{ background: 'rgba(0,0,0,0.35)', padding: '16px 18px', borderRadius: 12, border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                    <label style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#F1C193', fontWeight: 700 }}>
+                      ✨ Kecerahan / Opasitas Foto Spiral 3D
+                    </label>
+                    <span style={{ fontSize: 15, color: '#F1C193', fontWeight: 700, fontFamily: 'monospace' }}>
+                      {settings?.coverSpiralOpacity ?? 55}%
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="10"
+                    max="100"
+                    step="5"
+                    value={settings?.coverSpiralOpacity ?? 55}
+                    onChange={(e) => updateField('coverSpiralOpacity', parseInt(e.target.value))}
+                    style={{ width: '100%', accentColor: '#F1C193', cursor: 'pointer', height: 8 }}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6, fontSize: 10, color: 'var(--admin-muted)' }}>
+                    <span>10% (Samar-samar)</span>
+                    <span style={{ color: '#F1C193' }}>
+                      {(settings?.coverSpiralOpacity ?? 55) >= 70 ? 'Vivid / Tajam' : 'Harmonis Lembut'}
+                    </span>
+                    <span>100% (Sangat Terang)</span>
+                  </div>
+                  <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 8, lineHeight: 1.4, margin: '8px 0 0' }}>
+                    Mengatur seberapa terang foto-foto 3D spiral yang berputar di latar belakang nama pengantin.
+                  </p>
+                </div>
+
+                {/* Quick Presets */}
+                <div>
+                  <span style={{ fontSize: 11, color: 'var(--admin-muted)', display: 'block', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                    Pilihan Cepat (Presets Gelap Background):
+                  </span>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    {[
+                      { label: '🌑 Gelap Elegan (85%)', darkness: 85, opacity: 45 },
+                      { label: '✨ Standar Sinematik (75%)', darkness: 75, opacity: 55 },
+                      { label: '🌤️ Lembut & Seimbang (60%)', darkness: 60, opacity: 65 },
+                      { label: '🖼️ Terang & Foto Jelas (40%)', darkness: 40, opacity: 80 },
+                    ].map((p, pIdx) => (
+                      <button
+                        key={pIdx}
+                        onClick={() => {
+                          updateField('coverDarkness', p.darkness)
+                          updateField('coverSpiralOpacity', p.opacity)
+                        }}
+                        className="btn-admin-outline"
+                        style={{ padding: '6px 12px', fontSize: 11 }}
+                      >
+                        {p.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Live Interactive Preview Column */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <span style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#F1C193', fontWeight: 600 }}>
+                    👁️ Live Pratinjau Layar Pembuka (Real-Time)
+                  </span>
+                  <span style={{ fontSize: 10, color: 'var(--admin-muted)' }}>
+                    Otomatis berubah saat slider digeser
+                  </span>
+                </div>
+
+                {/* Mini Preview Box */}
+                {(() => {
+                  const cDark = (settings?.coverDarkness ?? 75) / 100
+                  const sOp = ((settings?.coverSpiralOpacity ?? 55) / 100).toFixed(2)
+                  const cTheme = settings?.bgTheme || 'midnight'
+                  const themeColors = {
+                    midnight: '4, 2, 1',
+                    amber: '16, 9, 3',
+                    espresso: '12, 7, 4',
+                    velvet: '14, 5, 8',
+                  }
+                  const rgb = themeColors[cTheme] || themeColors.midnight
+                  const centerA = (cDark * 0.92).toFixed(2)
+                  const midA = Math.min(1.0, cDark * 1.15).toFixed(2)
+                  const outerA = Math.min(1.0, cDark * 1.3).toFixed(2)
+
+                  return (
+                    <div
+                      style={{
+                        position: 'relative',
+                        height: 320,
+                        borderRadius: 16,
+                        overflow: 'hidden',
+                        background: '#040201',
+                        border: '1px solid rgba(241, 193, 147, 0.3)',
+                        boxShadow: '0 12px 36px rgba(0,0,0,0.8)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        textAlign: 'center',
+                        padding: 20,
+                      }}
+                    >
+                      {/* Background Spiral Simulation Photos */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          inset: 0,
+                          opacity: sOp,
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          gap: 12,
+                          transform: 'scale(1.05)',
+                          pointerEvents: 'none',
+                        }}
+                      >
+                        {[
+                          settings?.groomPhoto || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400',
+                          settings?.bridePhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400',
+                          settings?.coupleBgPhoto || 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=400',
+                        ].map((src, i) => (
+                          <div
+                            key={i}
+                            style={{
+                              width: 80,
+                              height: 105,
+                              borderRadius: 10,
+                              overflow: 'hidden',
+                              boxShadow: '0 8px 20px rgba(0,0,0,0.7)',
+                              transform: `rotate(${i === 0 ? -12 : i === 1 ? 4 : 14}deg) translateY(${i === 1 ? -15 : 10}px)`,
+                              border: '1px solid rgba(241,193,147,0.2)',
+                            }}
+                          >
+                            <img src={src} alt="sample" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Live Radial Vignette Darkness Filter */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          inset: 0,
+                          background: `radial-gradient(ellipse at center, rgba(${rgb}, ${centerA}) 0%, rgba(${rgb}, ${midA}) 60%, rgba(${rgb}, ${outerA}) 100%)`,
+                          pointerEvents: 'none',
+                        }}
+                      />
+
+                      {/* Foreground Mockup */}
+                      <div style={{ position: 'relative', zIndex: 5, maxWidth: '90%' }}>
+                        <p style={{ fontFamily: '"Metropolis", sans-serif', fontSize: 9, letterSpacing: '0.22em', color: '#F1C193', margin: '0 0 8px', textTransform: 'uppercase' }}>
+                          THE WEDDING OF
+                        </p>
+                        <h4 style={{ fontFamily: '"Playfair Display", serif', fontSize: 17, color: '#fff', margin: '0 0 2px', fontWeight: 400 }}>
+                          {settings?.groomName || 'Muhammad Irsyad'}
+                        </h4>
+                        <span style={{ fontFamily: '"Playfair Display", serif', fontStyle: 'italic', fontSize: 13, color: 'rgba(255,255,255,0.5)', display: 'block', margin: '2px 0' }}>
+                          &amp;
+                        </span>
+                        <h4 style={{ fontFamily: '"Playfair Display", serif', fontSize: 17, color: '#fff', margin: '0 0 14px', fontWeight: 400 }}>
+                          {settings?.brideName || 'Adisty Vana Lestari'}
+                        </h4>
+
+                        <div
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 6,
+                            padding: '6px 14px',
+                            background: 'rgba(255,255,255,0.12)',
+                            border: '1px solid rgba(255,255,255,0.25)',
+                            borderRadius: 20,
+                            backdropFilter: 'blur(10px)',
+                            color: '#fff',
+                            fontSize: 11,
+                            fontWeight: 600,
+                            boxShadow: '0 4px 15px rgba(0,0,0,0.5)',
+                          }}
+                        >
+                          <span>💌</span>
+                          <span>Buka Undangan</span>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })()}
+              </div>
+            </div>
+          </div>
+
           {/* Global Ambience & Theme Card */}
           <div className="admin-card" style={{ background: 'rgba(22, 16, 12, 0.7)' }}>
             <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', margin: '0 0 16px', fontSize: '1.25rem' }}>
               ✨ Pengaturan Nuansa Warna &amp; Musik Latar
             </h3>
             <p style={{ fontSize: '0.85rem', color: 'var(--admin-muted)', marginBottom: 20 }}>
-              Pengaturan global ini berlaku untuk seluruh segmen: mengatur tingkat kegelapan vignette foto agar teks tetap kontras, gradasi tema warna, dan backsound musik otomatis.
+              Pengaturan ini berlaku untuk seluruh segmen isi undangan (setelah tombol Buka Undangan diklik): mengatur tingkat kegelapan vignette foto latar, gradasi tema warna, dan musik pengiring.
             </p>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
@@ -1175,7 +1438,7 @@ export default function AdminSettingsPage() {
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                   <label style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', fontWeight: 600 }}>
-                    Tingkat Kegelapan Latar (Overlay Darkness)
+                    Tingkat Kegelapan Latar Isi Undangan (Inner Sections)
                   </label>
                   <span style={{ fontSize: 13, color: '#F1C193', fontWeight: 700 }}>
                     {settings?.bgOverlayDarkness || 60}%
@@ -1191,7 +1454,7 @@ export default function AdminSettingsPage() {
                   style={{ width: '100%', accentColor: '#F1C193', cursor: 'pointer', height: 6 }}
                 />
                 <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 6, lineHeight: 1.4 }}>
-                  Semakin tinggi nilainya, foto latar semakin gelap sehingga tulisan emas dan konten tetap kontras dan nyaman dibaca.
+                  Mengatur kepekatan overlay foto latar pada segmen-segmen isi (Groom, Bride, Love Story, Acara, dll) agar tulisan tetap kontras dan nyaman dibaca.
                 </p>
               </div>
 

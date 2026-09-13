@@ -92,6 +92,22 @@ export default function Preloader({ groomName, brideName, guestName, onOpen, isO
     }))
   }, [effectiveSettings, isMobile])
 
+  const coverDarkness = effectiveSettings?.coverDarkness ?? 75
+  const coverSpiralOpacity = (effectiveSettings?.coverSpiralOpacity ?? 55) / 100
+
+  const themeBaseColors = {
+    midnight: '4, 2, 1',
+    amber: '16, 9, 3',
+    espresso: '12, 7, 4',
+    velvet: '14, 5, 8',
+  }
+  const baseRgb = themeBaseColors[effectiveSettings?.bgTheme] || themeBaseColors.midnight
+
+  const normDark = Math.max(0.05, Math.min(1.0, coverDarkness / 100))
+  const centerAlpha = (normDark * 0.92).toFixed(2)
+  const midAlpha = Math.min(1.0, normDark * 1.15).toFixed(2)
+  const outerAlpha = Math.min(1.0, normDark * 1.3).toFixed(2)
+
   if (!visible) return null
 
   return (
@@ -106,7 +122,7 @@ export default function Preloader({ groomName, brideName, guestName, onOpen, isO
           height: '100%',
           overflow: 'hidden',
           zIndex: 1,
-          opacity: 0.52,
+          opacity: coverSpiralOpacity,
           pointerEvents: 'none',
         }}
       >
@@ -130,12 +146,12 @@ export default function Preloader({ groomName, brideName, guestName, onOpen, isO
         )}
       </div>
 
-      {/* Cinematic Radial Vignette */}
+      {/* Cinematic Radial Vignette & Darkness Overlay */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
-          background: 'radial-gradient(ellipse at center, rgba(4, 2, 1, 0.72) 0%, rgba(4, 2, 1, 0.88) 60%, rgba(4, 2, 1, 0.98) 100%)',
+          background: `radial-gradient(ellipse at center, rgba(${baseRgb}, ${centerAlpha}) 0%, rgba(${baseRgb}, ${midAlpha}) 60%, rgba(${baseRgb}, ${outerAlpha}) 100%)`,
           zIndex: 2,
           pointerEvents: 'none',
         }}
