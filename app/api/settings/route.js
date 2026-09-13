@@ -1,13 +1,9 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-
-export const dynamic = 'force-dynamic'
-
-const DEFAULT_SUPABASE_URL = 'https://vgbrjmqiigqjuyeowvfo.supabase.co'
-const DEFAULT_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnYnJqbXFpaWdxanV5ZW93dmZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxOTk1MTcsImV4cCI6MjEwNDc3NTUxN30.c_7rPTiLUSdgbvNv7O7wGv2tcm9VDYjKKJCPlwV2Kmc'
-
+import { getSupabaseServer } from '@/lib/supabaseServer'
 import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
 export { DEFAULT_SETTINGS }
+
+export const dynamic = 'force-dynamic'
 
 const NO_CACHE_HEADERS = {
   'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
@@ -15,17 +11,11 @@ const NO_CACHE_HEADERS = {
   'Expires': '0',
 }
 
-function getSupabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || DEFAULT_SUPABASE_URL
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || DEFAULT_ANON_KEY
-  return createClient(url, key)
-}
-
 let memoryCache = null
 
 // Helper to fetch settings from Supabase (tries 'settings' table first, then 'guests' table fallback)
 async function fetchSupabaseSettings() {
-  const supabase = getSupabase()
+  const supabase = getSupabaseServer()
 
   // 1. Try public.settings table
   try {
@@ -33,10 +23,10 @@ async function fetchSupabaseSettings() {
       .from('settings')
       .select('data')
       .eq('id', 'general')
-      .maybeSingle()
+      .limit(1)
 
-    if (!error && data?.data && Object.keys(data.data).length > 0) {
-      return data.data
+    if (!error && data && data.length > 0 && data[0]?.data && Object.keys(data[0].data).length > 0) {
+      return data[0].data
     }
   } catch (e) {}
 
@@ -46,10 +36,11 @@ async function fetchSupabaseSettings() {
       .from('guests')
       .select('id, invited_by')
       .eq('name', 'SYSTEM_SETTINGS')
-      .maybeSingle()
+      .order('created_at', { ascending: false })
+      .limit(1)
 
-    if (!error && data?.invited_by) {
-      const parsed = JSON.parse(data.invited_by)
+    if (!error && data && data.length > 0 && data[0]?.invited_by) {
+      const parsed = JSON.parse(data[0].invited_by)
       if (parsed && typeof parsed === 'object') {
         return parsed
       }
@@ -61,7 +52,7 @@ async function fetchSupabaseSettings() {
 
 // Helper to save settings to Supabase (saves to both 'settings' and 'guests' fallback)
 async function persistSupabaseSettings(settingsObj) {
-  const supabase = getSupabase()
+  const supabase = getSupabaseServer()
 
   // 1. Try saving to public.settings table
   try {
@@ -76,19 +67,26 @@ async function persistSupabaseSettings(settingsObj) {
 
   // 2. Always also sync to public.guests fallback row (guaranteed to exist across all devices)
   try {
-    const { data: existing } = await supabase
+    const { data: existingRows } = await supabase
       .from('guests')
       .select('id')
       .eq('name', 'SYSTEM_SETTINGS')
-      .maybeSingle()
+      .order('created_at', { ascending: false })
 
-    if (existing?.id) {
+    if (existingRows && existingRows.length > 0) {
       await supabase
         .from('guests')
         .update({
           invited_by: JSON.stringify(settingsObj),
         })
-        .eq('id', existing.id)
+        .eq('id', existingRows[0].id)
+
+      // Clean up any extraneous duplicates
+      if (existingRows.length > 1) {
+        for (let i = 1; i < existingRows.length; i++) {
+          await supabase.from('guests').delete().eq('id', existingRows[i].id)
+        }
+      }
     } else {
       await supabase
         .from('guests')
