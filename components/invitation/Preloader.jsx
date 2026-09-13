@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 
+import BlurText from './BlurText'
 import SpecularButton from './SpecularButton'
 
 export default function Preloader({ groomName, brideName, guestName, onOpen, isOpened }) {
@@ -15,26 +16,82 @@ export default function Preloader({ groomName, brideName, guestName, onOpen, isO
 
   return (
     <div className={`preloader ${isOpened ? 'hidden' : ''}`}>
-      <div className="preloader-inner">
+      <div className="preloader-inner" style={{ maxWidth: 900, width: '100%', margin: '0 auto', padding: '0 20px' }}>
         {/* THE WEDDING OF */}
-        <div className="word-mask" style={{ height: 28, marginBottom: 24 }}>
-          <span className="preloader-label delay-1">THE WEDDING OF</span>
-        </div>
+        <p
+          className="preloader-label"
+          style={{
+            color: '#F1C193',
+            fontFamily: "'Metropolis', sans-serif",
+            fontSize: 12,
+            letterSpacing: 4,
+            fontWeight: 400,
+            textTransform: 'uppercase',
+            margin: '0 auto 24px',
+            textAlign: 'center',
+            opacity: 0,
+            animation: 'fadeIn 0.7s ease forwards 0.2s',
+          }}
+        >
+          THE WEDDING OF
+        </p>
 
         {/* Groom Name */}
-        <div className="word-mask">
-          <span className="word-reveal delay-2">{groomName}</span>
-        </div>
+        <BlurText
+          text={groomName}
+          delay={150}
+          startDelay={0.35}
+          animateBy="words"
+          direction="top"
+          as="h1"
+          className="preloader-title-name"
+          style={{
+            fontFamily: '"Playfair Display", serif',
+            fontWeight: 400,
+            color: '#ffffff',
+            margin: '0 auto 6px',
+            lineHeight: 1.25,
+            justifyContent: 'center',
+          }}
+        />
 
         {/* Ampersand */}
-        <div className="word-mask" style={{ height: 60 }}>
-          <span className="preloader-ampersand delay-3">&amp;</span>
-        </div>
+        <BlurText
+          text="&"
+          delay={150}
+          startDelay={0.75}
+          animateBy="words"
+          direction="top"
+          className="preloader-ampersand-blur"
+          style={{
+            fontFamily: '"Playfair Display", serif',
+            fontSize: 34,
+            color: 'rgba(255, 255, 255, 0.45)',
+            margin: '4px auto 8px',
+            lineHeight: 1,
+            justifyContent: 'center',
+            fontStyle: 'italic',
+          }}
+        />
 
         {/* Bride Name */}
-        <div className="word-mask">
-          <span className="word-reveal delay-4">{brideName}</span>
-        </div>
+        <BlurText
+          text={brideName}
+          delay={150}
+          startDelay={0.95}
+          animateBy="words"
+          direction="top"
+          as="h1"
+          className="preloader-title-name"
+          style={{
+            fontFamily: '"Playfair Display", serif',
+            fontWeight: 400,
+            color: '#ffffff',
+            margin: '0 auto 16px',
+            lineHeight: 1.25,
+            justifyContent: 'center',
+          }}
+        />
 
         {/* Guest greeting */}
         {guestName && (

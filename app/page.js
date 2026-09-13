@@ -15,8 +15,8 @@ import GallerySection from '@/components/invitation/GallerySection'
 import RSVPSection from '@/components/invitation/RSVPSection'
 import ClosingSection from '@/components/invitation/ClosingSection'
 
-const GROOM = process.env.NEXT_PUBLIC_GROOM_NAME || 'Muhammad Irsyad'
-const BRIDE = process.env.NEXT_PUBLIC_BRIDE_NAME || 'Adisty Vana Lestari'
+const GROOM = process.env.NEXT_PUBLIC_GROOM_NAME || 'Muhammad Irsyad, S.T.'
+const BRIDE = process.env.NEXT_PUBLIC_BRIDE_NAME || 'Adisty Vana Lestari, S.Pd., M.Pd.'
 
 export default function InvitationPage() {
   const [opened, setOpened] = useState(false)

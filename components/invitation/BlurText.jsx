@@ -28,6 +28,7 @@ const BlurText = ({
   stepDuration = 0.35,
   as: Component = 'p',
   style = {},
+  startDelay = 0,
 }) => {
   const elements = animateBy === 'words' ? text.split(' ') : text.split('')
   const [inView, setInView] = useState(false)
@@ -63,6 +64,15 @@ const BlurText = ({
   // Observe entering and leaving view so animation triggers on BOTH scroll down and scroll up
   useEffect(() => {
     if (!ref.current) return
+
+    // Quick immediate check for elements already in viewport (e.g. Preloader or initial screen)
+    if (typeof window !== 'undefined') {
+      const rect = ref.current.getBoundingClientRect()
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        setInView(true)
+      }
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -124,7 +134,7 @@ const BlurText = ({
         const spanTransition = {
           duration: totalDuration,
           times,
-          delay: (index * delay) / 1000,
+          delay: startDelay + (index * delay) / 1000,
         }
         spanTransition.ease = easing
 

@@ -8,11 +8,11 @@ const DEFAULT_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhY
 
 export const DEFAULT_SETTINGS = {
   // Names & Parents Details
-  groomName: 'Muhammad Irsyad',
+  groomName: 'Muhammad Irsyad, S.T.',
   groomFather: '',
   groomMother: '',
 
-  brideName: 'Adisty Vana Lestari',
+  brideName: 'Adisty Vana Lestari, S.Pd., M.Pd.',
   brideFather: '',
   brideMother: '',
 
