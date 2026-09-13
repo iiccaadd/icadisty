@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import BlurText from './BlurText'
 import SpecularButton from './SpecularButton'
 import InfiniteSpiral from './InfiniteSpiral'
@@ -16,6 +16,17 @@ export default function Preloader({ groomName, brideName, guestName, onOpen, isO
   }
 
   const effectiveSettings = settings || DEFAULT_SETTINGS
+
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => {
+      setIsMobile(typeof window !== 'undefined' && window.innerWidth < 768)
+    }
+    check()
+    window.addEventListener('resize', check, { passive: true })
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   const spiralItems = useMemo(() => {
     const list = []
@@ -68,17 +79,18 @@ export default function Preloader({ groomName, brideName, guestName, onOpen, isO
       unique = Array.from(new Set(list.filter(Boolean)))
     }
 
-    // Repeat user's uploaded photos if fewer than 8 so spiral is continuous and full
+    // Target card count: 6 on mobile for fast GPU rendering, 10 on desktop
+    const targetCount = isMobile ? 6 : 10
     let finalPhotos = [...unique]
-    while (finalPhotos.length < 8 && unique.length > 0) {
+    while (finalPhotos.length < targetCount && unique.length > 0) {
       finalPhotos = finalPhotos.concat(unique)
     }
 
-    return finalPhotos.slice(0, 16).map((src, i) => ({
+    return finalPhotos.slice(0, targetCount).map((src, i) => ({
       src,
       alt: `Foto Pernikahan ${i + 1}`,
     }))
-  }, [effectiveSettings])
+  }, [effectiveSettings, isMobile])
 
   if (!visible) return null
 
@@ -98,22 +110,24 @@ export default function Preloader({ groomName, brideName, guestName, onOpen, isO
           pointerEvents: 'none',
         }}
       >
-        <InfiniteSpiral
-          items={spiralItems}
-          animationMode="auto"
-          speed={0.4}
-          radius={240}
-          cardWidth={120}
-          cardHeight={150}
-          verticalSpacing={65}
-          perspective={1100}
-          cardRadius={14}
-          centerScale={1.18}
-          edgeBlur={6}
-          cardsPerTurn={8}
-          pauseOnHover={false}
-          imageFit="cover"
-        />
+        {!isOpened && (
+          <InfiniteSpiral
+            items={spiralItems}
+            animationMode="auto"
+            speed={isMobile ? 0.32 : 0.4}
+            radius={isMobile ? 140 : 230}
+            cardWidth={isMobile ? 75 : 115}
+            cardHeight={isMobile ? 95 : 145}
+            verticalSpacing={isMobile ? 46 : 65}
+            perspective={isMobile ? 800 : 1100}
+            cardRadius={isMobile ? 10 : 14}
+            centerScale={isMobile ? 1.12 : 1.18}
+            edgeBlur={isMobile ? 0 : 5}
+            cardsPerTurn={isMobile ? 6 : 8}
+            pauseOnHover={false}
+            imageFit="cover"
+          />
+        )}
       </div>
 
       {/* Cinematic Radial Vignette */}

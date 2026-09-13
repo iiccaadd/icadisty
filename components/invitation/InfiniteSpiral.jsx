@@ -134,10 +134,14 @@ const InfiniteSpiral = ({
         const depthScale = clamp(perspective / Math.max(perspective - z, 1), 0.72, 1.45)
         const visualScale = scale * depthScale
         const depth = (z / Math.max(responsiveRadius, 1) + 1) / 2
-        const blur = edgeBlur * smoothstep(0.35, 1, edge)
         card.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${offset * verticalSpacing * fit}px, 0) rotateZ(${cardTilt}deg) scale(${visualScale})`
         card.style.opacity = opacity.toFixed(3)
-        card.style.filter = blur > 0.01 ? `blur(${blur.toFixed(2)}px)` : 'none'
+        if (edgeBlur > 0) {
+          const blur = edgeBlur * smoothstep(0.35, 1, edge)
+          card.style.filter = blur > 0.1 ? `blur(${blur.toFixed(1)}px)` : 'none'
+        } else if (card.style.filter && card.style.filter !== 'none') {
+          card.style.filter = 'none'
+        }
         card.style.zIndex = String(Math.round(depth * 100000) + index)
         card.style.pointerEvents = opacity > 0.25 ? 'auto' : 'none'
       })
@@ -250,7 +254,8 @@ const InfiniteSpiral = ({
                 className="infinite-spiral__image"
                 src={item.src}
                 alt={item.alt}
-                loading={index < 6 ? 'eager' : 'lazy'}
+                loading={index < 3 ? 'eager' : 'lazy'}
+                decoding="async"
                 draggable={false}
                 style={{
                   width: cardWidth,
@@ -258,7 +263,7 @@ const InfiniteSpiral = ({
                   maxWidth: 'none',
                   maxHeight: 'none',
                   objectFit: imageFit,
-                  filter: `grayscale(${Math.min(1, Math.max(0, grayscale))})`
+                  filter: grayscale > 0 ? `grayscale(${Math.min(1, Math.max(0, grayscale))})` : 'none'
                 }}
               />
             </Card>

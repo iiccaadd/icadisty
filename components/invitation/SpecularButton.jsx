@@ -119,7 +119,7 @@ const SpecularButton = ({
     let onPointerMove = null
 
     try {
-      const dpr = window.devicePixelRatio || 1
+      const dpr = Math.min(window.devicePixelRatio || 1, 2)
       const renderer = new Renderer({ alpha: true, premultipliedAlpha: true, antialias: true, dpr })
       const gl = renderer.gl
       if (!gl) return
