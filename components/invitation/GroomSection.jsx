@@ -7,6 +7,17 @@ import BlurText from './BlurText'
 export default function GroomSection({ id = 'groom', groomName, settings }) {
   const sectionRef = useRef(null)
 
+  const displayName = groomName || settings?.groomName || 'Muhammad Irsyad'
+  const father = settings?.groomFather?.trim()
+  const mother = settings?.groomMother?.trim()
+  const parentText = father && mother
+    ? `Putra dari Bapak ${father} dan Ibu ${mother}`
+    : father
+    ? `Putra dari Bapak ${father}`
+    : mother
+    ? `Putra dari Ibu ${mother}`
+    : 'Putra dari Bapak ____________ dan Ibu ____________'
+
   const groomImg = settings?.groomPhoto || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop'
   const bgPhoto = settings?.groomBgPhoto || settings?.coupleBgPhoto || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1600&auto=format&fit=crop'
 
@@ -107,7 +118,7 @@ export default function GroomSection({ id = 'groom', groomName, settings }) {
               ✦ THE GROOM ✦
             </p>
             <BlurText
-              text={groomName}
+              text={displayName}
               delay={150}
               animateBy="words"
               direction="top"
@@ -132,7 +143,7 @@ export default function GroomSection({ id = 'groom', groomName, settings }) {
                 maxWidth: 420,
               }}
             >
-              Putra dari Bapak ____________ dan Ibu ____________
+              {parentText}
             </p>
           </div>
 

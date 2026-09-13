@@ -7,6 +7,17 @@ import BlurText from './BlurText'
 export default function BrideSection({ id = 'bride', brideName, settings }) {
   const sectionRef = useRef(null)
 
+  const displayName = brideName || settings?.brideName || 'Adisty Vana Lestari'
+  const father = settings?.brideFather?.trim()
+  const mother = settings?.brideMother?.trim()
+  const parentText = father && mother
+    ? `Putri dari Bapak ${father} dan Ibu ${mother}`
+    : father
+    ? `Putri dari Bapak ${father}`
+    : mother
+    ? `Putri dari Ibu ${mother}`
+    : 'Putri dari Bapak ____________ dan Ibu ____________'
+
   const brideImg = settings?.bridePhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop'
   const bgPhoto = settings?.brideBgPhoto || settings?.coupleBgPhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1600&auto=format&fit=crop'
 
@@ -108,7 +119,7 @@ export default function BrideSection({ id = 'bride', brideName, settings }) {
               ✦ THE BRIDE ✦
             </p>
             <BlurText
-              text={brideName}
+              text={displayName}
               delay={150}
               animateBy="words"
               direction="top"
@@ -133,7 +144,7 @@ export default function BrideSection({ id = 'bride', brideName, settings }) {
                 maxWidth: 420,
               }}
             >
-              Putri dari Bapak ____________ dan Ibu ____________
+              {parentText}
             </p>
           </div>
 

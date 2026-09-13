@@ -2,13 +2,16 @@
 import { useState, useEffect } from 'react'
 import SectionBackground from './SectionBackground'
 
-const TARGET_DATE = new Date(
-  process.env.NEXT_PUBLIC_WEDDING_DATE || '2026-12-20T09:00:00+07:00'
-)
+function parseTargetDate(dateStr) {
+  if (!dateStr) return new Date('2026-11-11T08:00:00+07:00')
+  const d = new Date(dateStr)
+  return isNaN(d.getTime()) ? new Date('2026-11-11T08:00:00+07:00') : d
+}
 
-function getCountdown() {
+function getCountdown(targetDate) {
   const now = new Date()
-  const diff = TARGET_DATE - now
+  const target = parseTargetDate(targetDate)
+  const diff = target - now
   if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 }
   return {
     days: Math.floor(diff / (1000 * 60 * 60 * 24)),
@@ -19,13 +22,15 @@ function getCountdown() {
 }
 
 export default function CountdownSection({ id, settings }) {
-  const [time, setTime] = useState(getCountdown())
+  const targetDate = settings?.weddingDate || process.env.NEXT_PUBLIC_WEDDING_DATE || '2026-11-11T08:00'
+  const [time, setTime] = useState(() => getCountdown(targetDate))
   const bgPhoto = settings?.countdownBgPhoto || 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?q=80&w=1600&auto=format&fit=crop'
 
   useEffect(() => {
-    const timer = setInterval(() => setTime(getCountdown()), 1000)
+    setTime(getCountdown(targetDate))
+    const timer = setInterval(() => setTime(getCountdown(targetDate)), 1000)
     return () => clearInterval(timer)
-  }, [])
+  }, [targetDate])
 
   const pad = (n) => String(n).padStart(2, '0')
 

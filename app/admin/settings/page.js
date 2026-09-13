@@ -276,6 +276,25 @@ export default function AdminSettingsPage() {
     setSettings((prev) => ({ ...prev, galleryMoments: list }))
   }
 
+  const [now, setNow] = useState(() => new Date())
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const computeCountdown = () => {
+    const targetStr = settings?.weddingDate || '2026-11-11T08:00'
+    const target = new Date(targetStr)
+    const diff = target - now
+    if (isNaN(diff) || diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 }
+    return {
+      days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((diff / (1000 * 60)) % 60),
+      seconds: Math.floor((diff / 1000) % 60),
+    }
+  }
+
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--admin-muted)' }}>
@@ -346,7 +365,7 @@ export default function AdminSettingsPage() {
           className={`btn-admin-outline ${activeTab === 'photos' ? 'active' : ''}`}
           style={{ background: activeTab === 'photos' ? 'rgba(241, 193, 147, 0.2)' : 'transparent' }}
         >
-          📸 Foto Pengantin (Pria &amp; Wanita)
+          💍 Data Mempelai &amp; Countdown
         </button>
         <button
           onClick={() => setActiveTab('moments')}
@@ -364,141 +383,316 @@ export default function AdminSettingsPage() {
         </button>
       </div>
 
-      {/* TAB 1: FOTO PENGANTIN */}
+      {/* TAB 1: DATA MEMPELAI & COUNTDOWN */}
       {activeTab === 'photos' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
-          {/* Groom Card */}
-          <div className="admin-card">
-            <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', margin: '0 0 16px', fontSize: '1.25rem' }}>
-              🤵 Foto Pengantin Pria (The Groom)
-            </h3>
-            <p style={{ fontSize: '0.8rem', color: 'var(--admin-muted)', marginBottom: 14 }}>
-              Foto ini tampil pada kartu 3D berputar di samping nama <strong>Muhammad Irsyad</strong>.
-            </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          {/* Section 1: Tanggal Acara & Countdown Timer */}
+          <div className="admin-card" style={{ background: 'rgba(22, 16, 12, 0.7)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 16 }}>
+              <div>
+                <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', margin: '0 0 4px', fontSize: '1.25rem' }}>
+                  ⏳ Tanggal &amp; Waktu Acara (Countdown Timer)
+                </h3>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--admin-muted)' }}>
+                  Tanggal dan jam ini otomatis menggerakkan jam hitung mundur di segmen <strong>Countdown</strong> portal tamu.
+                </p>
+              </div>
 
-            <div style={{ marginBottom: 14 }}>
+              {/* Live Ticker Display */}
+              {(() => {
+                const cd = computeCountdown()
+                return (
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: 8,
+                      background: 'rgba(0,0,0,0.6)',
+                      padding: '8px 16px',
+                      borderRadius: 12,
+                      border: '1px solid rgba(241, 193, 147, 0.3)',
+                    }}
+                  >
+                    {[
+                      { val: cd.days, label: 'Hari' },
+                      { val: cd.hours, label: 'Jam' },
+                      { val: cd.minutes, label: 'Mnt' },
+                      { val: cd.seconds, label: 'Dtk' },
+                    ].map((item, idx) => (
+                      <div key={idx} style={{ textAlign: 'center', minWidth: 42 }}>
+                        <span style={{ fontFamily: 'monospace', fontSize: 18, color: '#F1C193', fontWeight: 700, display: 'block' }}>
+                          {String(item.val).padStart(2, '0')}
+                        </span>
+                        <span style={{ fontSize: 10, color: 'var(--admin-muted)', textTransform: 'uppercase' }}>
+                          {item.label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )
+              })()}
+            </div>
+
+            <div style={{ maxWidth: 400 }}>
               <label style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 6 }}>
-                URL Gambar Foto Pria
+                Tanggal &amp; Jam Mulai Acara (WIB)
               </label>
               <input
-                type="text"
-                value={settings?.groomPhoto || ''}
-                onChange={(e) => updateField('groomPhoto', e.target.value)}
-                placeholder="https://..."
+                type="datetime-local"
+                value={settings?.weddingDate || '2026-11-11T08:00'}
+                onChange={(e) => updateField('weddingDate', e.target.value)}
                 className="admin-input"
+                style={{ fontSize: 13, color: '#F1C193' }}
               />
-            </div>
-
-            {/* Presets */}
-            <div style={{ marginBottom: 16 }}>
-              <span style={{ fontSize: 11, color: 'var(--admin-muted)', display: 'block', marginBottom: 6 }}>
-                Pilihan Cepat (Presets):
-              </span>
-              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                {PHOTO_PRESETS.groom.map((p, i) => (
-                  <button
-                    key={i}
-                    onClick={() => updateField('groomPhoto', p.url)}
-                    className="btn-admin-outline"
-                    style={{ padding: '4px 8px', fontSize: 10 }}
-                  >
-                    {p.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Thumbnail Preview */}
-            <div style={{ textAlign: 'center', marginTop: 16 }}>
-              <span style={{ fontSize: 11, color: 'var(--admin-muted)', display: 'block', marginBottom: 8 }}>
-                Preview Kartu 3D Pria:
-              </span>
-              <div
-                style={{
-                  width: 160,
-                  height: 220,
-                  borderRadius: 20,
-                  overflow: 'hidden',
-                  margin: '0 auto',
-                  border: '1px solid rgba(241, 193, 147, 0.4)',
-                  boxShadow: '0 12px 30px rgba(0,0,0,0.8)',
-                  transform: 'perspective(600px) rotateY(-8deg) rotateZ(4deg)',
-                }}
-              >
-                <img
-                  src={settings?.groomPhoto}
-                  alt="Preview Groom"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop' }}
-                />
-              </div>
             </div>
           </div>
 
-          {/* Bride Card */}
-          <div className="admin-card">
-            <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', margin: '0 0 16px', fontSize: '1.25rem' }}>
-              👰 Foto Pengantin Wanita (The Bride)
-            </h3>
-            <p style={{ fontSize: '0.8rem', color: 'var(--admin-muted)', marginBottom: 14 }}>
-              Foto ini tampil pada kartu 3D berputar di samping nama <strong>Adisty Vana Lestari</strong>.
-            </p>
+          {/* Section 2: Profil & Orang Tua Pria dan Wanita */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 24 }}>
+            {/* Groom Card */}
+            <div className="admin-card">
+              <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', margin: '0 0 16px', fontSize: '1.25rem' }}>
+                🤵 Mempelai Pria (The Groom)
+              </h3>
 
-            <div style={{ marginBottom: 14 }}>
-              <label style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 6 }}>
-                URL Gambar Foto Wanita
-              </label>
-              <input
-                type="text"
-                value={settings?.bridePhoto || ''}
-                onChange={(e) => updateField('bridePhoto', e.target.value)}
-                placeholder="https://..."
-                className="admin-input"
-              />
-            </div>
+              {/* Nama Mempelai Pria */}
+              <div style={{ marginBottom: 12 }}>
+                <label style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 4 }}>
+                  Nama Lengkap Pria
+                </label>
+                <input
+                  type="text"
+                  value={settings?.groomName ?? 'Muhammad Irsyad'}
+                  onChange={(e) => updateField('groomName', e.target.value)}
+                  placeholder="Contoh: Muhammad Irsyad"
+                  className="admin-input"
+                />
+              </div>
 
-            {/* Presets */}
-            <div style={{ marginBottom: 16 }}>
-              <span style={{ fontSize: 11, color: 'var(--admin-muted)', display: 'block', marginBottom: 6 }}>
-                Pilihan Cepat (Presets):
-              </span>
-              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                {PHOTO_PRESETS.bride.map((p, i) => (
-                  <button
-                    key={i}
-                    onClick={() => updateField('bridePhoto', p.url)}
-                    className="btn-admin-outline"
-                    style={{ padding: '4px 8px', fontSize: 10 }}
-                  >
-                    {p.label}
-                  </button>
-                ))}
+              {/* Nama Bapak Pria */}
+              <div style={{ marginBottom: 12 }}>
+                <label style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 4 }}>
+                  Nama Bapak / Ayah Pria
+                </label>
+                <input
+                  type="text"
+                  value={settings?.groomFather || ''}
+                  onChange={(e) => updateField('groomFather', e.target.value)}
+                  placeholder="Contoh: H. Ahmad Supriyadi"
+                  className="admin-input"
+                />
+              </div>
+
+              {/* Nama Ibu Pria */}
+              <div style={{ marginBottom: 14 }}>
+                <label style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 4 }}>
+                  Nama Ibu Pria
+                </label>
+                <input
+                  type="text"
+                  value={settings?.groomMother || ''}
+                  onChange={(e) => updateField('groomMother', e.target.value)}
+                  placeholder="Contoh: Hj. Siti Fatimah"
+                  className="admin-input"
+                />
+              </div>
+
+              {/* Teks Keluarga Preview */}
+              <div style={{ background: 'rgba(0,0,0,0.4)', padding: '10px 14px', borderRadius: 10, marginBottom: 18, border: '1px solid rgba(255,255,255,0.06)' }}>
+                <span style={{ fontSize: 10, color: 'var(--admin-muted)', display: 'block', marginBottom: 2 }}>
+                  Tampilan Teks di Undangan:
+                </span>
+                <p style={{ margin: 0, fontSize: 12, color: 'rgba(255,255,255,0.85)', fontStyle: 'italic' }}>
+                  {settings?.groomFather && settings?.groomMother
+                    ? `Putra dari Bapak ${settings.groomFather} dan Ibu ${settings.groomMother}`
+                    : settings?.groomFather
+                    ? `Putra dari Bapak ${settings.groomFather}`
+                    : settings?.groomMother
+                    ? `Putra dari Ibu ${settings.groomMother}`
+                    : 'Putra dari Bapak ____________ dan Ibu ____________'}
+                </p>
+              </div>
+
+              {/* URL Foto Pria */}
+              <div style={{ marginBottom: 12 }}>
+                <label style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 6 }}>
+                  URL Gambar Foto Pria (3D Card)
+                </label>
+                <input
+                  type="text"
+                  value={settings?.groomPhoto || ''}
+                  onChange={(e) => updateField('groomPhoto', e.target.value)}
+                  placeholder="https://..."
+                  className="admin-input"
+                />
+              </div>
+
+              {/* Presets */}
+              <div style={{ marginBottom: 16 }}>
+                <span style={{ fontSize: 10, color: 'var(--admin-muted)', display: 'block', marginBottom: 6 }}>
+                  Pilihan Cepat (Presets):
+                </span>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                  {PHOTO_PRESETS.groom.map((p, i) => (
+                    <button
+                      key={i}
+                      onClick={() => updateField('groomPhoto', p.url)}
+                      className="btn-admin-outline"
+                      style={{ padding: '4px 8px', fontSize: 10 }}
+                    >
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Thumbnail Preview */}
+              <div style={{ textAlign: 'center', marginTop: 16 }}>
+                <span style={{ fontSize: 10, color: 'var(--admin-muted)', display: 'block', marginBottom: 8 }}>
+                  Preview Kartu 3D Pria:
+                </span>
+                <div
+                  style={{
+                    width: 150,
+                    height: 200,
+                    borderRadius: 20,
+                    overflow: 'hidden',
+                    margin: '0 auto',
+                    border: '1px solid rgba(241, 193, 147, 0.4)',
+                    boxShadow: '0 12px 30px rgba(0,0,0,0.8)',
+                    transform: 'perspective(600px) rotateY(-8deg) rotateZ(4deg)',
+                  }}
+                >
+                  <img
+                    src={settings?.groomPhoto}
+                    alt="Preview Groom"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop' }}
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Thumbnail Preview */}
-            <div style={{ textAlign: 'center', marginTop: 16 }}>
-              <span style={{ fontSize: 11, color: 'var(--admin-muted)', display: 'block', marginBottom: 8 }}>
-                Preview Kartu 3D Wanita:
-              </span>
-              <div
-                style={{
-                  width: 160,
-                  height: 220,
-                  borderRadius: 20,
-                  overflow: 'hidden',
-                  margin: '0 auto',
-                  border: '1px solid rgba(241, 193, 147, 0.4)',
-                  boxShadow: '0 12px 30px rgba(0,0,0,0.8)',
-                  transform: 'perspective(600px) rotateY(8deg) rotateZ(-4deg)',
-                }}
-              >
-                <img
-                  src={settings?.bridePhoto}
-                  alt="Preview Bride"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop' }}
+            {/* Bride Card */}
+            <div className="admin-card">
+              <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', margin: '0 0 16px', fontSize: '1.25rem' }}>
+                👰 Mempelai Wanita (The Bride)
+              </h3>
+
+              {/* Nama Mempelai Wanita */}
+              <div style={{ marginBottom: 12 }}>
+                <label style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 4 }}>
+                  Nama Lengkap Wanita
+                </label>
+                <input
+                  type="text"
+                  value={settings?.brideName ?? 'Adisty Vana Lestari'}
+                  onChange={(e) => updateField('brideName', e.target.value)}
+                  placeholder="Contoh: Adisty Vana Lestari"
+                  className="admin-input"
                 />
+              </div>
+
+              {/* Nama Bapak Wanita */}
+              <div style={{ marginBottom: 12 }}>
+                <label style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 4 }}>
+                  Nama Bapak / Ayah Wanita
+                </label>
+                <input
+                  type="text"
+                  value={settings?.brideFather || ''}
+                  onChange={(e) => updateField('brideFather', e.target.value)}
+                  placeholder="Contoh: H. Bambang Irawan"
+                  className="admin-input"
+                />
+              </div>
+
+              {/* Nama Ibu Wanita */}
+              <div style={{ marginBottom: 14 }}>
+                <label style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 4 }}>
+                  Nama Ibu Wanita
+                </label>
+                <input
+                  type="text"
+                  value={settings?.brideMother || ''}
+                  onChange={(e) => updateField('brideMother', e.target.value)}
+                  placeholder="Contoh: Hj. Siti Rahmawati"
+                  className="admin-input"
+                />
+              </div>
+
+              {/* Teks Keluarga Preview */}
+              <div style={{ background: 'rgba(0,0,0,0.4)', padding: '10px 14px', borderRadius: 10, marginBottom: 18, border: '1px solid rgba(255,255,255,0.06)' }}>
+                <span style={{ fontSize: 10, color: 'var(--admin-muted)', display: 'block', marginBottom: 2 }}>
+                  Tampilan Teks di Undangan:
+                </span>
+                <p style={{ margin: 0, fontSize: 12, color: 'rgba(255,255,255,0.85)', fontStyle: 'italic' }}>
+                  {settings?.brideFather && settings?.brideMother
+                    ? `Putri dari Bapak ${settings.brideFather} dan Ibu ${settings.brideMother}`
+                    : settings?.brideFather
+                    ? `Putri dari Bapak ${settings.brideFather}`
+                    : settings?.brideMother
+                    ? `Putri dari Ibu ${settings.brideMother}`
+                    : 'Putri dari Bapak ____________ dan Ibu ____________'}
+                </p>
+              </div>
+
+              {/* URL Foto Wanita */}
+              <div style={{ marginBottom: 12 }}>
+                <label style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 6 }}>
+                  URL Gambar Foto Wanita (3D Card)
+                </label>
+                <input
+                  type="text"
+                  value={settings?.bridePhoto || ''}
+                  onChange={(e) => updateField('bridePhoto', e.target.value)}
+                  placeholder="https://..."
+                  className="admin-input"
+                />
+              </div>
+
+              {/* Presets */}
+              <div style={{ marginBottom: 16 }}>
+                <span style={{ fontSize: 10, color: 'var(--admin-muted)', display: 'block', marginBottom: 6 }}>
+                  Pilihan Cepat (Presets):
+                </span>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                  {PHOTO_PRESETS.bride.map((p, i) => (
+                    <button
+                      key={i}
+                      onClick={() => updateField('bridePhoto', p.url)}
+                      className="btn-admin-outline"
+                      style={{ padding: '4px 8px', fontSize: 10 }}
+                    >
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Thumbnail Preview */}
+              <div style={{ textAlign: 'center', marginTop: 16 }}>
+                <span style={{ fontSize: 10, color: 'var(--admin-muted)', display: 'block', marginBottom: 8 }}>
+                  Preview Kartu 3D Wanita:
+                </span>
+                <div
+                  style={{
+                    width: 150,
+                    height: 200,
+                    borderRadius: 20,
+                    overflow: 'hidden',
+                    margin: '0 auto',
+                    border: '1px solid rgba(241, 193, 147, 0.4)',
+                    boxShadow: '0 12px 30px rgba(0,0,0,0.8)',
+                    transform: 'perspective(600px) rotateY(8deg) rotateZ(-4deg)',
+                  }}
+                >
+                  <img
+                    src={settings?.bridePhoto}
+                    alt="Preview Bride"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop' }}
+                  />
+                </div>
               </div>
             </div>
           </div>

@@ -95,11 +95,14 @@ export default function InvitationPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
+  const groomName = settings?.groomName || GROOM
+  const brideName = settings?.brideName || BRIDE
+
   return (
     <>
       <Preloader
-        groomName={GROOM}
-        brideName={BRIDE}
+        groomName={groomName}
+        brideName={brideName}
         guestName={guestName}
         onOpen={handleOpen}
         isOpened={opened}
@@ -115,15 +118,15 @@ export default function InvitationPage() {
         <MusicButton musicUrl={settings?.musicUrl} />
 
         {/* Sections */}
-        <HeroSection id="opening" groomName={GROOM} brideName={BRIDE} guestName={guestName} settings={settings} />
-        <GroomSection id="groom" groomName={GROOM} settings={settings} />
-        <BrideSection id="bride" brideName={BRIDE} settings={settings} />
+        <HeroSection id="opening" groomName={groomName} brideName={brideName} guestName={guestName} settings={settings} />
+        <GroomSection id="groom" groomName={groomName} settings={settings} />
+        <BrideSection id="bride" brideName={brideName} settings={settings} />
         <LoveStorySection id="lovestory" settings={settings} />
         <EventSection id="events" settings={settings} />
         <CountdownSection id="countdown" settings={settings} />
         <GallerySection id="gallery" settings={settings} />
         <RSVPSection id="rsvp" guestName={guestName} settings={settings} />
-        <ClosingSection id="closing" groomName={GROOM} brideName={BRIDE} settings={settings} />
+        <ClosingSection id="closing" groomName={groomName} brideName={brideName} settings={settings} />
       </div>
     </>
   )

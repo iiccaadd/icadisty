@@ -7,6 +7,18 @@ const DEFAULT_SUPABASE_URL = 'https://vgbrjmqiigqjuyeowvfo.supabase.co'
 const DEFAULT_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnYnJqbXFpaWdxanV5ZW93dmZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxOTk1MTcsImV4cCI6MjEwNDc3NTUxN30.c_7rPTiLUSdgbvNv7O7wGv2tcm9VDYjKKJCPlwV2Kmc'
 
 export const DEFAULT_SETTINGS = {
+  // Names & Parents Details
+  groomName: 'Muhammad Irsyad',
+  groomFather: '',
+  groomMother: '',
+
+  brideName: 'Adisty Vana Lestari',
+  brideFather: '',
+  brideMother: '',
+
+  // Wedding & Countdown Target Date
+  weddingDate: '2026-11-11T08:00',
+
   // Photos - Couple 3D Cards
   groomPhoto: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop',
   bridePhoto: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop',
