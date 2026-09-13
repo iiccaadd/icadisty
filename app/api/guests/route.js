@@ -24,9 +24,71 @@ function generateSlug(text) {
     .replace(/-+$/, '') + '-' + Math.random().toString(36).substring(2, 6)
 }
 
-export async function GET() {
+export async function GET(request) {
   try {
     const supabase = getSupabase()
+    const { searchParams } = new URL(request.url)
+    const checkSlug = searchParams.get('u') || searchParams.get('slug')
+    const checkName = searchParams.get('to') || searchParams.get('name') || searchParams.get('nama')
+    const checkId = searchParams.get('id') || searchParams.get('guest_id')
+    const isCheck = searchParams.get('check') === '1' || Boolean(checkSlug || checkName || checkId)
+
+    // Verification mode: check if a specific guest exists in database
+    if (isCheck && (checkSlug || checkName || checkId)) {
+      let guest = null
+
+      // 1. Match by ID
+      if (checkId) {
+        const { data } = await supabase
+          .from('guests')
+          .select('id, name, slug, has_opened, opened_at')
+          .eq('id', checkId)
+          .neq('name', 'SYSTEM_SETTINGS')
+          .maybeSingle()
+        if (data) guest = data
+      }
+
+      // 2. Match by Slug
+      if (!guest && checkSlug) {
+        const { data } = await supabase
+          .from('guests')
+          .select('id, name, slug, has_opened, opened_at')
+          .eq('slug', checkSlug)
+          .neq('name', 'SYSTEM_SETTINGS')
+          .maybeSingle()
+        if (data) guest = data
+      }
+
+      // 3. Match by Name (Exact or ILIKE)
+      if (!guest && checkName) {
+        const cleanName = decodeURIComponent(checkName.replace(/\+/g, ' ')).trim()
+        const { data } = await supabase
+          .from('guests')
+          .select('id, name, slug, has_opened, opened_at')
+          .ilike('name', cleanName)
+          .neq('name', 'SYSTEM_SETTINGS')
+          .maybeSingle()
+        if (data) guest = data
+
+        if (!guest) {
+          const { data: loose } = await supabase
+            .from('guests')
+            .select('id, name, slug, has_opened, opened_at')
+            .ilike('name', `%${cleanName}%`)
+            .neq('name', 'SYSTEM_SETTINGS')
+            .limit(1)
+          if (loose && loose.length > 0) guest = loose[0]
+        }
+      }
+
+      if (guest) {
+        return NextResponse.json({ valid: true, guest })
+      } else {
+        return NextResponse.json({ valid: false, message: 'Tamu tidak terdaftar atau telah dihapus' })
+      }
+    }
+
+    // Default: fetch all guests for admin dashboard
     const { data, error } = await supabase
       .from('guests')
       .select('*')

@@ -7,7 +7,16 @@ import InfiniteSpiral from './InfiniteSpiral'
 
 import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
 
-export default function Preloader({ groomName, brideName, guestName, onOpen, isOpened, settings }) {
+export default function Preloader({
+  groomName,
+  brideName,
+  guestName,
+  onOpen,
+  isOpened,
+  settings,
+  isGuestInvalid = false,
+  invalidGuestName = '',
+}) {
   const [visible, setVisible] = useState(true)
 
   const handleOpen = () => {
@@ -245,77 +254,135 @@ export default function Preloader({ groomName, brideName, guestName, onOpen, isO
           }}
         />
 
-        {/* Guest greeting */}
-        {guestName && (
-          <div style={{ marginTop: 32, textAlign: 'center' }}>
-            <p
-              style={{
-                color: 'rgba(255,255,255,0.6)',
-                fontFamily: '"Cormorant", serif',
-                fontStyle: 'italic',
-                fontSize: 14,
-                opacity: 0,
-                animation: 'fadeIn 0.6s ease forwards 1.5s',
-              }}
-            >
-              Kepada Yth.<br />
-              <strong style={{ color: '#F1C193', fontSize: 18, fontStyle: 'normal' }}>
-                {guestName}
-              </strong>
-            </p>
-          </div>
-        )}
-
-        {/* Open Button */}
-        <div className="preloader-open-btn" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <SpecularButton
-            size="md"
-            radius={28}
-            tint="#ffffff"
-            tintOpacity={0.12}
-            blur={16}
-            textColor="#ffffff"
-            lineColor="#ffffff"
-            baseColor="#555555"
-            intensity={1.5}
-            shineSize={18}
-            shineFade={38}
-            thickness={1.5}
-            speed={0.4}
-            followMouse={true}
-            proximity={250}
-            autoAnimate={true}
-            onClick={handleOpen}
-            className="btn-buka-undangan"
-          >
-            <span
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 10,
-                fontWeight: 600,
-                fontSize: 15,
-                letterSpacing: '0.03em',
-                textShadow: '0 1px 4px rgba(0, 0, 0, 0.6)',
-              }}
-            >
-              <span style={{ fontSize: 17, lineHeight: 1 }}>💌</span>
-              <span>Buka Undangan</span>
-            </span>
-          </SpecularButton>
-          <p
+        {/* If guest was deleted or invalid: show locked notification and forbid opening */}
+        {isGuestInvalid ? (
+          <div
             style={{
-              color: 'rgba(255,255,255,0.4)',
-              fontFamily: '"Cormorant", serif',
-              fontStyle: 'italic',
-              fontSize: 11,
+              marginTop: 28,
+              padding: '24px 28px',
+              borderRadius: 18,
+              background: 'rgba(25, 12, 10, 0.88)',
+              border: '1px solid rgba(239, 83, 80, 0.5)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              boxShadow: '0 15px 40px rgba(0,0,0,0.8), 0 0 20px rgba(239,83,80,0.15)',
+              maxWidth: 480,
+              margin: '28px auto 0',
               textAlign: 'center',
-              marginTop: 12,
+              animation: 'fadeIn 0.6s ease forwards',
             }}
           >
-            Wednesday, 11 November 2026
-          </p>
-        </div>
+            <span style={{ fontSize: 34, display: 'block', marginBottom: 10 }}>🔒</span>
+            <h3
+              style={{
+                fontFamily: '"Playfair Display", serif',
+                fontSize: 19,
+                color: '#ef5350',
+                margin: '0 0 8px',
+                fontWeight: 600,
+                letterSpacing: '0.02em',
+              }}
+            >
+              Undangan Tidak Aktif
+            </h3>
+            <p
+              style={{
+                fontFamily: '"Montserrat", sans-serif',
+                fontSize: 13,
+                color: 'rgba(255,255,255,0.88)',
+                lineHeight: 1.65,
+                margin: '0 0 10px',
+              }}
+            >
+              Mohon maaf, tautan undangan untuk{' '}
+              <strong style={{ color: '#F1C193' }}>{invalidGuestName || 'tamu ini'}</strong> sudah tidak aktif atau telah dihapus dari daftar undangan.
+            </p>
+            <p
+              style={{
+                fontSize: 11,
+                color: 'rgba(255,255,255,0.45)',
+                margin: 0,
+                fontStyle: 'italic',
+              }}
+            >
+              Silakan hubungi pihak mempelai atau keluarga jika terdapat kekeliruan.
+            </p>
+          </div>
+        ) : (
+          <>
+            {/* Guest greeting */}
+            {guestName && (
+              <div style={{ marginTop: 32, textAlign: 'center' }}>
+                <p
+                  style={{
+                    color: 'rgba(255,255,255,0.6)',
+                    fontFamily: '"Cormorant", serif',
+                    fontStyle: 'italic',
+                    fontSize: 14,
+                    opacity: 0,
+                    animation: 'fadeIn 0.6s ease forwards 1.5s',
+                  }}
+                >
+                  Kepada Yth.<br />
+                  <strong style={{ color: '#F1C193', fontSize: 18, fontStyle: 'normal' }}>
+                    {guestName}
+                  </strong>
+                </p>
+              </div>
+            )}
+
+            {/* Open Button */}
+            <div className="preloader-open-btn" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <SpecularButton
+                size="md"
+                radius={28}
+                tint="#ffffff"
+                tintOpacity={0.12}
+                blur={16}
+                textColor="#ffffff"
+                lineColor="#ffffff"
+                baseColor="#555555"
+                intensity={1.5}
+                shineSize={18}
+                shineFade={38}
+                thickness={1.5}
+                speed={0.4}
+                followMouse={true}
+                proximity={250}
+                autoAnimate={true}
+                onClick={handleOpen}
+                className="btn-buka-undangan"
+              >
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 10,
+                    fontWeight: 600,
+                    fontSize: 15,
+                    letterSpacing: '0.03em',
+                    textShadow: '0 1px 4px rgba(0, 0, 0, 0.6)',
+                  }}
+                >
+                  <span style={{ fontSize: 17, lineHeight: 1 }}>💌</span>
+                  <span>Buka Undangan</span>
+                </span>
+              </SpecularButton>
+              <p
+                style={{
+                  color: 'rgba(255,255,255,0.4)',
+                  fontFamily: '"Cormorant", serif',
+                  fontStyle: 'italic',
+                  fontSize: 11,
+                  textAlign: 'center',
+                  marginTop: 12,
+                }}
+              >
+                Wednesday, 11 November 2026
+              </p>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )

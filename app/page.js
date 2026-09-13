@@ -22,6 +22,8 @@ const BRIDE = process.env.NEXT_PUBLIC_BRIDE_NAME || 'Adisty Vana Lestari, S.Pd.,
 export default function InvitationPage() {
   const [opened, setOpened] = useState(false)
   const [guestName, setGuestName] = useState('')
+  const [isGuestInvalid, setIsGuestInvalid] = useState(false)
+  const [invalidGuestName, setInvalidGuestName] = useState('')
   const [settings, setSettings] = useState(DEFAULT_SETTINGS)
   const rootRef = useRef(null)
 
@@ -49,12 +51,36 @@ export default function InvitationPage() {
   }, [])
 
   useEffect(() => {
-    // Get guest name from URL: ?to=NamaTamu or ?u=NamaTamu
+    // Check and verify guest from URL parameters: ?to=NamaTamu or ?u=Slug or ?id=Id
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search)
-      const name = params.get('to') || params.get('u') || params.get('nama')
-      if (name) {
-        setGuestName(decodeURIComponent(name.replace(/\+/g, ' ')))
+      const toName = params.get('to') || params.get('nama')
+      const toSlug = params.get('u') || params.get('slug')
+      const toId = params.get('id') || params.get('guest_id')
+
+      const rawName = toName ? decodeURIComponent(toName.replace(/\+/g, ' ')).trim() : ''
+
+      // If this is a personalized guest link (has name, slug, or id)
+      if (rawName || toSlug || toId) {
+        if (rawName) setGuestName(rawName)
+
+        // Verify with database if this guest exists and is still active
+        const checkUrl = `/api/guests?check=1&to=${encodeURIComponent(rawName)}&u=${encodeURIComponent(toSlug || '')}&id=${encodeURIComponent(toId || '')}&t=${Date.now()}`
+        fetch(checkUrl, { cache: 'no-store' })
+          .then((res) => res.json())
+          .then((json) => {
+            if (json && json.valid === true) {
+              if (json.guest?.name) setGuestName(json.guest.name)
+              setIsGuestInvalid(false)
+            } else if (json && json.valid === false) {
+              // Guest was deleted or not registered: block access!
+              setIsGuestInvalid(true)
+              setInvalidGuestName(rawName || toSlug || 'Tamu')
+            }
+          })
+          .catch((err) => {
+            console.warn('Guest verification fallback notice:', err)
+          })
       }
     }
   }, [])
@@ -81,6 +107,9 @@ export default function InvitationPage() {
   }, [opened])
 
   const handleOpen = () => {
+    // If guest was deleted or invalid, do not allow opening
+    if (isGuestInvalid) return
+
     setOpened(true)
 
     // Trigger music auto-play on user interaction
@@ -133,12 +162,14 @@ export default function InvitationPage() {
         onOpen={handleOpen}
         isOpened={opened}
         settings={settings}
+        isGuestInvalid={isGuestInvalid}
+        invalidGuestName={invalidGuestName}
       />
 
       <div
         ref={rootRef}
         className={`invitation-root ${opened ? '' : 'no-snap'}`}
-        style={{ display: opened ? 'block' : 'none' }}
+        style={{ display: (opened && !isGuestInvalid) ? 'block' : 'none' }}
       >
         {/* Floating UI */}
         <NavMenu />
