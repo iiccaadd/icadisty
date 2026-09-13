@@ -163,7 +163,8 @@ export default function AdminSettingsPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [toast, setToast] = useState('')
-  const [activeTab, setActiveTab] = useState('photos') // photos | moments | background
+  const [activeTab, setActiveTab] = useState('photos') // photos | lovestory | moments | banks | background
+  const [previewCopiedIndex, setPreviewCopiedIndex] = useState(null)
 
   useEffect(() => {
     fetchSettings()
@@ -316,6 +317,69 @@ export default function AdminSettingsPage() {
     setSettings((prev) => ({ ...prev, loveStories: list }))
   }
 
+  const getBankAccounts = () => {
+    if (Array.isArray(settings?.bankAccounts) && settings.bankAccounts.length > 0) {
+      return settings.bankAccounts
+    }
+    return DEFAULT_SETTINGS.bankAccounts || [
+      {
+        id: 'bca',
+        bankName: 'BANK BCA',
+        accountNumber: '7820491823',
+        accountHolder: 'Muhammad Irsyad',
+      },
+      {
+        id: 'mandiri',
+        bankName: 'BANK MANDIRI',
+        accountNumber: '1480029381920',
+        accountHolder: 'Adisty Vana Lestari',
+      },
+    ]
+  }
+
+  const updateBankAccount = (index, field, value) => {
+    const list = [...getBankAccounts()]
+    list[index] = { ...list[index], [field]: value }
+    setSettings((prev) => ({ ...prev, bankAccounts: list }))
+  }
+
+  const addBankAccount = () => {
+    const list = [...getBankAccounts()]
+    list.push({
+      id: 'bank_' + Date.now(),
+      bankName: 'BANK BCA',
+      accountNumber: '',
+      accountHolder: '',
+    })
+    setSettings((prev) => ({ ...prev, bankAccounts: list }))
+  }
+
+  const removeBankAccount = (index) => {
+    const list = [...getBankAccounts()]
+    if (list.length <= 1) {
+      alert('Minimal harus ada 1 nomor rekening atau dompet digital!')
+      return
+    }
+    list.splice(index, 1)
+    setSettings((prev) => ({ ...prev, bankAccounts: list }))
+  }
+
+  const handlePreviewCopy = (text, idx) => {
+    if (!text) return
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(text).then(() => {
+        setPreviewCopiedIndex(idx)
+        setTimeout(() => setPreviewCopiedIndex(null), 2000)
+      }).catch(() => {
+        setPreviewCopiedIndex(idx)
+        setTimeout(() => setPreviewCopiedIndex(null), 2000)
+      })
+    } else {
+      setPreviewCopiedIndex(idx)
+      setTimeout(() => setPreviewCopiedIndex(null), 2000)
+    }
+  }
+
   const [now, setNow] = useState(() => new Date())
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 1000)
@@ -420,6 +484,13 @@ export default function AdminSettingsPage() {
           style={{ background: activeTab === 'moments' ? 'rgba(241, 193, 147, 0.2)' : 'transparent' }}
         >
           🎞️ Galeri Foto &amp; Momen (Stack 3D)
+        </button>
+        <button
+          onClick={() => setActiveTab('banks')}
+          className={`btn-admin-outline ${activeTab === 'banks' ? 'active' : ''}`}
+          style={{ background: activeTab === 'banks' ? 'rgba(241, 193, 147, 0.2)' : 'transparent' }}
+        >
+          💳 Rekening &amp; Amplop Digital
         </button>
         <button
           onClick={() => setActiveTab('background')}
@@ -1158,7 +1229,343 @@ export default function AdminSettingsPage() {
         </div>
       )}
 
-      {/* TAB 4: FOTO LATAR & NUANSA TEMA */}
+      {/* TAB 4: REKENING & AMPLOP DIGITAL (TANDA KASIH) */}
+      {activeTab === 'banks' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          {/* Top Info Banner & Add Button */}
+          <div className="admin-card" style={{ background: 'rgba(22, 16, 12, 0.75)', border: '1px solid rgba(241, 193, 147, 0.3)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+                  <span style={{ fontSize: 22 }}>💳</span>
+                  <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', margin: 0, fontSize: '1.3rem' }}>
+                    Daftar Rekening Bank &amp; Dompet Digital (Tanda Kasih)
+                  </h3>
+                </div>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--admin-muted)' }}>
+                  Kelola rekening bank atau e-wallet (DANA, OVO, Gopay, ShopeePay, dll) yang ditampilkan pada modal <strong>"Tanda Kasih Digital"</strong> di bagian penutup undangan.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={addBankAccount}
+                className="btn-admin"
+                style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px' }}
+              >
+                <span>➕</span>
+                <span>Tambah Rekening Baru</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Grid Layout: Left Edit Cards, Right Sticky Live Preview */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: 24, alignItems: 'start' }}>
+            {/* Left Column: Bank Cards Editor */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              {getBankAccounts().map((bank, index) => (
+                <div
+                  key={bank.id || index}
+                  className="admin-card"
+                  style={{
+                    background: 'rgba(18, 12, 8, 0.75)',
+                    border: '1px solid rgba(241, 193, 147, 0.25)',
+                    borderRadius: 16,
+                    padding: 20,
+                    position: 'relative',
+                  }}
+                >
+                  {/* Card Header */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <span
+                        style={{
+                          background: 'rgba(241, 193, 147, 0.15)',
+                          color: '#F1C193',
+                          border: '1px solid rgba(241, 193, 147, 0.3)',
+                          borderRadius: '50%',
+                          width: 28,
+                          height: 28,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: 12,
+                          fontWeight: 700,
+                        }}
+                      >
+                        {index + 1}
+                      </span>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: '#F1C193', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                        {bank.bankName || `Rekening #${index + 1}`}
+                      </span>
+                    </div>
+
+                    {getBankAccounts().length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeBankAccount(index)}
+                        className="btn-admin-outline"
+                        style={{
+                          borderColor: 'rgba(239, 83, 80, 0.4)',
+                          color: '#ef5350',
+                          padding: '4px 10px',
+                          fontSize: 11,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 4,
+                        }}
+                        title="Hapus rekening ini"
+                      >
+                        <span>🗑️</span>
+                        <span>Hapus</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Bank Quick Preset Chips */}
+                  <div style={{ marginBottom: 14 }}>
+                    <span style={{ fontSize: 10, color: 'var(--admin-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>
+                      Pilihan Bank &amp; E-Wallet Cepat:
+                    </span>
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                      {[
+                        'BANK BCA',
+                        'BANK MANDIRI',
+                        'BANK BNI',
+                        'BANK BRI',
+                        'BANK BSI',
+                        'CIMB NIAGA',
+                        'BANK JAGO',
+                        'SEABANK',
+                        'DANA',
+                        'GOPAY',
+                        'OVO',
+                        'SHOPEEPAY',
+                      ].map((presetName) => (
+                        <button
+                          key={presetName}
+                          type="button"
+                          onClick={() => updateBankAccount(index, 'bankName', presetName)}
+                          className="btn-admin-outline"
+                          style={{
+                            padding: '3px 8px',
+                            fontSize: 10,
+                            background: bank.bankName === presetName ? 'rgba(241, 193, 147, 0.25)' : 'transparent',
+                            borderColor: bank.bankName === presetName ? '#F1C193' : 'rgba(255,255,255,0.1)',
+                            color: bank.bankName === presetName ? '#F1C193' : 'rgba(255,255,255,0.7)',
+                          }}
+                        >
+                          {presetName}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Form Inputs */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    <div>
+                      <label style={{ fontSize: 11, color: 'var(--admin-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 4 }}>
+                        Nama Bank / Provider E-Wallet
+                      </label>
+                      <input
+                        type="text"
+                        className="admin-input"
+                        placeholder="Contoh: BANK BCA, BANK MANDIRI, DANA"
+                        value={bank.bankName || ''}
+                        onChange={(e) => updateBankAccount(index, 'bankName', e.target.value)}
+                        style={{ width: '100%' }}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: 11, color: 'var(--admin-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 4 }}>
+                        Nomor Rekening / No. Virtual Account / No. HP
+                      </label>
+                      <input
+                        type="text"
+                        className="admin-input"
+                        placeholder="Contoh: 7820491823 atau 08123456789"
+                        value={bank.accountNumber || ''}
+                        onChange={(e) => updateBankAccount(index, 'accountNumber', e.target.value)}
+                        style={{ width: '100%', fontFamily: 'monospace', letterSpacing: '0.05em' }}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: 11, color: 'var(--admin-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: 4 }}>
+                        Atas Nama Pemilik Rekening
+                      </label>
+                      <input
+                        type="text"
+                        className="admin-input"
+                        placeholder="Contoh: Muhammad Irsyad atau Adisty Vana Lestari"
+                        value={bank.accountHolder || ''}
+                        onChange={(e) => updateBankAccount(index, 'accountHolder', e.target.value)}
+                        style={{ width: '100%' }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {/* Add New Bank Button Bottom */}
+              <div style={{ textAlign: 'center', padding: '10px 0' }}>
+                <button
+                  type="button"
+                  onClick={addBankAccount}
+                  className="btn-admin-outline"
+                  style={{
+                    padding: '12px 28px',
+                    fontSize: 14,
+                    borderColor: 'var(--gold)',
+                    color: 'var(--gold)',
+                    background: 'rgba(241, 193, 147, 0.08)',
+                    width: '100%',
+                  }}
+                >
+                  ➕ Tambah Rekening / E-Wallet Baru
+                </button>
+              </div>
+            </div>
+
+            {/* Right Column: Sticky Live Preview */}
+            <div style={{ position: 'sticky', top: 20 }}>
+              <div
+                className="admin-card"
+                style={{
+                  background: 'rgba(10, 6, 4, 0.95)',
+                  border: '1px solid rgba(241, 193, 147, 0.3)',
+                  boxShadow: '0 16px 40px rgba(0,0,0,0.8)',
+                  padding: 24,
+                  borderRadius: 18,
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                  <span style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#F1C193', fontWeight: 600 }}>
+                    👁️ Live Preview Modal "Tanda Kasih Digital"
+                  </span>
+                  <span style={{ fontSize: 10, color: 'var(--admin-muted)', background: 'rgba(255,255,255,0.06)', padding: '2px 8px', borderRadius: 4 }}>
+                    Tampilan Tamu
+                  </span>
+                </div>
+
+                {/* Simulation of the modal */}
+                <div
+                  style={{
+                    background: 'rgba(20, 14, 10, 0.9)',
+                    border: '1px solid rgba(241, 193, 147, 0.25)',
+                    borderRadius: 16,
+                    padding: '24px 20px',
+                    textAlign: 'left',
+                  }}
+                >
+                  <h4
+                    style={{
+                      fontFamily: '"Playfair Display", serif',
+                      color: '#F1C193',
+                      fontSize: '1.25rem',
+                      margin: '0 0 8px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    Tanda Kasih Digital
+                  </h4>
+                  <p
+                    style={{
+                      fontSize: 12,
+                      color: 'rgba(255,255,255,0.5)',
+                      textAlign: 'center',
+                      marginBottom: 20,
+                    }}
+                  >
+                    Bagi keluarga &amp; sahabat yang ingin memberikan tanda kasih secara cashless:
+                  </p>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {getBankAccounts().map((bank, bIdx) => {
+                      const isCopied = previewCopiedIndex === bIdx
+                      return (
+                        <div
+                          key={bank.id || bIdx}
+                          style={{
+                            background: 'rgba(255,255,255,0.04)',
+                            border: '1px solid rgba(255,255,255,0.08)',
+                            borderRadius: 12,
+                            padding: '16px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            gap: 12,
+                          }}
+                        >
+                          <div style={{ minWidth: 0, flex: 1 }}>
+                            <span
+                              style={{
+                                fontSize: 11,
+                                color: '#F1C193',
+                                letterSpacing: '0.1em',
+                                fontWeight: 600,
+                                textTransform: 'uppercase',
+                                display: 'block',
+                              }}
+                            >
+                              {bank.bankName || 'NAMA BANK'}
+                            </span>
+                            <p
+                              style={{
+                                margin: '4px 0',
+                                fontSize: 16,
+                                letterSpacing: '0.1em',
+                                fontFamily: 'monospace',
+                                color: '#fff',
+                                wordBreak: 'break-all',
+                              }}
+                            >
+                              {bank.accountNumber || '•••• •••• ••••'}
+                            </p>
+                            {bank.accountHolder && (
+                              <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', display: 'block', wordBreak: 'break-word' }}>
+                                a.n {bank.accountHolder}
+                              </span>
+                            )}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handlePreviewCopy(bank.accountNumber, bIdx)}
+                            style={{
+                              background: isCopied ? '#2e7d32' : 'rgba(241,193,147,0.15)',
+                              color: isCopied ? '#fff' : '#F1C193',
+                              border: isCopied ? '1px solid #2e7d32' : '1px solid rgba(241,193,147,0.4)',
+                              padding: '8px 14px',
+                              borderRadius: 8,
+                              fontSize: 12,
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease',
+                              flexShrink: 0,
+                              fontWeight: 500,
+                            }}
+                          >
+                            {isCopied ? '✓ Tersalin' : 'Salin Rek'}
+                          </button>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                <div style={{ marginTop: 14, display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: 'var(--admin-muted)' }}>
+                  <span>💡</span>
+                  <span>
+                    Klik tombol <strong>"Salin Rek"</strong> di pratinjau atas untuk menguji fungsi copy clipboard secara langsung.
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 5: FOTO LATAR & NUANSA TEMA */}
       {activeTab === 'background' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
           {/* Card 1: 🌑 Pengaturan Kegelapan Background Layar Pembuka / Cover */}

@@ -1,12 +1,21 @@
 'use client'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import SectionBackground from './SectionBackground'
+import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
 
 export default function ClosingSection({ id, groomName, brideName, settings }) {
   const [giftOpen, setGiftOpen] = useState(false)
   const [copiedBank, setCopiedBank] = useState(null)
 
-  const closingBg = settings?.closingBgPhoto || 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop'
+  const effectiveSettings = settings || DEFAULT_SETTINGS
+  const closingBg = effectiveSettings?.closingBgPhoto || DEFAULT_SETTINGS.closingBgPhoto
+
+  const banks = useMemo(() => {
+    if (Array.isArray(effectiveSettings?.bankAccounts) && effectiveSettings.bankAccounts.length > 0) {
+      return effectiveSettings.bankAccounts
+    }
+    return DEFAULT_SETTINGS.bankAccounts || []
+  }, [effectiveSettings])
 
   const copyToClipboard = (text, bankKey) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -167,77 +176,76 @@ export default function ClosingSection({ id, groomName, brideName, settings }) {
               Bagi keluarga & sahabat yang ingin memberikan tanda kasih secara cashless:
             </p>
 
-            {/* Bank Card 1 */}
-            <div
-              style={{
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: 12,
-                padding: '16px',
-                marginBottom: 12,
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <div>
-                <span style={{ fontSize: 11, color: '#F1C193', letterSpacing: '0.1em', fontWeight: 600 }}>BANK BCA</span>
-                <p style={{ margin: '4px 0', fontSize: 16, letterSpacing: '0.1em', fontFamily: 'monospace', color: '#fff' }}>
-                  7820491823
-                </p>
-                <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>a.n Muhammad Irsyad</span>
-              </div>
-              <button
-                onClick={() => copyToClipboard('7820491823', 'bca')}
-                style={{
-                  background: copiedBank === 'bca' ? '#2e7d32' : 'rgba(241,193,147,0.15)',
-                  color: copiedBank === 'bca' ? '#fff' : '#F1C193',
-                  border: '1px solid rgba(241,193,147,0.4)',
-                  padding: '8px 14px',
-                  borderRadius: 8,
-                  fontSize: 12,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                }}
-              >
-                {copiedBank === 'bca' ? '✓ Tersalin' : 'Salin Rek'}
-              </button>
-            </div>
-
-            {/* Bank Card 2 */}
-            <div
-              style={{
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: 12,
-                padding: '16px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <div>
-                <span style={{ fontSize: 11, color: '#F1C193', letterSpacing: '0.1em', fontWeight: 600 }}>BANK MANDIRI</span>
-                <p style={{ margin: '4px 0', fontSize: 16, letterSpacing: '0.1em', fontFamily: 'monospace', color: '#fff' }}>
-                  1480029381920
-                </p>
-                <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>a.n Adisty Vana Lestari</span>
-              </div>
-              <button
-                onClick={() => copyToClipboard('1480029381920', 'mandiri')}
-                style={{
-                  background: copiedBank === 'mandiri' ? '#2e7d32' : 'rgba(241,193,147,0.15)',
-                  color: copiedBank === 'mandiri' ? '#fff' : '#F1C193',
-                  border: '1px solid rgba(241,193,147,0.4)',
-                  padding: '8px 14px',
-                  borderRadius: 8,
-                  fontSize: 12,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                }}
-              >
-                {copiedBank === 'mandiri' ? '✓ Tersalin' : 'Salin Rek'}
-              </button>
+            {/* Dynamic Bank Cards */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {banks.map((bank, bIdx) => {
+                const isCopied = copiedBank === bIdx
+                return (
+                  <div
+                    key={bank.id || bIdx}
+                    style={{
+                      background: 'rgba(255,255,255,0.04)',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                      borderRadius: 12,
+                      padding: '16px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      gap: 12,
+                    }}
+                  >
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <span
+                        style={{
+                          fontSize: 11,
+                          color: '#F1C193',
+                          letterSpacing: '0.1em',
+                          fontWeight: 600,
+                          textTransform: 'uppercase',
+                          display: 'block',
+                        }}
+                      >
+                        {bank.bankName || 'BANK'}
+                      </span>
+                      <p
+                        style={{
+                          margin: '4px 0',
+                          fontSize: 16,
+                          letterSpacing: '0.1em',
+                          fontFamily: 'monospace',
+                          color: '#fff',
+                          wordBreak: 'break-all',
+                        }}
+                      >
+                        {bank.accountNumber}
+                      </p>
+                      {bank.accountHolder && (
+                        <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', display: 'block', wordBreak: 'break-word' }}>
+                          a.n {bank.accountHolder}
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => copyToClipboard(bank.accountNumber, bIdx)}
+                      style={{
+                        background: isCopied ? '#2e7d32' : 'rgba(241,193,147,0.15)',
+                        color: isCopied ? '#fff' : '#F1C193',
+                        border: isCopied ? '1px solid #2e7d32' : '1px solid rgba(241,193,147,0.4)',
+                        padding: '8px 14px',
+                        borderRadius: 8,
+                        fontSize: 12,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        flexShrink: 0,
+                        fontWeight: 500,
+                      }}
+                    >
+                      {isCopied ? '✓ Tersalin' : 'Salin Rek'}
+                    </button>
+                  </div>
+                )
+              })}
             </div>
           </div>
         )}
