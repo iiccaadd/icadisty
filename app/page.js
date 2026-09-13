@@ -86,6 +86,31 @@ export default function InvitationPage() {
     // Trigger music auto-play on user interaction
     window.dispatchEvent(new Event('open_wedding_invitation'))
 
+    // Automatically update guest status to 'has_opened = true' in database
+    if (typeof window !== 'undefined') {
+      try {
+        const params = new URLSearchParams(window.location.search)
+        const toName = params.get('to') || params.get('nama') || guestName
+        const toSlug = params.get('u') || params.get('slug')
+        const toId = params.get('id') || params.get('guest_id')
+
+        if (toName || toSlug || toId) {
+          fetch('/api/guests', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: toId || undefined,
+              slug: toSlug || undefined,
+              name: toName ? decodeURIComponent(toName.replace(/\+/g, ' ')) : undefined,
+              has_opened: true,
+            }),
+          }).catch((err) => console.warn('Status open track notice:', err))
+        }
+      } catch (e) {
+        console.warn('Track opened error:', e)
+      }
+    }
+
     // Disable scroll snap momentarily during opening transition
     if (rootRef.current) {
       rootRef.current.classList.add('no-snap')

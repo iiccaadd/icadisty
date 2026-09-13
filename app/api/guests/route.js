@@ -92,29 +92,83 @@ export async function PATCH(request) {
   try {
     const supabase = getSupabase()
     const body = await request.json()
-    const { id, has_opened } = body
+    const { id, slug, name, has_opened } = body
 
-    if (!id) {
-      return NextResponse.json({ error: 'ID is required' }, { status: 400 })
+    if (!id && !slug && !name) {
+      return NextResponse.json({ error: 'ID, slug, or name is required' }, { status: 400 })
     }
 
-    const updateData = {}
-    if (typeof has_opened === 'boolean') {
-      updateData.has_opened = has_opened
-      if (has_opened) updateData.opened_at = new Date().toISOString()
+    const isOpened = typeof has_opened === 'boolean' ? has_opened : true
+    const updateData = {
+      has_opened: isOpened,
+      opened_at: isOpened ? new Date().toISOString() : null,
     }
 
-    const { data, error } = await supabase
-      .from('guests')
-      .update(updateData)
-      .eq('id', id)
-      .select()
+    let updatedData = null
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    // 1. Try by ID if available
+    if (id) {
+      const { data, error } = await supabase
+        .from('guests')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+      if (!error && data && data.length > 0) {
+        updatedData = data[0]
+      }
     }
 
-    return NextResponse.json({ success: true, data: data?.[0] })
+    // 2. Try by Slug if not updated yet
+    if (!updatedData && slug) {
+      const { data, error } = await supabase
+        .from('guests')
+        .update(updateData)
+        .eq('slug', slug)
+        .select()
+      if (!error && data && data.length > 0) {
+        updatedData = data[0]
+      }
+    }
+
+    // 3. Try by Name (Exact or ILIKE) if not updated yet
+    if (!updatedData && name) {
+      const cleanName = name.trim()
+      // Try exact case-insensitive match
+      const { data, error } = await supabase
+        .from('guests')
+        .update(updateData)
+        .ilike('name', cleanName)
+        .select()
+      if (!error && data && data.length > 0) {
+        updatedData = data[0]
+      }
+
+      // If still not matched, try searching loose name
+      if (!updatedData) {
+        const { data: found } = await supabase
+          .from('guests')
+          .select('id')
+          .ilike('name', `%${cleanName}%`)
+          .limit(1)
+
+        if (found && found.length > 0) {
+          const { data: d2 } = await supabase
+            .from('guests')
+            .update(updateData)
+            .eq('id', found[0].id)
+            .select()
+          if (d2 && d2.length > 0) {
+            updatedData = d2[0]
+          }
+        }
+      }
+    }
+
+    if (!updatedData) {
+      return NextResponse.json({ success: false, message: 'Tamu tidak ditemukan di database' })
+    }
+
+    return NextResponse.json({ success: true, data: updatedData })
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 })
   }

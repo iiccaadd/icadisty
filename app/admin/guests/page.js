@@ -108,7 +108,30 @@ export default function AdminGuestsPage() {
   }
 
   const getGuestUrl = (guest) => {
+    if (guest?.slug) {
+      return `${origin}/?to=${encodeURIComponent(guest.name)}&u=${encodeURIComponent(guest.slug)}`
+    }
     return `${origin}/?to=${encodeURIComponent(guest.name)}`
+  }
+
+  const toggleGuestStatus = async (guest) => {
+    const newStatus = !guest.has_opened
+    setGuests((prev) =>
+      prev.map((g) =>
+        g.id === guest.id
+          ? { ...g, has_opened: newStatus, opened_at: newStatus ? new Date().toISOString() : null }
+          : g
+      )
+    )
+    try {
+      await fetch('/api/guests', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: guest.id, has_opened: newStatus }),
+      })
+    } catch (e) {
+      console.error('Error toggling guest status:', e)
+    }
   }
 
   const copyGuestLink = (guest) => {
@@ -311,13 +334,39 @@ Salam hangat,
                         )}
                       </td>
                       <td>
-                        {guest.has_opened ? (
-                          <span className="badge badge-success">✓ Sudah Dibuka</span>
-                        ) : (
-                          <span className="badge" style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)' }}>
-                            Belum Dibuka
-                          </span>
-                        )}
+                        <button
+                          onClick={() => toggleGuestStatus(guest)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            padding: 0,
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                          }}
+                          title={
+                            guest.has_opened
+                              ? `Dibuka: ${guest.opened_at ? new Date(guest.opened_at).toLocaleString('id-ID') : 'Sudah'} (Klik untuk ubah ke Belum Dibuka)`
+                              : 'Klik untuk ubah ke Sudah Dibuka secara manual'
+                          }
+                        >
+                          {guest.has_opened ? (
+                            <span className="badge badge-success" style={{ cursor: 'pointer' }}>
+                              ✓ Sudah Dibuka
+                            </span>
+                          ) : (
+                            <span
+                              className="badge"
+                              style={{
+                                background: 'rgba(255,255,255,0.08)',
+                                color: 'rgba(255,255,255,0.6)',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              Belum Dibuka
+                            </span>
+                          )}
+                        </button>
                       </td>
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
