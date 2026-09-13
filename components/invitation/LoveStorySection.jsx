@@ -1,15 +1,19 @@
-import SectionBackground from './SectionBackground'
+'use client'
 
-const stories = [
-  { year: '2020', title: 'Pertama Bertemu', desc: 'Takdir mempertemukan kami di sebuah momen yang tak terlupakan.' },
-  { year: '2021', title: 'Jatuh Cinta', desc: 'Dari pertemanan yang hangat, tumbuh rasa yang lebih dalam.' },
-  { year: '2022', title: 'Menjalin Hubungan', desc: 'Kami memutuskan untuk bersama dan saling menjaga.' },
-  { year: '2023', title: 'Bersama Keluarga', desc: 'Memperkenalkan satu sama lain kepada keluarga tercinta.' },
-  { year: '2026', title: 'Menuju Pelaminan', desc: 'Dengan ridho Allah, kami siap melangkah ke jenjang yang lebih sakral.' },
-]
+import { useMemo } from 'react'
+import SectionBackground from './SectionBackground'
+import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
 
 export default function LoveStorySection({ id, settings }) {
-  const bgPhoto = settings?.loveStoryBgPhoto || 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=1600&auto=format&fit=crop'
+  const effectiveSettings = settings || DEFAULT_SETTINGS
+  const bgPhoto = effectiveSettings?.loveStoryBgPhoto || DEFAULT_SETTINGS.loveStoryBgPhoto
+
+  const stories = useMemo(() => {
+    if (Array.isArray(effectiveSettings?.loveStories) && effectiveSettings.loveStories.length > 0) {
+      return effectiveSettings.loveStories
+    }
+    return DEFAULT_SETTINGS.loveStories
+  }, [effectiveSettings])
 
   return (
     <section id={id} className="section" style={{ background: '#050200' }}>

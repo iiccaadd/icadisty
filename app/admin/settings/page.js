@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
 
 const PHOTO_PRESETS = {
   groom: [
@@ -276,6 +277,45 @@ export default function AdminSettingsPage() {
     setSettings((prev) => ({ ...prev, galleryMoments: list }))
   }
 
+  const getLoveStories = () => {
+    if (Array.isArray(settings?.loveStories) && settings.loveStories.length > 0) {
+      return settings.loveStories
+    }
+    return DEFAULT_SETTINGS.loveStories || [
+      { year: '2020', title: 'Pertama Bertemu', desc: 'Takdir mempertemukan kami di sebuah momen yang tak terlupakan.' },
+      { year: '2021', title: 'Jatuh Cinta', desc: 'Dari pertemanan yang hangat, tumbuh rasa yang lebih dalam.' },
+      { year: '2022', title: 'Menjalin Hubungan', desc: 'Kami memutuskan untuk bersama dan saling menjaga.' },
+      { year: '2023', title: 'Bersama Keluarga', desc: 'Memperkenalkan satu sama lain kepada keluarga tercinta.' },
+      { year: '2026', title: 'Menuju Pelaminan', desc: 'Dengan ridho Allah, kami siap melangkah ke jenjang yang lebih sakral.' },
+    ]
+  }
+
+  const updateLoveStory = (index, field, value) => {
+    const list = [...getLoveStories()]
+    list[index] = { ...list[index], [field]: value }
+    setSettings((prev) => ({ ...prev, loveStories: list }))
+  }
+
+  const addLoveStory = () => {
+    const list = [...getLoveStories()]
+    list.push({
+      year: String(new Date().getFullYear()),
+      title: 'Momen Indah',
+      desc: 'Tuliskan sekelumit cerita perjalanan cinta di sini...',
+    })
+    setSettings((prev) => ({ ...prev, loveStories: list }))
+  }
+
+  const removeLoveStory = (index) => {
+    const list = [...getLoveStories()]
+    if (list.length <= 1) {
+      alert('Minimal harus ada 1 momen perjalanan cinta!')
+      return
+    }
+    list.splice(index, 1)
+    setSettings((prev) => ({ ...prev, loveStories: list }))
+  }
+
   const [now, setNow] = useState(() => new Date())
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 1000)
@@ -366,6 +406,13 @@ export default function AdminSettingsPage() {
           style={{ background: activeTab === 'photos' ? 'rgba(241, 193, 147, 0.2)' : 'transparent' }}
         >
           💍 Data Mempelai &amp; Countdown
+        </button>
+        <button
+          onClick={() => setActiveTab('lovestory')}
+          className={`btn-admin-outline ${activeTab === 'lovestory' ? 'active' : ''}`}
+          style={{ background: activeTab === 'lovestory' ? 'rgba(241, 193, 147, 0.2)' : 'transparent' }}
+        >
+          📖 Cerita Cinta (Love Story)
         </button>
         <button
           onClick={() => setActiveTab('moments')}
@@ -699,7 +746,204 @@ export default function AdminSettingsPage() {
         </div>
       )}
 
-      {/* TAB 2: GALERI FOTO & MOMEN (STACK 3D) */}
+      {/* TAB 2: CERITA CINTA (LOVE STORY) */}
+      {activeTab === 'lovestory' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          {/* Top Panel: Description & Add Button */}
+          <div className="admin-card" style={{ background: 'rgba(22, 16, 12, 0.7)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+              <div>
+                <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', margin: '0 0 6px', fontSize: '1.25rem' }}>
+                  📖 Linimasa Perjalanan Cinta (Our Journey / Love Story)
+                </h3>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--admin-muted)' }}>
+                  Total <strong>{getLoveStories().length} Momen Cerita</strong> tersusun. Tamu dapat melihat dan menggeser linimasa horizontal ini di segmen <em>Love Story</em>.
+                </p>
+              </div>
+
+              <button
+                onClick={addLoveStory}
+                className="btn-admin"
+                style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 18px' }}
+              >
+                <span>➕</span>
+                <span>Tambah Momen Cerita</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Live Preview Box */}
+          <div className="admin-card" style={{ background: 'rgba(10, 6, 4, 0.85)', border: '1px solid rgba(241, 193, 147, 0.25)', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+              <span style={{ fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#F1C193', fontWeight: 600 }}>
+                👁️ Live Preview Segmen Love Story (Tampilan Tamu)
+              </span>
+              <span style={{ fontSize: 11, color: 'var(--admin-muted)' }}>
+                Geser linimasa horizontal ➔
+              </span>
+            </div>
+
+            <div style={{ padding: '20px 24px', background: 'radial-gradient(ellipse at center, rgba(35,22,14,0.7) 0%, rgba(5,2,0,0.95) 100%)', borderRadius: 12, border: '1px solid rgba(255,255,255,0.05)' }}>
+              <p style={{ fontFamily: '"Metropolis", sans-serif', fontSize: 10, letterSpacing: '0.25em', color: '#F1C193', textTransform: 'uppercase', margin: '0 0 2px' }}>
+                ✦ Our Journey ✦
+              </p>
+              <h2 style={{ fontFamily: '"Playfair Display", serif', fontSize: 26, color: '#F1C193', margin: '0 0 16px', fontWeight: 400 }}>
+                Love Story
+              </h2>
+
+              <div
+                style={{
+                  display: 'flex',
+                  overflowX: 'auto',
+                  gap: 16,
+                  paddingBottom: 12,
+                }}
+                className="no-scrollbar"
+              >
+                {getLoveStories().map((s, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      flexShrink: 0,
+                      width: 220,
+                      background: 'rgba(18, 12, 8, 0.75)',
+                      border: '1px solid rgba(241, 193, 147, 0.25)',
+                      borderRadius: 14,
+                      padding: '20px 16px',
+                      boxShadow: '0 10px 24px rgba(0,0,0,0.5)',
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontFamily: '"Playfair Display", serif',
+                        fontSize: 28,
+                        color: 'rgba(241,193,147,0.85)',
+                        display: 'block',
+                        marginBottom: 6,
+                      }}
+                    >
+                      {s.year || 'Tahun'}
+                    </span>
+                    <h4
+                      style={{
+                        fontFamily: '"Playfair Display", serif',
+                        fontSize: 16,
+                        color: '#fff',
+                        fontWeight: 400,
+                        margin: '0 0 6px',
+                      }}
+                    >
+                      {s.title || 'Judul Momen'}
+                    </h4>
+                    <p
+                      style={{
+                        fontFamily: '"Metropolis", sans-serif',
+                        fontSize: 12,
+                        fontWeight: 300,
+                        color: 'rgba(255,255,255,0.75)',
+                        lineHeight: 1.45,
+                        margin: 0,
+                      }}
+                    >
+                      {s.desc || 'Deskripsi cerita...'}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Editable Cards Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20 }}>
+            {getLoveStories().map((story, idx) => (
+              <div key={idx} className="admin-card" style={{ position: 'relative' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                  <span style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', fontSize: '1.1rem', fontWeight: 600 }}>
+                    Momen #{String(idx + 1).padStart(2, '0')}
+                  </span>
+                  <button
+                    onClick={() => removeLoveStory(idx)}
+                    className="btn-admin-outline"
+                    style={{
+                      padding: '4px 10px',
+                      fontSize: 11,
+                      borderColor: 'rgba(239, 83, 80, 0.4)',
+                      color: '#ef5350',
+                    }}
+                    title="Hapus momen ini"
+                  >
+                    🗑️ Hapus
+                  </button>
+                </div>
+
+                {/* Year Input */}
+                <div style={{ marginBottom: 12 }}>
+                  <label style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 4 }}>
+                    Tahun / Periode Waktu
+                  </label>
+                  <input
+                    type="text"
+                    value={story.year || ''}
+                    onChange={(e) => updateLoveStory(idx, 'year', e.target.value)}
+                    placeholder="Contoh: 2020 atau Nov 2020"
+                    className="admin-input"
+                    style={{ fontSize: 14, fontWeight: 600, color: '#F1C193' }}
+                  />
+                </div>
+
+                {/* Title Input */}
+                <div style={{ marginBottom: 12 }}>
+                  <label style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 4 }}>
+                    Judul Momen
+                  </label>
+                  <input
+                    type="text"
+                    value={story.title || ''}
+                    onChange={(e) => updateLoveStory(idx, 'title', e.target.value)}
+                    placeholder="Contoh: Pertama Bertemu"
+                    className="admin-input"
+                    style={{ fontSize: 13 }}
+                  />
+                </div>
+
+                {/* Description Textarea */}
+                <div>
+                  <label style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 4 }}>
+                    Deskripsi Kisah
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={story.desc || ''}
+                    onChange={(e) => updateLoveStory(idx, 'desc', e.target.value)}
+                    placeholder="Ceritakan momen ini..."
+                    className="admin-input"
+                    style={{ fontSize: 12, lineHeight: 1.5 }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Bottom Add Button */}
+          <div style={{ textAlign: 'center', padding: '16px 0 24px' }}>
+            <button
+              onClick={addLoveStory}
+              className="btn-admin-outline"
+              style={{
+                padding: '12px 28px',
+                fontSize: 14,
+                borderColor: 'var(--gold)',
+                color: 'var(--gold)',
+                background: 'rgba(241, 193, 147, 0.08)',
+              }}
+            >
+              ➕ Tambah Momen Cerita Baru
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 3: GALERI FOTO & MOMEN (STACK 3D) */}
       {activeTab === 'moments' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
           {/* Top Control Panel: Stack Behavior & Add Button */}
