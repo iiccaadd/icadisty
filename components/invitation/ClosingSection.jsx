@@ -1,6 +1,7 @@
 'use client'
 import { useState, useMemo } from 'react'
 import SectionBackground from './SectionBackground'
+import CoupleName from './CoupleName'
 import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
 
 export default function ClosingSection({ id, groomName, brideName, settings }) {
@@ -25,7 +26,7 @@ export default function ClosingSection({ id, groomName, brideName, settings }) {
   }
 
   return (
-    <section id={id} className="section" style={{ background: '#000', overflowY: 'auto' }}>
+    <section id={id} className="section" style={{ background: '#000' }}>
       {/* Full-bleed Photo Background */}
       <SectionBackground
         photo={closingBg}
@@ -34,249 +35,72 @@ export default function ClosingSection({ id, groomName, brideName, settings }) {
         position="center"
       />
 
-      <div
-        className="section-content"
-        style={{
-          justifyContent: 'center',
-          alignItems: 'center',
-          textAlign: 'center',
-          padding: '60px 24px',
-          maxWidth: 720,
-          margin: '0 auto',
-        }}
-      >
-        <p className="label-gold" style={{ letterSpacing: '0.3em', marginBottom: 16 }}>
-          ✦ DOA & UNGKAPAN TERIMA KASIH ✦
-        </p>
+      <div className="section-content">
+        <p className="label-gold">✦ Doa &amp; Ungkapan Terima Kasih ✦</p>
 
         {/* Ayat Suci / Blessing Quote */}
-        <div
-          style={{
-            borderLeft: '2px solid rgba(241,193,147,0.4)',
-            borderRight: '2px solid rgba(241,193,147,0.4)',
-            padding: '24px 20px',
-            margin: '0 0 32px',
-            background: 'rgba(255,255,255,0.02)',
-            backdropFilter: 'blur(8px)',
-            borderRadius: 16,
-          }}
-        >
-          <p
-            style={{
-              fontFamily: '"Cormorant Garamond", serif',
-              fontSize: 'clamp(1rem, 2.5vw, 1.25rem)',
-              fontStyle: 'italic',
-              lineHeight: 1.8,
-              color: 'rgba(255,255,255,0.85)',
-              margin: '0 0 14px',
-            }}
-          >
+        <div className="closing-quote">
+          <p className="quote-text">
             &ldquo;Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang.&rdquo;
           </p>
-          <span
-            style={{
-              fontFamily: '"Montserrat", sans-serif',
-              fontSize: 11,
-              letterSpacing: '0.2em',
-              textTransform: 'uppercase',
-              color: '#F1C193',
-            }}
-          >
-            QS. Ar-Rum : 21
-          </span>
+          <span className="label-gold">QS. Ar-Rum : 21</span>
         </div>
 
-        <p
-          style={{
-            fontFamily: '"Montserrat", sans-serif',
-            fontSize: '0.88rem',
-            lineHeight: 1.8,
-            color: 'rgba(255,255,255,0.88)',
-            maxWidth: 520,
-            margin: '0 auto 28px',
-          }}
-        >
+        <p className="body-text">
           Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu bagi lembaran baru perjalanan hidup kami.
         </p>
 
         {/* Digital Gift / Wedding Gift Button */}
-        <div style={{ marginBottom: 36 }}>
-          <button
-            onClick={() => setGiftOpen(!giftOpen)}
-            className="btn-gold"
-            style={{
-              padding: '14px 32px',
-              fontSize: '0.9rem',
-              fontWeight: 600,
-              letterSpacing: '0.12em',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 10,
-              cursor: 'pointer',
-              color: '#F1C193',
-              background: 'rgba(241, 193, 147, 0.15)',
-              border: '1px solid rgba(241, 193, 147, 0.5)',
-              borderRadius: 30,
-              boxShadow: '0 8px 25px rgba(0, 0, 0, 0.6), 0 0 16px rgba(241, 193, 147, 0.2)',
-              backdropFilter: 'blur(12px)',
-              WebkitBackdropFilter: 'blur(12px)',
-              transition: 'all 0.25s ease',
-            }}
-          >
-            <span style={{ fontSize: 18, lineHeight: 1 }}>🎁</span>
-            <span
-              style={{
-                color: '#F1C193',
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                textShadow: '0 1px 4px rgba(0, 0, 0, 0.8)',
-                letterSpacing: '0.1em',
-              }}
-            >
-              {giftOpen ? 'Tutup Amplop Digital' : 'Kirim Amplop Digital'}
-            </span>
-          </button>
-        </div>
+        <button onClick={() => setGiftOpen(!giftOpen)} className="btn-gold" aria-expanded={giftOpen}>
+          {giftOpen ? 'Tutup Amplop Digital' : 'Kirim Amplop Digital'}
+        </button>
 
         {/* Gift Card Accordion/Modal */}
         {giftOpen && (
-          <div
-            style={{
-              width: '100%',
-              maxWidth: 480,
-              background: 'rgba(20,15,12,0.85)',
-              backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(241,193,147,0.25)',
-              borderRadius: 16,
-              padding: '24px 20px',
-              marginBottom: 36,
-              textAlign: 'left',
-              animation: 'fadeInUp 0.5s ease forwards',
-            }}
-          >
-            <h4
-              style={{
-                fontFamily: '"Playfair Display", serif',
-                color: '#F1C193',
-                fontSize: '1.2rem',
-                margin: '0 0 8px',
-                textAlign: 'center',
-              }}
-            >
-              Tanda Kasih Digital
-            </h4>
-            <p
-              style={{
-                fontSize: 12,
-                color: 'rgba(255,255,255,0.5)',
-                textAlign: 'center',
-                marginBottom: 20,
-              }}
-            >
-              Bagi keluarga & sahabat yang ingin memberikan tanda kasih secara cashless:
+          <div className="gift-card">
+            <h4>Tanda Kasih Digital</h4>
+            <p className="caption-text">
+              Bagi keluarga &amp; sahabat yang ingin memberikan tanda kasih secara cashless:
             </p>
 
             {/* Dynamic Bank Cards */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {banks.map((bank, bIdx) => {
-                const isCopied = copiedBank === bIdx
-                return (
-                  <div
-                    key={bank.id || bIdx}
-                    style={{
-                      background: 'rgba(255,255,255,0.04)',
-                      border: '1px solid rgba(255,255,255,0.08)',
-                      borderRadius: 12,
-                      padding: '16px',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      gap: 12,
-                    }}
-                  >
-                    <div style={{ minWidth: 0, flex: 1 }}>
-                      <span
-                        style={{
-                          fontSize: 11,
-                          color: '#F1C193',
-                          letterSpacing: '0.1em',
-                          fontWeight: 600,
-                          textTransform: 'uppercase',
-                          display: 'block',
-                        }}
-                      >
-                        {bank.bankName || 'BANK'}
+            {banks.map((bank, bIdx) => {
+              const isCopied = copiedBank === bIdx
+              return (
+                <div key={bank.id || bIdx} className="bank-row">
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <span className="label-gold" style={{ display: 'block' }}>{bank.bankName || 'BANK'}</span>
+                    <p className="bank-number">{bank.accountNumber}</p>
+                    {bank.accountHolder && (
+                      <span className="caption-text" style={{ display: 'block', wordBreak: 'break-word' }}>
+                        a.n {bank.accountHolder}
                       </span>
-                      <p
-                        style={{
-                          margin: '4px 0',
-                          fontSize: 16,
-                          letterSpacing: '0.1em',
-                          fontFamily: 'monospace',
-                          color: '#fff',
-                          wordBreak: 'break-all',
-                        }}
-                      >
-                        {bank.accountNumber}
-                      </p>
-                      {bank.accountHolder && (
-                        <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', display: 'block', wordBreak: 'break-word' }}>
-                          a.n {bank.accountHolder}
-                        </span>
-                      )}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => copyToClipboard(bank.accountNumber, bIdx)}
-                      style={{
-                        background: isCopied ? '#2e7d32' : 'rgba(241,193,147,0.15)',
-                        color: isCopied ? '#fff' : '#F1C193',
-                        border: isCopied ? '1px solid #2e7d32' : '1px solid rgba(241,193,147,0.4)',
-                        padding: '8px 14px',
-                        borderRadius: 8,
-                        fontSize: 12,
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease',
-                        flexShrink: 0,
-                        fontWeight: 500,
-                      }}
-                    >
-                      {isCopied ? '✓ Tersalin' : 'Salin Rek'}
-                    </button>
+                    )}
                   </div>
-                )
-              })}
-            </div>
+                  <button
+                    type="button"
+                    onClick={() => copyToClipboard(bank.accountNumber, bIdx)}
+                    className={`bank-copy ${isCopied ? 'copied' : ''}`}
+                  >
+                    {isCopied ? '✓ Tersalin' : 'Salin Rek'}
+                  </button>
+                </div>
+              )
+            })}
           </div>
         )}
 
-        <h3
-          style={{
-            fontFamily: '"Playfair Display", serif',
-            fontSize: 'clamp(1.6rem, 4vw, 2.4rem)',
-            color: '#F1C193',
-            margin: '0 0 8px',
-            letterSpacing: '0.04em',
-          }}
-        >
-          {groomName} &amp; {brideName}
-        </h3>
-        <p
-          style={{
-            fontSize: 11,
-            letterSpacing: '0.25em',
-            textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.4)',
-            marginBottom: 30,
-          }}
-        >
+        <div style={{ marginTop: 32 }}>
+          <CoupleName fullName={groomName} as="h3" />
+          <span className="amp">&amp;</span>
+          <CoupleName fullName={brideName} as="h3" />
+        </div>
+        <p className="caption-text" style={{ letterSpacing: '0.25em', textTransform: 'uppercase' }}>
           #IrsyAdoreAdisty • 11.11.2026
         </p>
 
-        <footer style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 20, width: '100%' }}>
-          <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.15em' }}>
-            DIGITAL WEDDING INVITATION • MUARA TEWEH
-          </p>
+        <footer className="closing-footer">
+          DIGITAL WEDDING INVITATION • MUARA TEWEH
         </footer>
       </div>
     </section>

@@ -6,7 +6,7 @@ export default function EventSection({ id, settings }) {
   const bgPhoto = settings?.eventsBgPhoto || 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?q=80&w=1600&auto=format&fit=crop'
 
   return (
-    <section id={id} className="section" style={{ background: '#000', overflowY: 'auto' }}>
+    <section id={id} className="section" style={{ background: '#000' }}>
       {/* Full-bleed Photo Background */}
       <SectionBackground
         photo={bgPhoto}
@@ -16,49 +16,42 @@ export default function EventSection({ id, settings }) {
       />
 
       {/* Ghost Background Typography */}
-      <span
-        className="ghost-text"
-        style={{
-          top: '20%',
-          right: '-20px',
-          fontSize: 'clamp(4rem, 14vw, 8rem)',
-          opacity: 0.12,
-        }}
-      >
+      <span className="ghost-text" style={{ top: '20%' }}>
         LOCATION
       </span>
 
-      <div className="section-content" style={{
-        justifyContent: 'flex-end',
-        padding: '0 28px 60px',
-        gap: 16,
-      }}>
-        <p className="label-gold" style={{ fontSize: 11, letterSpacing: '0.25em' }}>✦ Save The Date ✦</p>
-        <h2 className="section-heading" style={{ marginBottom: 8, textShadow: '0 2px 16px rgba(0,0,0,0.8)' }}>Waktu &amp; Lokasi</h2>
+      <div className="section-content">
+        <div>
+          <p className="label-gold">✦ Save The Date ✦</p>
+          <h2 className="section-heading" style={{ marginTop: 8 }}>Waktu &amp; Lokasi</h2>
+        </div>
 
-        {getEvents(settings).map((e) => (
-          <div className="event-card" key={e.id}>
-            {e.type && <span className="event-type">{e.type}</span>}
-            {e.title && <h3 className="event-name">{e.title}</h3>}
-            <p className="event-detail">
-              {e.date && <>📅 {e.date}<br /></>}
-              {e.time && <>⏰ {e.time}<br /></>}
-              {e.venue && <>📍 {e.venue}<br /></>}
-              {e.address && <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>{e.address}</span>}
-            </p>
-            {e.maps && (
-              <a
-                href={e.maps}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-gold-outline"
-                style={{ marginTop: 14, fontSize: 12, padding: '8px 18px', display: 'inline-block', textDecoration: 'none' }}
-              >
-                📌 Petunjuk Lokasi (Google Maps)
-              </a>
-            )}
-          </div>
-        ))}
+        {getEvents(settings).map((e) => {
+          // "Akad Nikah" label above an "Akad Nikah" title says the same thing twice
+          const showType = e.type && !(e.title || '').toLowerCase().includes(e.type.toLowerCase())
+          // Date and time each stay whole, so a narrow card wraps between them, not inside "08.00 – 10.00"
+          const when = [e.date, e.time].filter(Boolean)
+          return (
+            <div className="event-card" key={e.id}>
+              {showType && <span className="event-type">{e.type}</span>}
+              {e.title && <h3 className="event-name">{e.title}</h3>}
+              {when.length > 0 && (
+                <p className="event-detail">
+                  {when.map((part, i) => (
+                    <span key={i} style={{ whiteSpace: 'nowrap' }}>{i > 0 && ' · '}{part}</span>
+                  ))}
+                </p>
+              )}
+              {e.venue && <p className="event-detail">{e.venue}</p>}
+              {e.address && <p className="caption-text">{e.address}</p>}
+              {e.maps && (
+                <a href={e.maps} target="_blank" rel="noopener noreferrer" className="btn btn-gold-outline">
+                  Petunjuk Lokasi (Google Maps)
+                </a>
+              )}
+            </div>
+          )
+        })}
       </div>
     </section>
   )

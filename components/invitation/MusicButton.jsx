@@ -49,28 +49,14 @@ export default function MusicButton({ musicUrl }) {
         onClick={toggle}
         title={playing ? 'Matikan musik' : 'Putar musik'}
         aria-label={playing ? 'Matikan musik latar' : 'Putar musik latar'}
-        style={{
-          position: 'fixed',
-          bottom: 24,
-          right: 24,
-          zIndex: 99,
-          width: 44,
-          height: 44,
-          borderRadius: '50%',
-          background: 'rgba(20, 15, 10, 0.75)',
-          backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(241, 193, 147, 0.4)',
-          color: '#F1C193',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
-          animation: playing ? 'spin 8s linear infinite' : 'none',
-          transition: 'transform 0.2s',
-        }}
+        aria-pressed={playing}
       >
-        <span style={{ fontSize: 18 }}>{playing ? '💿' : '🎵'}</span>
+        {/* Feather "music" icon */}
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M9 18V5l12-2v13" />
+          <circle cx="6" cy="18" r="3" />
+          <circle cx="18" cy="16" r="3" />
+        </svg>
       </button>
     </>
   )

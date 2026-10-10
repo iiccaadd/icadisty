@@ -45,30 +45,14 @@ export default function CountdownSection({ id, settings }) {
       />
 
       {/* Ghost text */}
-      <span
-        className="ghost-text"
-        style={{
-          top: '25%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          fontSize: 'clamp(3rem, 10vw, 6rem)',
-          opacity: 0.1,
-          letterSpacing: '0.15em',
-        }}
-      >
+      <span className="ghost-text" style={{ top: '25%' }}>
         COUNTDOWN
       </span>
 
-      <div className="section-content" style={{
-        justifyContent: 'center',
-        alignItems: 'center',
-        textAlign: 'center',
-        padding: '0 28px',
-        gap: 32,
-      }}>
+      <div className="section-content" style={{ gap: 32 }}>
         <div>
-          <p className="label-gold" style={{ fontSize: 11, letterSpacing: '0.25em' }}>✦ Menuju Hari Bahagia ✦</p>
-          <h2 className="section-heading" style={{ marginTop: 8, textShadow: '0 2px 16px rgba(0,0,0,0.8)' }}>Countdown</h2>
+          <p className="label-gold">✦ Menuju Hari Bahagia ✦</p>
+          <h2 className="section-heading" style={{ marginTop: 8 }}>Hitung Mundur</h2>
         </div>
 
         <div className="countdown-wrapper">
@@ -84,21 +68,15 @@ export default function CountdownSection({ id, settings }) {
                 <span className="countdown-label">{item.label}</span>
               </div>
               {i < 3 && (
-                <span className="countdown-sep" style={{ margin: '0 4px', marginTop: 0 }}>:</span>
+                <span className="countdown-sep" style={{ margin: '0 4px' }}>:</span>
               )}
             </div>
           ))}
         </div>
 
-        <p style={{
-          fontFamily: '"Cormorant", serif',
-          fontStyle: 'italic',
-          fontSize: 16,
-          color: 'rgba(255,255,255,0.5)',
-          maxWidth: 280,
-        }}>
-          "Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu
-          isteri-isteri dari jenismu sendiri..." — QS. Ar-Rum: 21
+        <p className="quote-text" style={{ maxWidth: 320 }}>
+          &ldquo;Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu
+          isteri-isteri dari jenismu sendiri...&rdquo; — QS. Ar-Rum: 21
         </p>
       </div>
     </section>
