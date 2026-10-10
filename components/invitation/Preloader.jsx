@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
-import BlurText from './BlurText'
+import CoupleName from './CoupleName'
 import SpecularButton from './SpecularButton'
 import InfiniteSpiral from './InfiniteSpiral'
 
 import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
+import { formatWeddingDate } from '@/lib/format'
 
 export default function Preloader({
   groomName,
@@ -172,86 +173,30 @@ export default function Preloader({
         style={{
           position: 'relative',
           zIndex: 10,
-          maxWidth: 900,
+          maxWidth: 480,
           width: '100%',
           margin: '0 auto',
-          padding: '0 20px',
+          padding: '0 24px',
         }}
       >
         {/* THE WEDDING OF */}
         <p
-          className="preloader-label"
-          style={{
-            color: '#F1C193',
-            fontFamily: "'Metropolis', sans-serif",
-            fontSize: 12,
-            letterSpacing: 4,
-            fontWeight: 400,
-            textTransform: 'uppercase',
-            margin: '0 auto 24px',
-            textAlign: 'center',
-            opacity: 0,
-            animation: 'fadeIn 0.7s ease forwards 0.2s',
-          }}
+          className="label-gold"
+          style={{ margin: '0 auto 24px', opacity: 0, animation: 'fadeIn 0.7s ease forwards 0.2s' }}
         >
-          THE WEDDING OF
+          ✦ The Wedding of ✦
         </p>
 
-        {/* Groom Name */}
-        <BlurText
-          text={groomName}
-          delay={150}
-          startDelay={0.35}
-          animateBy="words"
-          direction="top"
+        <CoupleName
+          fullName={groomName}
           as="h1"
-          className="preloader-title-name"
-          style={{
-            fontFamily: '"Playfair Display", serif',
-            fontWeight: 400,
-            color: '#ffffff',
-            margin: '0 auto 6px',
-            lineHeight: 1.25,
-            justifyContent: 'center',
-          }}
+          blur={{ delay: 150, startDelay: 0.35, animateBy: 'words', direction: 'top' }}
         />
-
-        {/* Ampersand */}
-        <BlurText
-          text="&"
-          delay={150}
-          startDelay={0.75}
-          animateBy="words"
-          direction="top"
-          className="preloader-ampersand-blur"
-          style={{
-            fontFamily: '"Playfair Display", serif',
-            fontSize: 34,
-            color: 'rgba(255, 255, 255, 0.45)',
-            margin: '4px auto 8px',
-            lineHeight: 1,
-            justifyContent: 'center',
-            fontStyle: 'italic',
-          }}
-        />
-
-        {/* Bride Name */}
-        <BlurText
-          text={brideName}
-          delay={150}
-          startDelay={0.95}
-          animateBy="words"
-          direction="top"
+        <span className="amp">&amp;</span>
+        <CoupleName
+          fullName={brideName}
           as="h1"
-          className="preloader-title-name"
-          style={{
-            fontFamily: '"Playfair Display", serif',
-            fontWeight: 400,
-            color: '#ffffff',
-            margin: '0 auto 16px',
-            lineHeight: 1.25,
-            justifyContent: 'center',
-          }}
+          blur={{ delay: 150, startDelay: 0.95, animateBy: 'words', direction: 'top' }}
         />
 
         {/* If guest was deleted or invalid: show locked notification and forbid opening */}
@@ -272,25 +217,22 @@ export default function Preloader({
               animation: 'fadeIn 0.6s ease forwards',
             }}
           >
-            <span style={{ fontSize: 34, display: 'block', marginBottom: 10 }}>🔒</span>
             <h3
               style={{
-                fontFamily: '"Playfair Display", serif',
-                fontSize: 19,
+                fontFamily: 'var(--font-display)',
+                fontSize: 'var(--fs-h3)',
                 color: '#ef5350',
                 margin: '0 0 8px',
-                fontWeight: 600,
-                letterSpacing: '0.02em',
               }}
             >
               Undangan Tidak Aktif
             </h3>
             <p
               style={{
-                fontFamily: '"Montserrat", sans-serif',
-                fontSize: 13,
-                color: 'rgba(255,255,255,0.88)',
-                lineHeight: 1.65,
+                fontFamily: 'var(--font-body)',
+                fontSize: 'var(--fs-body)',
+                color: 'var(--text-body)',
+                lineHeight: 1.6,
                 margin: '0 0 10px',
               }}
             >
@@ -299,10 +241,9 @@ export default function Preloader({
             </p>
             <p
               style={{
-                fontSize: 11,
-                color: 'rgba(255,255,255,0.45)',
+                fontSize: 'var(--fs-caption)',
+                color: 'var(--text-muted)',
                 margin: 0,
-                fontStyle: 'italic',
               }}
             >
               Silakan hubungi pihak mempelai atau keluarga jika terdapat kekeliruan.
@@ -315,16 +256,17 @@ export default function Preloader({
               <div style={{ marginTop: 32, textAlign: 'center' }}>
                 <p
                   style={{
-                    color: 'rgba(255,255,255,0.6)',
-                    fontFamily: '"Cormorant", serif',
+                    color: 'var(--text-muted)',
+                    fontFamily: 'var(--font-display)',
                     fontStyle: 'italic',
-                    fontSize: 14,
+                    fontSize: 'var(--fs-body)',
+                    lineHeight: 1.6,
                     opacity: 0,
                     animation: 'fadeIn 0.6s ease forwards 1.5s',
                   }}
                 >
                   Kepada Yth.<br />
-                  <strong style={{ color: '#F1C193', fontSize: 18, fontStyle: 'normal' }}>
+                  <strong style={{ color: '#F1C193', fontSize: 'var(--fs-h3)', fontStyle: 'normal', fontWeight: 400 }}>
                     {guestName}
                   </strong>
                 </p>
@@ -357,29 +299,16 @@ export default function Preloader({
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: 10,
-                    fontWeight: 600,
-                    fontSize: 15,
-                    letterSpacing: '0.03em',
+                    fontWeight: 500,
+                    fontSize: 'var(--fs-button)',
+                    letterSpacing: '0.05em',
                     textShadow: '0 1px 4px rgba(0, 0, 0, 0.6)',
                   }}
                 >
-                  <span style={{ fontSize: 17, lineHeight: 1 }}>💌</span>
                   <span>Buka Undangan</span>
                 </span>
               </SpecularButton>
-              <p
-                style={{
-                  color: 'rgba(255,255,255,0.4)',
-                  fontFamily: '"Cormorant", serif',
-                  fontStyle: 'italic',
-                  fontSize: 11,
-                  textAlign: 'center',
-                  marginTop: 12,
-                }}
-              >
-                Wednesday, 11 November 2026
-              </p>
+              <p className="preloader-date">{formatWeddingDate(effectiveSettings?.weddingDate)}</p>
             </div>
           </>
         )}

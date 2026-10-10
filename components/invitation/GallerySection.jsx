@@ -19,8 +19,8 @@ export default function GallerySection({ id, settings }) {
 
     return rawMoments.map((m, i) => ({
       id: m.id || i + 1,
-      date: m.date || 'Moment',
-      title: m.title || `Kenangan 0${i + 1}`,
+      date: m.date || '',
+      title: m.title || '',
       desc: m.desc || '',
       src: m.photo || m.src || DEFAULT_SETTINGS.galleryMoments[0].photo,
       alt: m.title || `Irsyad & Adisty - Moment ${i + 1}`,
@@ -57,7 +57,7 @@ export default function GallerySection({ id, settings }) {
         <div className="gallery-stack-overlay" />
         {item.title && (
           <div className="gallery-stack-badge">
-            ✦ {item.title.toUpperCase()} ✦
+            ✦ {item.title} ✦
           </div>
         )}
       </div>
@@ -65,17 +65,7 @@ export default function GallerySection({ id, settings }) {
   }, [moments])
 
   return (
-    <section
-      id={id}
-      className="section"
-      style={{
-        background: '#040201',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        overflow: 'hidden',
-      }}
-    >
+    <section id={id} className="section" style={{ background: '#040201' }}>
       {/* Full-bleed Photo Background */}
       <SectionBackground
         photo={bgPhoto}
@@ -85,73 +75,41 @@ export default function GallerySection({ id, settings }) {
       />
 
       {/* Ghost Background Typography */}
-      <span
-        className="ghost-text"
-        style={{
-          top: '18%',
-          right: '-20px',
-          fontSize: 'clamp(4rem, 14vw, 8rem)',
-          opacity: 0.15,
-        }}
-      >
+      <span className="ghost-text" style={{ top: '18%' }}>
         MOMENTS
       </span>
 
-      <div className="section-content" style={{ justifyContent: 'center', padding: '40px 0' }}>
-        {/* Section Tag */}
-        <div style={{ padding: '0 28px', marginBottom: 12, maxWidth: 1080, margin: '0 auto 16px', width: '100%' }}>
-          <p className="label-gold" style={{ fontSize: 11, letterSpacing: '0.25em', margin: 0 }}>
-            ✦ OUR STORY &amp; MOMENTS ✦
-          </p>
-        </div>
+      <div className="section-content">
+        <p className="label-gold">✦ Our Story &amp; Moments ✦</p>
 
-        {/* 3D Perspective Showcase Container */}
+        {/* Stack on top, caption and controls below */}
         <div className="slice-showcase-container">
-          {/* Left Column: Kinetic Editorial Info */}
           <div className="slice-info-col">
-            <span className="slice-meta">
-              <span>Date</span>
-              <span>{activeItem.date}</span>
-            </span>
+            {/* Caption lines only render when the admin filled them in */}
+            {activeItem.date && <span className="slice-meta">{activeItem.date}</span>}
+            {activeItem.title && (
+              <div className="slice-title-mask">
+                <h3 className="slice-title" key={activeItem.id || currentIdx}>
+                  {activeItem.title}
+                </h3>
+              </div>
+            )}
+            {activeItem.desc && <p className="slice-desc">{activeItem.desc}</p>}
 
-            {/* Kinetic Title */}
-            <div className="slice-title-mask">
-              <h3 className="slice-title enter-down" key={activeItem.id || currentIdx}>
-                {activeItem.title}
-              </h3>
-            </div>
-
-            <p className="slice-desc">{activeItem.desc}</p>
-
-            <div className="slice-divider" />
-
-            {/* Action & Controls */}
             <div className="slice-action-bar">
-              <button
-                className="slice-more-btn"
-                onClick={handleNext}
-                aria-label="Lihat foto berikutnya"
-              >
-                <span>MORE</span>
-                <span>→</span>
+              <button className="slice-more-btn" onClick={handleNext} aria-label="Lihat foto berikutnya">
+                <span>Berikutnya</span>
+                <span aria-hidden="true">→</span>
               </button>
 
               <div className="slice-nav-controls">
-                <button
-                  className="slice-nav-btn"
-                  onClick={handlePrev}
-                  aria-label="Previous photo"
-                >
+                <button className="slice-nav-btn" onClick={handlePrev} aria-label="Foto sebelumnya">
                   ‹
                 </button>
                 <span className="slice-counter">
                   {String(currentIdx + 1).padStart(2, '0')} / {String(moments.length).padStart(2, '0')}
                 </span>
-                <button
-                  className="slice-nav-btn"
-                  onClick={handleNext}
-                  aria-label="Next photo"
-                >
+                <button className="slice-nav-btn" onClick={handleNext} aria-label="Foto berikutnya">
                   ›
                 </button>
               </div>

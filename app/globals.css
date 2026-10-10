@@ -3,7 +3,7 @@
    icadisty Wedding Invitation
    ═══════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=Corinthia:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
 
 /* ─── CSS Custom Properties ─── */
 :root {
@@ -26,8 +26,22 @@
   --warm-brown-3: #554131;
   --font-display: 'Playfair Display', serif;
   --font-body: 'Metropolis', sans-serif;
-  --font-script: 'Corinthia', cursive;
-  --font-italic: 'Cormorant', serif;
+
+  /* Type scale: the invitation uses only these sizes */
+  --fs-hero: clamp(28px, 8vw, 36px);   /* couple names */
+  --fs-countdown: 32px;                 /* countdown digits */
+  --fs-h2: 28px;                        /* section headings, ampersand */
+  --fs-h3: 20px;                        /* card names, timeline & event titles */
+  --fs-body: 15px;                      /* paragraphs */
+  --fs-button: 14px;                    /* buttons, cover date */
+  --fs-caption: 12px;                   /* captions, addresses, degrees, footer */
+  --fs-eyebrow: 11px;                   /* small gold labels */
+
+  --lh-tight: 1.15;
+  --lh-body: 1.7;
+  --tracking-eyebrow: 0.3em;
+  --text-body: rgba(255, 255, 255, 0.85);
+  --text-muted: rgba(255, 255, 255, 0.7);
 }
 
 /* ─── Metropolis Font Face ─── */
@@ -93,8 +107,6 @@ ul, ol { list-style: none; }
 .text-muted { color: var(--white-60); }
 .font-display { font-family: var(--font-display); }
 .font-body { font-family: var(--font-body); }
-.font-script { font-family: var(--font-script); }
-.font-italic { font-family: var(--font-italic); font-style: italic; }
 
 /* ─── Glassmorphism Utilities ─── */
 .glass {
@@ -121,9 +133,9 @@ ul, ol { list-style: none; }
   padding: 12px 24px 10px;
   border-radius: 20px;
   font-family: var(--font-body);
-  font-size: 14px;
-  font-weight: 400;
-  letter-spacing: 0.8px;
+  font-size: var(--fs-button);
+  font-weight: 500;
+  letter-spacing: 0.05em;
   cursor: pointer;
   transition: all 0.2s ease;
   backdrop-filter: blur(2px);

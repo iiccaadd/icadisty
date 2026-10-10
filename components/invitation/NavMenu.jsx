@@ -2,15 +2,15 @@
 import { useState } from 'react'
 
 const menuItems = [
-  { num: '01', label: 'COVER', href: '#opening' },
-  { num: '02', label: 'THE GROOM', href: '#groom' },
-  { num: '03', label: 'THE BRIDE', href: '#bride' },
-  { num: '04', label: 'OUR STORY', href: '#lovestory' },
-  { num: '05', label: 'SPECIAL EVENTS', href: '#events' },
-  { num: '06', label: 'COUNTDOWN', href: '#countdown' },
-  { num: '07', label: 'MOMENTS', href: '#gallery' },
-  { num: '08', label: 'RSVP & WISHES', href: '#rsvp' },
-  { num: '09', label: 'WEDDING GIFT', href: '#closing' },
+  { num: '01', label: 'Sampul', href: '#opening' },
+  { num: '02', label: 'Mempelai Pria', href: '#groom' },
+  { num: '03', label: 'Mempelai Wanita', href: '#bride' },
+  { num: '04', label: 'Kisah Cinta', href: '#lovestory' },
+  { num: '05', label: 'Waktu & Lokasi', href: '#events' },
+  { num: '06', label: 'Hitung Mundur', href: '#countdown' },
+  { num: '07', label: 'Momen', href: '#gallery' },
+  { num: '08', label: 'RSVP & Ucapan', href: '#rsvp' },
+  { num: '09', label: 'Amplop Digital', href: '#closing' },
 ]
 
 export default function NavMenu() {
@@ -29,7 +29,7 @@ export default function NavMenu() {
       <button
         className="nav-menu-toggle"
         onClick={() => setOpen(!open)}
-        aria-label={open ? 'Close menu' : 'Open menu'}
+        aria-label={open ? 'Tutup menu' : 'Buka menu'}
       >
         <span />
         <span />
@@ -50,7 +50,7 @@ export default function NavMenu() {
 
       {/* Caption */}
       <p className="nav-menu-caption">
-        Select one of the menus above to navigate.
+        Pilih menu di atas untuk menuju bagian undangan.
       </p>
     </nav>
   )

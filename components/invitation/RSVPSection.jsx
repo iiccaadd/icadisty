@@ -54,7 +54,7 @@ export default function RSVPSection({ id, guestName, settings }) {
   }
 
   return (
-    <section id={id} className="section" style={{ background: '#000', overflowY: 'auto' }}>
+    <section id={id} className="section" style={{ background: '#000' }}>
       {/* Full-bleed Photo Background */}
       <SectionBackground
         photo={bgPhoto}
@@ -64,50 +64,28 @@ export default function RSVPSection({ id, guestName, settings }) {
       />
 
       {/* Ghost Background Typography */}
-      <span
-        className="ghost-text"
-        style={{
-          top: '18%',
-          right: '-15px',
-          fontSize: 'clamp(4rem, 14vw, 8rem)',
-          opacity: 0.12,
-        }}
-      >
+      <span className="ghost-text" style={{ top: '18%' }}>
         RSVP
       </span>
 
-      <div
-        className="section-content"
-        style={{
-          justifyContent: 'flex-end',
-          padding: '0 28px 40px',
-          gap: 0,
-          overflowY: 'auto',
-          maxHeight: '100%',
-        }}
-      >
-        <p className="label-gold" style={{ fontSize: 11, letterSpacing: '0.25em', marginBottom: 4 }}>✦ Konfirmasi Kehadiran ✦</p>
-        <h2 className="section-heading" style={{ marginBottom: 20, textShadow: '0 2px 16px rgba(0,0,0,0.8)' }}>RSVP & Wishes</h2>
+      <div className="section-content">
+        <div>
+          <p className="label-gold">✦ Konfirmasi Kehadiran ✦</p>
+          <h2 className="section-heading" style={{ marginTop: 8 }}>RSVP &amp; Ucapan</h2>
+        </div>
 
         {status === 'success' ? (
           <div style={{
+            width: '100%',
             background: 'rgba(241,193,147,0.1)',
             border: '1px solid rgba(241,193,147,0.3)',
             borderRadius: 12,
-            padding: 20,
-            textAlign: 'center',
-            marginBottom: 20,
+            padding: 24,
           }}>
-            <p style={{ fontSize: 28 }}>🎊</p>
-            <p style={{
-              fontFamily: '"Playfair Display", serif',
-              fontSize: 20,
-              color: '#F1C193',
-              marginBottom: 4,
-            }}>Terima Kasih!</p>
-            <p className="body-text" style={{ fontSize: 14 }}>
-              Konfirmasi kehadiran Anda sudah kami terima.
-            </p>
+            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--fs-h3)', color: '#F1C193', marginBottom: 8 }}>
+              Terima Kasih!
+            </h3>
+            <p className="body-text">Konfirmasi kehadiran Anda sudah kami terima.</p>
           </div>
         ) : (
           <form className="rsvp-form" onSubmit={handleSubmit}>
@@ -172,7 +150,7 @@ export default function RSVPSection({ id, guestName, settings }) {
             )}
 
             <div>
-              <label className="rsvp-label">Ucapan & Doa 💌</label>
+              <label className="rsvp-label">Ucapan & Doa</label>
               <textarea
                 className="rsvp-textarea"
                 placeholder="Tulis ucapan untuk pengantin..."
@@ -186,17 +164,15 @@ export default function RSVPSection({ id, guestName, settings }) {
               className="rsvp-submit"
               disabled={status === 'loading'}
             >
-              {status === 'loading' ? '⏳ Mengirim...' : '💌 Kirim Konfirmasi'}
+              {status === 'loading' ? 'Mengirim...' : 'Kirim Konfirmasi'}
             </button>
           </form>
         )}
 
         {/* Wishes List */}
         {wishes.length > 0 && (
-          <div style={{ marginTop: 24 }}>
-            <p className="label-gold" style={{ fontSize: 12, marginBottom: 12 }}>
-              💬 Ucapan Tamu
-            </p>
+          <div style={{ width: '100%', marginTop: 8 }}>
+            <p className="label-gold" style={{ marginBottom: 16 }}>Ucapan Tamu</p>
             <div className="wishes-list">
               {wishes.map((w, i) => (
                 <div key={i} className="wish-item">

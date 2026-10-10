@@ -1,16 +1,15 @@
 import './globals.css'
 import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
 import { fetchSupabaseSettings } from '@/lib/supabaseServer'
+import { splitName } from '@/lib/format'
 
 // Re-read names/photo from settings at most once a minute (WhatsApp caches previews anyway)
 export const revalidate = 60
 
-// "Muhammad Irsyad, S.T." -> "Muhammad Irsyad": academic titles make the share title too long
-const plainName = (name) => (name || '').split(',')[0].trim()
-
 export async function generateMetadata() {
   const settings = { ...DEFAULT_SETTINGS, ...(await fetchSupabaseSettings().catch(() => null)) }
-  const title = `The Wedding of ${plainName(settings.groomName)} & ${plainName(settings.brideName)}`
+  // Degrees are dropped: they make the share title too long
+  const title = `The Wedding of ${splitName(settings.groomName).name} & ${splitName(settings.brideName).name}`
   const description = 'Dengan penuh sukacita kami mengundang Anda untuk hadir dalam acara pernikahan kami.'
   const images = settings.heroBgPhoto ? [settings.heroBgPhoto] : []
 

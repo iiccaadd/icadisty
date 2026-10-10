@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react'
 import SectionBackground from './SectionBackground'
-import BlurText from './BlurText'
+import CoupleName from './CoupleName'
 
 export default function BrideSection({ id = 'bride', brideName, settings }) {
   const sectionRef = useRef(null)
@@ -73,11 +73,8 @@ export default function BrideSection({ id = 'bride', brideName, settings }) {
     <section
       id={id}
       ref={sectionRef}
-      className="section"
-      style={{
-        background: '#040201',
-        overflowY: 'auto',
-      }}
+      className="section section-compact"
+      style={{ background: '#040201' }}
     >
       {/* Full-bleed Photo Background */}
       <SectionBackground
@@ -88,62 +85,22 @@ export default function BrideSection({ id = 'bride', brideName, settings }) {
       />
 
       {/* Ghost background text */}
-      <span
-        className="ghost-text"
-        style={{
-          top: '18%',
-          right: '-15px',
-          fontSize: 'clamp(4rem, 15vw, 8.5rem)',
-          opacity: 0.12,
-        }}
-      >
+      <span className="ghost-text" style={{ top: '18%' }}>
         BRIDE
       </span>
 
-      <div
-        className="section-content"
-        style={{
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: '40px 24px',
-          maxWidth: 960,
-          margin: '0 auto',
-          width: '100%',
-        }}
-      >
-        {/* Reversed layout on desktop (Card Left, Text Right) for alternating rhythm */}
-        <div className="single-profile-container reverse">
+      <div className="section-content">
+        <div className="single-profile-container">
           {/* Info Side */}
           <div className="single-profile-info">
-            <p className="label-gold" style={{ fontSize: 11, letterSpacing: 3, marginBottom: 8 }}>
-              ✦ THE BRIDE ✦
-            </p>
-            <BlurText
-              text={displayName}
-              delay={150}
-              animateBy="words"
-              direction="top"
+            <p className="label-gold">✦ THE BRIDE ✦</p>
+            <CoupleName
+              fullName={displayName}
               as="h2"
-              className="name-display"
-              style={{ margin: '0 0 12px', textShadow: '0 2px 20px rgba(0,0,0,0.8)' }}
+              blur={{ delay: 150, animateBy: 'words', direction: 'top' }}
             />
-            <div
-              style={{
-                width: 60,
-                height: 2,
-                background: 'linear-gradient(90deg, var(--gold), transparent)',
-                marginBottom: 16,
-              }}
-            />
-            <p
-              className="body-text"
-              style={{
-                fontSize: 14,
-                color: 'rgba(255,255,255,0.75)',
-                lineHeight: 1.8,
-                maxWidth: 420,
-              }}
-            >
+            <div className="profile-divider" />
+            <p className="body-text" style={{ maxWidth: 420 }}>
               {parentText}
             </p>
           </div>
