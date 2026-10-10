@@ -14,7 +14,7 @@ export default function HeroSection({ id, groomName, brideName, settings }) {
         photo={heroBg}
         settings={settings}
         position="center 40%"
-        brightnessMultiplier={1.05}
+        natural
       />
 
       {/* Hero Content */}
