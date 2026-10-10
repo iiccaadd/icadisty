@@ -1,20 +1,15 @@
 'use client'
 import { useState } from 'react'
+import { SECTIONS } from '@/lib/defaultSettings'
 
-const menuItems = [
-  { num: '01', label: 'Sampul', href: '#opening' },
-  { num: '02', label: 'Mempelai Pria', href: '#groom' },
-  { num: '03', label: 'Mempelai Wanita', href: '#bride' },
-  { num: '04', label: 'Kisah Cinta', href: '#lovestory' },
-  { num: '05', label: 'Waktu & Lokasi', href: '#events' },
-  { num: '06', label: 'Hitung Mundur', href: '#countdown' },
-  { num: '07', label: 'Momen', href: '#gallery' },
-  { num: '08', label: 'RSVP & Ucapan', href: '#rsvp' },
-  { num: '09', label: 'Amplop Digital', href: '#closing' },
-]
 
-export default function NavMenu() {
+export default function NavMenu({ order }) {
   const [open, setOpen] = useState(false)
+  const menuItems = order.map((id, i) => ({
+    num: String(i + 1).padStart(2, '0'),
+    label: SECTIONS.find((x) => x.id === id).label,
+    href: '#' + id,
+  }))
 
   const handleLink = (e, href) => {
     e.preventDefault()

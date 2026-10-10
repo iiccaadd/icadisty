@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { Fragment, useEffect, useState, useRef } from 'react'
 import './invitation.css'
 import NavMenu from '@/components/invitation/NavMenu'
 import MusicButton from '@/components/invitation/MusicButton'
@@ -14,7 +14,7 @@ import CountdownSection from '@/components/invitation/CountdownSection'
 import GallerySection from '@/components/invitation/GallerySection'
 import RSVPSection from '@/components/invitation/RSVPSection'
 import ClosingSection from '@/components/invitation/ClosingSection'
-import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
+import { DEFAULT_SETTINGS, getSectionOrder } from '@/lib/defaultSettings'
 
 const GROOM = process.env.NEXT_PUBLIC_GROOM_NAME || 'Muhammad Irsyad, S.T.'
 const BRIDE = process.env.NEXT_PUBLIC_BRIDE_NAME || 'Adisty Vana Lestari, S.Pd., M.Pd.'
@@ -178,6 +178,19 @@ export default function InvitationPage() {
   const groomName = settings?.groomName || GROOM
   const brideName = settings?.brideName || BRIDE
 
+  const sectionOrder = getSectionOrder(settings)
+  const sections = {
+    opening: <HeroSection id="opening" groomName={groomName} brideName={brideName} guestName={guestName} settings={settings} />,
+    groom: <GroomSection id="groom" groomName={groomName} settings={settings} />,
+    bride: <BrideSection id="bride" brideName={brideName} settings={settings} />,
+    lovestory: <LoveStorySection id="lovestory" settings={settings} />,
+    events: <EventSection id="events" settings={settings} />,
+    countdown: <CountdownSection id="countdown" settings={settings} />,
+    gallery: <GallerySection id="gallery" settings={settings} />,
+    rsvp: <RSVPSection id="rsvp" guestName={guestName} settings={settings} />,
+    closing: <ClosingSection id="closing" groomName={groomName} brideName={brideName} settings={settings} />,
+  }
+
   return (
     <>
       <Preloader
@@ -197,19 +210,11 @@ export default function InvitationPage() {
         style={{ display: (opened && !isGuestInvalid) ? 'block' : 'none' }}
       >
         {/* Floating UI */}
-        <NavMenu />
+        <NavMenu order={sectionOrder} />
         <MusicButton musicUrl={settings?.musicUrl} />
 
-        {/* Sections */}
-        <HeroSection id="opening" groomName={groomName} brideName={brideName} guestName={guestName} settings={settings} />
-        <GroomSection id="groom" groomName={groomName} settings={settings} />
-        <BrideSection id="bride" brideName={brideName} settings={settings} />
-        <LoveStorySection id="lovestory" settings={settings} />
-        <EventSection id="events" settings={settings} />
-        <CountdownSection id="countdown" settings={settings} />
-        <GallerySection id="gallery" settings={settings} />
-        <RSVPSection id="rsvp" guestName={guestName} settings={settings} />
-        <ClosingSection id="closing" groomName={groomName} brideName={brideName} settings={settings} />
+        {/* Sections, in the order set in admin settings */}
+        {sectionOrder.map((sid) => <Fragment key={sid}>{sections[sid]}</Fragment>)}
       </div>
     </>
   )

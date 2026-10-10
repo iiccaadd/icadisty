@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { DEFAULT_SETTINGS, getEvents } from '@/lib/defaultSettings'
+import { DEFAULT_SETTINGS, getEvents, SECTIONS, getSectionOrder } from '@/lib/defaultSettings'
 
 const MAX_PHOTO_SIDE = 2000
 
@@ -453,6 +453,14 @@ export default function AdminSettingsPage() {
     setSettings((prev) => ({ ...prev, events: list }))
   }
 
+  const moveSection = (index, delta) => {
+    const list = getSectionOrder(settings)
+    const target = index + delta
+    if (target < 0 || target >= list.length) return
+    ;[list[index], list[target]] = [list[target], list[index]]
+    setSettings((prev) => ({ ...prev, sectionOrder: list }))
+  }
+
   const handlePreviewCopy = (text, idx) => {
     if (!text) return
     if (navigator?.clipboard?.writeText) {
@@ -587,6 +595,13 @@ export default function AdminSettingsPage() {
           style={{ background: activeTab === 'events' ? 'rgba(241, 193, 147, 0.2)' : 'transparent' }}
         >
           📅 Waktu &amp; Lokasi
+        </button>
+        <button
+          onClick={() => setActiveTab('order')}
+          className={`btn-admin-outline ${activeTab === 'order' ? 'active' : ''}`}
+          style={{ background: activeTab === 'order' ? 'rgba(241, 193, 147, 0.2)' : 'transparent' }}
+        >
+          ↕️ Urutan Section
         </button>
         <button
           onClick={() => setActiveTab('background')}
@@ -1724,6 +1739,54 @@ export default function AdminSettingsPage() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* TAB: URUTAN SECTION */}
+      {activeTab === 'order' && (
+        <div className="admin-card" style={{ maxWidth: 560 }}>
+          <p style={{ margin: '0 0 16px', fontSize: '0.85rem', color: 'var(--admin-muted)' }}>
+            Atur urutan tampilan section di undangan (juga urutan di menu ☰). Klik <strong>Simpan Perubahan</strong> setelah selesai.
+          </p>
+          <ol style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {getSectionOrder(settings).map((id, index, list) => (
+              <li
+                key={id}
+                style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', borderRadius: 10, border: '1px solid rgba(241, 193, 147, 0.25)', background: 'rgba(18, 12, 8, 0.75)' }}
+              >
+                <span style={{ color: '#F1C193', fontVariantNumeric: 'tabular-nums', width: 24 }}>{String(index + 1).padStart(2, '0')}</span>
+                <span style={{ flex: 1 }}>{SECTIONS.find((x) => x.id === id).label}</span>
+                <button
+                  type="button"
+                  onClick={() => moveSection(index, -1)}
+                  disabled={index === 0}
+                  className="btn-admin-outline"
+                  style={{ padding: '4px 10px', opacity: index === 0 ? 0.3 : 1 }}
+                  aria-label={`Naikkan ${SECTIONS.find((x) => x.id === id).label}`}
+                >
+                  ↑
+                </button>
+                <button
+                  type="button"
+                  onClick={() => moveSection(index, 1)}
+                  disabled={index === list.length - 1}
+                  className="btn-admin-outline"
+                  style={{ padding: '4px 10px', opacity: index === list.length - 1 ? 0.3 : 1 }}
+                  aria-label={`Turunkan ${SECTIONS.find((x) => x.id === id).label}`}
+                >
+                  ↓
+                </button>
+              </li>
+            ))}
+          </ol>
+          <button
+            type="button"
+            onClick={() => setSettings((prev) => ({ ...prev, sectionOrder: SECTIONS.map((x) => x.id) }))}
+            className="btn-admin-outline"
+            style={{ marginTop: 16, fontSize: 12 }}
+          >
+            Kembalikan urutan awal
+          </button>
         </div>
       )}
 
