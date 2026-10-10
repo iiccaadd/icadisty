@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase'
 import SectionBackground from './SectionBackground'
 
 export default function RSVPSection({ id, guestName, settings }) {
@@ -22,52 +21,23 @@ export default function RSVPSection({ id, guestName, settings }) {
 
   useEffect(() => {
     // Load recent wishes
-    const load = async () => {
-      const supabase = createClient()
-      const { data } = await supabase
-        .from('rsvp')
-        .select('name, wishes, created_at')
-        .not('wishes', 'is', null)
-        .neq('wishes', '')
-        .order('created_at', { ascending: false })
-        .limit(5)
-      if (data) setWishes(data)
-    }
-    load()
+    fetch('/api/rsvp?wishes=true&limit=5')
+      .then(res => res.json())
+      .then(json => { if (json.data) setWishes(json.data) })
+      .catch(() => {})
   }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setStatus('loading')
     try {
-      let success = false
-
-      // 1. Try Supabase client directly
-      try {
-        const supabase = createClient()
-        const { error } = await supabase.from('rsvp').insert([{
-          name: form.name,
-          phone: form.phone,
-          attending: form.attending,
-          guest_count: parseInt(form.guest_count),
-          message: form.message,
-          wishes: form.wishes,
-        }])
-        if (!error) success = true
-      } catch (clientErr) {
-        console.warn('Direct supabase client warning, falling back to API:', clientErr)
-      }
-
-      // 2. If direct client didn't succeed, fallback to server API endpoint
-      if (!success) {
-        const res = await fetch('/api/rsvp', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(form),
-        })
-        const json = await res.json()
-        if (!res.ok) throw new Error(json.error || 'Gagal mengirim RSVP')
-      }
+      const res = await fetch('/api/rsvp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error || 'Gagal mengirim RSVP')
 
       setStatus('success')
 

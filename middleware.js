@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server'
+import { isAdmin } from '@/lib/adminAuth'
 
-export function middleware(request) {
+export async function middleware(request) {
   const { pathname } = request.nextUrl
 
   // Protect all /admin routes except /admin/login
   if (pathname.startsWith('/admin')) {
     const isLoginPage = pathname === '/admin/login'
-    const sessionCookie = request.cookies.get('icadisty_admin_session')?.value
-    const isAuthenticated = sessionCookie === 'authenticated'
+    const isAuthenticated = await isAdmin(request)
 
     // If not authenticated and trying to access protected admin page
     if (!isAuthenticated && !isLoginPage) {
