@@ -1,7 +1,56 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
+
+function UploadButton({ onUploaded }) {
+  const inputRef = useRef(null)
+  const [uploading, setUploading] = useState(false)
+
+  const handleFile = async (e) => {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    setUploading(true)
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: file.type }),
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error || 'Gagal menyiapkan upload')
+
+      // Same request shape supabase-js uploadToSignedUrl sends
+      const form = new FormData()
+      form.append('cacheControl', '3600')
+      form.append('', file)
+      const up = await fetch(json.signedUrl, { method: 'PUT', body: form })
+      if (!up.ok) throw new Error((await up.json().catch(() => ({}))).message || 'Upload gagal (maks. 10 MB)')
+
+      onUploaded(json.publicUrl)
+    } catch (err) {
+      alert(err.message)
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  return (
+    <>
+      <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={handleFile} hidden />
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
+        disabled={uploading}
+        className="btn-admin-outline"
+        style={{ marginTop: 6, padding: '6px 12px', fontSize: 11 }}
+      >
+        {uploading ? '⏳ Mengunggah...' : '📤 Upload Foto dari Perangkat'}
+      </button>
+    </>
+  )
+}
 
 const PHOTO_PRESETS = {
   groom: [
@@ -642,6 +691,7 @@ export default function AdminSettingsPage() {
                   placeholder="https://..."
                   className="admin-input"
                 />
+                <UploadButton onUploaded={(url) => updateField('groomPhoto', url)} />
               </div>
 
               {/* Presets */}
@@ -766,6 +816,7 @@ export default function AdminSettingsPage() {
                   placeholder="https://..."
                   className="admin-input"
                 />
+                <UploadButton onUploaded={(url) => updateField('bridePhoto', url)} />
               </div>
 
               {/* Presets */}
@@ -1121,6 +1172,7 @@ export default function AdminSettingsPage() {
                     className="admin-input"
                     style={{ fontSize: 12 }}
                   />
+                  <UploadButton onUploaded={(url) => updateMoment(idx, 'photo', url)} />
                 </div>
 
                 {/* Preset Buttons */}
@@ -1980,6 +2032,7 @@ export default function AdminSettingsPage() {
                         className="admin-input"
                         style={{ fontSize: 12 }}
                       />
+                      <UploadButton onUploaded={(url) => updateField(seg.key, url)} />
                     </div>
 
                     {/* Presets */}
