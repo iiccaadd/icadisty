@@ -1,11 +1,11 @@
 'use client'
 import SectionBackground from './SectionBackground'
+import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
 
-const VENUE_NAME = process.env.NEXT_PUBLIC_VENUE_NAME || 'Masjid H. Muhammad Sidik Islamic Center Muara Teweh'
-const VENUE_ADDRESS = process.env.NEXT_PUBLIC_VENUE_ADDRESS || 'Muara Teweh, Kabupaten Barito Utara, Kalimantan Tengah'
-const VENUE_MAPS = process.env.NEXT_PUBLIC_VENUE_MAPS || 'https://maps.google.com/?q=Masjid+H+Muhammad+Sidik+Muara+Teweh'
 
 export default function EventSection({ id, settings }) {
+  // Cached settings from before this feature lack the event keys
+  const s = { ...DEFAULT_SETTINGS, ...settings }
   const bgPhoto = settings?.eventsBgPhoto || 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?q=80&w=1600&auto=format&fit=crop'
 
   return (
@@ -39,37 +39,32 @@ export default function EventSection({ id, settings }) {
         <p className="label-gold" style={{ fontSize: 11, letterSpacing: '0.25em' }}>✦ Save The Date ✦</p>
         <h2 className="section-heading" style={{ marginBottom: 8, textShadow: '0 2px 16px rgba(0,0,0,0.8)' }}>Waktu &amp; Lokasi</h2>
 
-        {/* Akad */}
-        <div className="event-card">
-          <span className="event-type">Akad Nikah</span>
-          <h3 className="event-name">Akad Nikah</h3>
-          <p className="event-detail">
-            📅 Rabu, 11 November 2026<br />
-            ⏰ 08.00 – 10.00 WIB<br />
-            📍 {VENUE_NAME}
-          </p>
-        </div>
-
-        {/* Resepsi */}
-        <div className="event-card">
-          <span className="event-type">Resepsi</span>
-          <h3 className="event-name">Resepsi Pernikahan</h3>
-          <p className="event-detail">
-            📅 Rabu, 11 November 2026<br />
-            ⏰ 11.00 – 14.00 WIB<br />
-            📍 {VENUE_NAME}<br />
-            <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>{VENUE_ADDRESS}</span>
-          </p>
-          <a
-            href={VENUE_MAPS}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-gold-outline"
-            style={{ marginTop: 14, fontSize: 12, padding: '8px 18px', display: 'inline-block', textDecoration: 'none' }}
-          >
-            📌 Petunjuk Lokasi (Google Maps)
-          </a>
-        </div>
+        {[
+          { type: 'Akad Nikah', title: 'Akad Nikah', key: 'akad' },
+          { type: 'Resepsi', title: 'Resepsi Pernikahan', key: 'resepsi' },
+        ].map(({ type, title, key }) => (
+          <div className="event-card" key={key}>
+            <span className="event-type">{type}</span>
+            <h3 className="event-name">{title}</h3>
+            <p className="event-detail">
+              {s[key + 'Date'] && <>📅 {s[key + 'Date']}<br /></>}
+              {s[key + 'Time'] && <>⏰ {s[key + 'Time']}<br /></>}
+              {s[key + 'Venue'] && <>📍 {s[key + 'Venue']}<br /></>}
+              {s[key + 'Address'] && <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>{s[key + 'Address']}</span>}
+            </p>
+            {s[key + 'Maps'] && (
+              <a
+                href={s[key + 'Maps']}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-gold-outline"
+                style={{ marginTop: 14, fontSize: 12, padding: '8px 18px', display: 'inline-block', textDecoration: 'none' }}
+              >
+                📌 Petunjuk Lokasi (Google Maps)
+              </a>
+            )}
+          </div>
+        ))}
       </div>
     </section>
   )

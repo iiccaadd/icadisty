@@ -564,6 +564,13 @@ export default function AdminSettingsPage() {
           💳 Rekening &amp; Amplop Digital
         </button>
         <button
+          onClick={() => setActiveTab('events')}
+          className={`btn-admin-outline ${activeTab === 'events' ? 'active' : ''}`}
+          style={{ background: activeTab === 'events' ? 'rgba(241, 193, 147, 0.2)' : 'transparent' }}
+        >
+          📅 Waktu &amp; Lokasi
+        </button>
+        <button
           onClick={() => setActiveTab('background')}
           className={`btn-admin-outline ${activeTab === 'background' ? 'active' : ''}`}
           style={{ background: activeTab === 'background' ? 'rgba(241, 193, 147, 0.2)' : 'transparent' }}
@@ -1636,6 +1643,44 @@ export default function AdminSettingsPage() {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* TAB: WAKTU & LOKASI */}
+      {activeTab === 'events' && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
+          {[
+            { key: 'akad', title: '🕌 Akad Nikah' },
+            { key: 'resepsi', title: '🎉 Resepsi Pernikahan' },
+          ].map(({ key, title }) => (
+            <div key={key} className="admin-card">
+              <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', marginTop: 0 }}>{title}</h3>
+              {[
+                ['Date', 'Hari & Tanggal', 'Rabu, 11 November 2026'],
+                ['Time', 'Jam', '08.00 – 10.00 WIB'],
+                ['Venue', 'Nama Tempat', 'Masjid ...'],
+                ['Address', 'Alamat (opsional)', 'Kosongkan jika tidak ditampilkan'],
+                ['Maps', 'Link Google Maps (opsional)', 'https://maps.google.com/...'],
+              ].map(([field, label, placeholder]) => (
+                <div key={field} style={{ marginBottom: 12 }}>
+                  <label htmlFor={key + field} style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 6 }}>
+                    {label}
+                  </label>
+                  <input
+                    id={key + field}
+                    type="text"
+                    value={settings?.[key + field] || ''}
+                    onChange={(e) => updateField(key + field, e.target.value)}
+                    placeholder={placeholder}
+                    className="admin-input"
+                  />
+                </div>
+              ))}
+              <p style={{ fontSize: 11, color: 'var(--admin-muted)', margin: 0 }}>
+                Kolom yang dikosongkan tidak ditampilkan di undangan. Tombol Google Maps hanya muncul jika link diisi.
+              </p>
+            </div>
+          ))}
         </div>
       )}
 
