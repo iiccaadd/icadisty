@@ -1,11 +1,8 @@
 'use client'
 import SectionBackground from './SectionBackground'
-import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
-
+import { getEvents } from '@/lib/defaultSettings'
 
 export default function EventSection({ id, settings }) {
-  // Cached settings from before this feature lack the event keys
-  const s = { ...DEFAULT_SETTINGS, ...settings }
   const bgPhoto = settings?.eventsBgPhoto || 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?q=80&w=1600&auto=format&fit=crop'
 
   return (
@@ -39,22 +36,19 @@ export default function EventSection({ id, settings }) {
         <p className="label-gold" style={{ fontSize: 11, letterSpacing: '0.25em' }}>✦ Save The Date ✦</p>
         <h2 className="section-heading" style={{ marginBottom: 8, textShadow: '0 2px 16px rgba(0,0,0,0.8)' }}>Waktu &amp; Lokasi</h2>
 
-        {[
-          { type: 'Akad Nikah', title: 'Akad Nikah', key: 'akad' },
-          { type: 'Resepsi', title: 'Resepsi Pernikahan', key: 'resepsi' },
-        ].map(({ type, title, key }) => (
-          <div className="event-card" key={key}>
-            <span className="event-type">{type}</span>
-            <h3 className="event-name">{title}</h3>
+        {getEvents(settings).map((e) => (
+          <div className="event-card" key={e.id}>
+            {e.type && <span className="event-type">{e.type}</span>}
+            {e.title && <h3 className="event-name">{e.title}</h3>}
             <p className="event-detail">
-              {s[key + 'Date'] && <>📅 {s[key + 'Date']}<br /></>}
-              {s[key + 'Time'] && <>⏰ {s[key + 'Time']}<br /></>}
-              {s[key + 'Venue'] && <>📍 {s[key + 'Venue']}<br /></>}
-              {s[key + 'Address'] && <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>{s[key + 'Address']}</span>}
+              {e.date && <>📅 {e.date}<br /></>}
+              {e.time && <>⏰ {e.time}<br /></>}
+              {e.venue && <>📍 {e.venue}<br /></>}
+              {e.address && <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>{e.address}</span>}
             </p>
-            {s[key + 'Maps'] && (
+            {e.maps && (
               <a
-                href={s[key + 'Maps']}
+                href={e.maps}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-gold-outline"

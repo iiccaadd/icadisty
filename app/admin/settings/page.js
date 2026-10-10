@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
+import { DEFAULT_SETTINGS, getEvents } from '@/lib/defaultSettings'
 
 const MAX_PHOTO_SIDE = 2000
 
@@ -433,6 +433,24 @@ export default function AdminSettingsPage() {
     }
     list.splice(index, 1)
     setSettings((prev) => ({ ...prev, bankAccounts: list }))
+  }
+
+  const updateEvent = (index, field, value) => {
+    const list = [...getEvents(settings)]
+    list[index] = { ...list[index], [field]: value }
+    setSettings((prev) => ({ ...prev, events: list }))
+  }
+
+  const addEvent = () => {
+    const list = [...getEvents(settings), { id: 'event_' + Date.now(), type: 'Acara', title: 'Nama Acara', date: '', time: '', venue: '', address: '', maps: '' }]
+    setSettings((prev) => ({ ...prev, events: list }))
+  }
+
+  const removeEvent = (index) => {
+    const list = [...getEvents(settings)]
+    if (!confirm(`Hapus acara "${list[index].title || list[index].type || 'ini'}"? Klik Simpan Perubahan agar terhapus dari undangan.`)) return
+    list.splice(index, 1)
+    setSettings((prev) => ({ ...prev, events: list }))
   }
 
   const handlePreviewCopy = (text, idx) => {
@@ -1648,39 +1666,64 @@ export default function AdminSettingsPage() {
 
       {/* TAB: WAKTU & LOKASI */}
       {activeTab === 'events' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
-          {[
-            { key: 'akad', title: '🕌 Akad Nikah' },
-            { key: 'resepsi', title: '🎉 Resepsi Pernikahan' },
-          ].map(({ key, title }) => (
-            <div key={key} className="admin-card">
-              <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', marginTop: 0 }}>{title}</h3>
-              {[
-                ['Date', 'Hari & Tanggal', 'Rabu, 11 November 2026'],
-                ['Time', 'Jam', '08.00 – 10.00 WIB'],
-                ['Venue', 'Nama Tempat', 'Masjid ...'],
-                ['Address', 'Alamat (opsional)', 'Kosongkan jika tidak ditampilkan'],
-                ['Maps', 'Link Google Maps (opsional)', 'https://maps.google.com/...'],
-              ].map(([field, label, placeholder]) => (
-                <div key={field} style={{ marginBottom: 12 }}>
-                  <label htmlFor={key + field} style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 6 }}>
-                    {label}
-                  </label>
-                  <input
-                    id={key + field}
-                    type="text"
-                    value={settings?.[key + field] || ''}
-                    onChange={(e) => updateField(key + field, e.target.value)}
-                    placeholder={placeholder}
-                    className="admin-input"
-                  />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div className="admin-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--admin-muted)' }}>
+              Kolom yang dikosongkan tidak ditampilkan di undangan. Tombol Google Maps hanya muncul jika link diisi.
+            </p>
+            <button type="button" onClick={addEvent} className="btn-admin" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px' }}>
+              <span>➕</span>
+              <span>Tambah Acara</span>
+            </button>
+          </div>
+
+          {getEvents(settings).length === 0 && (
+            <p style={{ color: 'var(--admin-muted)', textAlign: 'center' }}>Belum ada acara. Klik Tambah Acara.</p>
+          )}
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
+            {getEvents(settings).map((event, index) => (
+              <div key={event.id} className="admin-card">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                  <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', margin: 0 }}>
+                    {event.title || event.type || 'Acara ' + (index + 1)}
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => removeEvent(index)}
+                    className="btn-admin-outline"
+                    style={{ borderColor: 'rgba(239, 83, 80, 0.4)', color: '#ef5350', padding: '4px 10px', fontSize: 11 }}
+                    title="Hapus acara ini"
+                  >
+                    🗑️ Hapus
+                  </button>
                 </div>
-              ))}
-              <p style={{ fontSize: 11, color: 'var(--admin-muted)', margin: 0 }}>
-                Kolom yang dikosongkan tidak ditampilkan di undangan. Tombol Google Maps hanya muncul jika link diisi.
-              </p>
-            </div>
-          ))}
+                {[
+                  ['type', 'Label Kecil', 'Akad Nikah'],
+                  ['title', 'Judul Acara', 'Akad Nikah'],
+                  ['date', 'Hari & Tanggal', 'Rabu, 11 November 2026'],
+                  ['time', 'Jam', '08.00 – 10.00 WIB'],
+                  ['venue', 'Nama Tempat', 'Masjid ...'],
+                  ['address', 'Alamat (opsional)', 'Kosongkan jika tidak ditampilkan'],
+                  ['maps', 'Link Google Maps (opsional)', 'https://maps.google.com/...'],
+                ].map(([field, label, placeholder]) => (
+                  <div key={field} style={{ marginBottom: 12 }}>
+                    <label htmlFor={event.id + field} style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 6 }}>
+                      {label}
+                    </label>
+                    <input
+                      id={event.id + field}
+                      type="text"
+                      value={event[field] || ''}
+                      onChange={(e) => updateEvent(index, field, e.target.value)}
+                      placeholder={placeholder}
+                      className="admin-input"
+                    />
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
