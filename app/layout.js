@@ -1,16 +1,25 @@
 import './globals.css'
+import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
+import { fetchSupabaseSettings } from '@/lib/supabaseServer'
 
-const GROOM = process.env.NEXT_PUBLIC_GROOM_NAME || 'Nama Pria'
-const BRIDE = process.env.NEXT_PUBLIC_BRIDE_NAME || 'Nama Wanita'
+// Re-read names/photo from settings at most once a minute (WhatsApp caches previews anyway)
+export const revalidate = 60
 
-export const metadata = {
-  title: `The Wedding of ${GROOM} & ${BRIDE}`,
-  description: `Dengan penuh sukacita kami mengundang Anda untuk hadir dalam acara pernikahan kami.`,
-  openGraph: {
-    title: `The Wedding of ${GROOM} & ${BRIDE}`,
-    description: 'Undangan pernikahan digital',
-    type: 'website',
-  },
+// "Muhammad Irsyad, S.T." -> "Muhammad Irsyad": academic titles make the share title too long
+const plainName = (name) => (name || '').split(',')[0].trim()
+
+export async function generateMetadata() {
+  const settings = { ...DEFAULT_SETTINGS, ...(await fetchSupabaseSettings().catch(() => null)) }
+  const title = `The Wedding of ${plainName(settings.groomName)} & ${plainName(settings.brideName)}`
+  const description = 'Dengan penuh sukacita kami mengundang Anda untuk hadir dalam acara pernikahan kami.'
+  const images = settings.heroBgPhoto ? [settings.heroBgPhoto] : []
+
+  return {
+    title,
+    description,
+    openGraph: { title, description, type: 'website', images },
+    twitter: { card: 'summary_large_image', title, description, images },
+  }
 }
 
 export const viewport = {

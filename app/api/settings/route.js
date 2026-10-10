@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getSupabaseServer } from '@/lib/supabaseServer'
+import { getSupabaseServer, fetchSupabaseSettings } from '@/lib/supabaseServer'
 import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
 import { isAdmin } from '@/lib/adminAuth'
 export { DEFAULT_SETTINGS }
@@ -13,43 +13,6 @@ const NO_CACHE_HEADERS = {
 }
 
 let memoryCache = null
-
-// Helper to fetch settings from Supabase (tries 'settings' table first, then 'guests' table fallback)
-async function fetchSupabaseSettings() {
-  const supabase = getSupabaseServer()
-
-  // 1. Try public.settings table
-  try {
-    const { data, error } = await supabase
-      .from('settings')
-      .select('data')
-      .eq('id', 'general')
-      .limit(1)
-
-    if (!error && data && data.length > 0 && data[0]?.data && Object.keys(data[0].data).length > 0) {
-      return data[0].data
-    }
-  } catch (e) {}
-
-  // 2. Fallback to public.guests table row (name = 'SYSTEM_SETTINGS')
-  try {
-    const { data, error } = await supabase
-      .from('guests')
-      .select('id, invited_by')
-      .eq('name', 'SYSTEM_SETTINGS')
-      .order('created_at', { ascending: false })
-      .limit(1)
-
-    if (!error && data && data.length > 0 && data[0]?.invited_by) {
-      const parsed = JSON.parse(data[0].invited_by)
-      if (parsed && typeof parsed === 'object') {
-        return parsed
-      }
-    }
-  } catch (e) {}
-
-  return null
-}
 
 // Helper to save settings to Supabase (saves to both 'settings' and 'guests' fallback)
 async function persistSupabaseSettings(settingsObj) {
