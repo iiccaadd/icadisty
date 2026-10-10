@@ -3,16 +3,38 @@
 import { useState, useEffect, useRef } from 'react'
 import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
 
+const MAX_PHOTO_SIDE = 2000
+
+// Resize to MAX_PHOTO_SIDE and re-encode as JPEG; keeps the original if that is already smaller.
+// shortcut: PNG transparency becomes black and GIF animation is skipped, fine for wedding photos
+async function compressImage(file) {
+  if (file.type === 'image/gif') return file
+  try {
+    const bitmap = await createImageBitmap(file) // applies EXIF rotation from phone cameras
+    const scale = Math.min(1, MAX_PHOTO_SIDE / Math.max(bitmap.width, bitmap.height))
+    const canvas = document.createElement('canvas')
+    canvas.width = Math.round(bitmap.width * scale)
+    canvas.height = Math.round(bitmap.height * scale)
+    canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+    bitmap.close()
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.82))
+    return blob && blob.size < file.size ? blob : file
+  } catch {
+    return file // browser can't decode it (e.g. HEIC): upload as-is, server validates the type
+  }
+}
+
 function UploadButton({ onUploaded }) {
   const inputRef = useRef(null)
   const [uploading, setUploading] = useState(false)
 
   const handleFile = async (e) => {
-    const file = e.target.files?.[0]
+    const original = e.target.files?.[0]
     e.target.value = ''
-    if (!file) return
+    if (!original) return
     setUploading(true)
     try {
+      const file = await compressImage(original)
       const res = await fetch('/api/upload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
