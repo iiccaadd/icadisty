@@ -191,8 +191,11 @@ export default function InvitationPage() {
     closing: <ClosingSection id="closing" groomName={groomName} brideName={brideName} settings={settings} />,
   }
 
+  // Both names share one font size, sized so the longer one still fits on a single line
+  const nameChars = Math.max(groomName.length, brideName.length)
+
   return (
-    <>
+    <div style={{ '--name-chars': nameChars }}>
       <Preloader
         groomName={groomName}
         brideName={brideName}
@@ -216,6 +219,6 @@ export default function InvitationPage() {
         {/* Sections, in the order set in admin settings */}
         {sectionOrder.map((sid) => <Fragment key={sid}>{sections[sid]}</Fragment>)}
       </div>
-    </>
+    </div>
   )
 }

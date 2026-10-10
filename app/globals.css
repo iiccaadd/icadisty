@@ -34,7 +34,7 @@
   --fs-h3: 20px;                        /* card names, timeline & event titles */
   --fs-body: 15px;                      /* paragraphs */
   --fs-button: 14px;                    /* buttons, cover date */
-  --fs-caption: 12px;                   /* captions, addresses, degrees, footer */
+  --fs-caption: 12px;                   /* captions, addresses, footer */
   --fs-eyebrow: 11px;                   /* small gold labels */
 
   --lh-tight: 1.15;
