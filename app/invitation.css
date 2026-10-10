@@ -502,7 +502,7 @@
 }
 .hero-section.fade-out { opacity: 0; }
 
-/* Bottom padding = scroll indicator (24px offset + ~40px tall) + 48px breathing room */
+/* Bottom padding = scroll indicator (24px offset + ~40px tall) + 24px gap, as low as possible so the cover faces stay clear */
 .hero-content {
   position: relative;
   z-index: 2;
@@ -514,22 +514,32 @@
   justify-content: flex-end;
   align-items: center;
   text-align: center;
-  padding: 80px 24px 112px;
+  padding: 80px 24px 88px;
 }
-.hero-content .label-gold { margin-bottom: 16px; }
+/* Tighter stack keeps the text low, below the couple's faces in the cover photo */
+.hero-content .label-gold { margin-bottom: 8px; }
+.hero-content .amp { margin: 0; line-height: 1; }
+.hero-content .label-gold { text-shadow: 0 1px 8px rgba(0,0,0,0.9); }
+/* Natural (undimmed) cover photo: darken only the lower half where the text sits */
+.hero-section .overlay-bottom {
+  height: 60%;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.85) 100%);
+}
+.hero-content .couple-name .name { text-shadow: 0 2px 12px rgba(0,0,0,0.9); }
 .hero-date {
-  color: var(--text-muted);
+  color: var(--text-body);
   font-family: var(--font-body);
   font-size: var(--fs-button);
   letter-spacing: 0.05em;
-  margin-top: 16px;
+  margin-top: 8px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.9);
 }
 .hero-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   width: 100%;
-  margin-top: 32px;
+  margin-top: 16px;
 }
 .hero-actions .btn { padding: 12px 16px; }
 .scroll-indicator {

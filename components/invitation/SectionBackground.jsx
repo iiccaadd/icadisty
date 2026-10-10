@@ -6,6 +6,7 @@ export default function SectionBackground({
   brightnessMultiplier = 1,
   position = 'center',
   fallbackGradient = null,
+  natural = false, // photo as-is: no dimming, only the bottom fade that keeps text readable
 }) {
   const darkness = settings?.bgOverlayDarkness ? settings.bgOverlayDarkness / 100 : 0.6
   const theme = settings?.bgTheme || 'midnight'
@@ -26,14 +27,14 @@ export default function SectionBackground({
         className="section-bg"
         style={{
           backgroundImage: photo
-            ? `${radialGradient}, url('${photo}')`
+            ? (natural ? `url('${photo}')` : `${radialGradient}, url('${photo}')`)
             : fallbackGradient || radialGradient,
           backgroundSize: 'cover',
           backgroundPosition: position,
-          filter: `brightness(${computedBrightness.toFixed(2)}) saturate(0.85)`,
+          filter: natural ? 'none' : `brightness(${computedBrightness.toFixed(2)}) saturate(0.85)`,
         }}
       />
-      <div className="overlay overlay-dark" style={{ opacity: darkness * 0.65 }} />
+      {!natural && <div className="overlay overlay-dark" style={{ opacity: darkness * 0.65 }} />}
       <div className="overlay-bottom" />
     </>
   )
