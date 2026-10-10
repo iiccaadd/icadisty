@@ -73,7 +73,7 @@ export default function GroomSection({ id = 'groom', groomName, settings }) {
     <section
       id={id}
       ref={sectionRef}
-      className="section section-compact"
+      className="section"
       style={{ background: '#040201' }}
     >
       {/* Full-bleed Photo Background */}

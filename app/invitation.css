@@ -29,11 +29,6 @@
   flex-shrink: 0;
 }
 
-/* Groom & bride: as tall as their content instead of a full screen of empty space */
-.section.section-compact {
-  height: auto;
-}
-
 .invitation-root h1, .invitation-root h2, .invitation-root h3, .invitation-root h4,
 .preloader h1, .preloader h3 {
   font-weight: 400;
