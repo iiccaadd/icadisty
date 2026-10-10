@@ -1,18 +1,24 @@
 import { NextResponse } from 'next/server'
 import { getSupabaseServer } from '@/lib/supabaseServer'
+import { isAdmin } from '@/lib/adminAuth'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(request) {
   try {
-    const supabase = getSupabase()
+    const supabase = getSupabaseServer()
     const { searchParams } = new URL(request.url)
     const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')) : 100
     const onlyWishes = searchParams.get('wishes') === 'true'
 
+    // Public may only read wishes, never phone numbers or the full RSVP list
+    if (!onlyWishes && !(await isAdmin(request))) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     let query = supabase
       .from('rsvp')
-      .select('*')
+      .select(onlyWishes ? 'name, wishes, created_at' : '*')
       .order('created_at', { ascending: false })
       .limit(limit)
 
@@ -68,6 +74,7 @@ export async function POST(request) {
 
 export async function DELETE(request) {
   try {
+    if (!(await isAdmin(request))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const supabase = getSupabaseServer()
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')

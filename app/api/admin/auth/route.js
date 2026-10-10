@@ -1,18 +1,13 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
+import { ADMIN_COOKIE, adminToken, isAdmin } from '@/lib/adminAuth'
 
 export const dynamic = 'force-dynamic'
 
-const VALID_PASSWORD = process.env.ADMIN_SECRET_PASSWORD || 'icadisty2026'
-const VALID_PIN = process.env.NEXT_PUBLIC_ADMIN_PIN || '2026'
-
 // Verify active session
-export async function GET() {
+export async function GET(request) {
   try {
-    const cookieStore = await cookies()
-    const session = cookieStore.get('icadisty_admin_session')?.value
-    const isAuthenticated = session === 'authenticated'
-    return NextResponse.json({ authenticated: isAuthenticated })
+    return NextResponse.json({ authenticated: await isAdmin(request) })
   } catch (err) {
     return NextResponse.json({ authenticated: false, error: err.message }, { status: 500 })
   }
@@ -22,11 +17,16 @@ export async function GET() {
 export async function POST(request) {
   try {
     const { password } = await request.json()
+    const token = await adminToken()
 
-    if (password === VALID_PASSWORD || password === VALID_PIN || password === 'admin') {
+    if (!token) {
+      return NextResponse.json({ error: 'ADMIN_SECRET_PASSWORD belum diatur di server' }, { status: 500 })
+    }
+
+    if (password === process.env.ADMIN_SECRET_PASSWORD) {
       const cookieStore = await cookies()
-      cookieStore.set('icadisty_admin_session', 'authenticated', {
-        httpOnly: false,
+      cookieStore.set(ADMIN_COOKIE, token, {
+        httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: 60 * 60 * 24 * 7, // 7 days
@@ -36,7 +36,7 @@ export async function POST(request) {
       return NextResponse.json({ success: true })
     }
 
-    return NextResponse.json({ error: 'Kata sandi / PIN salah' }, { status: 401 })
+    return NextResponse.json({ error: 'Kata sandi salah' }, { status: 401 })
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
@@ -45,6 +45,6 @@ export async function POST(request) {
 // Log out and destroy session
 export async function DELETE() {
   const cookieStore = await cookies()
-  cookieStore.delete('icadisty_admin_session')
+  cookieStore.delete(ADMIN_COOKIE)
   return NextResponse.json({ success: true })
 }

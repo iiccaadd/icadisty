@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getSupabaseServer } from '@/lib/supabaseServer'
 import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
+import { isAdmin } from '@/lib/adminAuth'
 export { DEFAULT_SETTINGS }
 
 export const dynamic = 'force-dynamic'
@@ -148,6 +149,7 @@ export async function GET() {
 
 export async function POST(request) {
   try {
+    if (!(await isAdmin(request))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers: NO_CACHE_HEADERS })
     const body = await request.json()
     const newSettings = body.settings || body
 

@@ -57,38 +57,8 @@ drop policy if exists "Public insert settings" on public.settings;
 drop policy if exists "Public update settings" on public.settings;
 drop policy if exists "Public all settings" on public.settings;
 
--- Recreate policies for rsvp
-create policy "Public insert rsvp" on public.rsvp
-  for insert with check (true);
-
-create policy "Public select rsvp" on public.rsvp
-  for select using (true);
-
-create policy "Public delete rsvp" on public.rsvp
-  for delete using (true);
-
--- Recreate policies for guests
-create policy "Public select guests" on public.guests
-  for select using (true);
-
-create policy "Public insert guests" on public.guests
-  for insert with check (true);
-
-create policy "Public update guests" on public.guests
-  for update using (true);
-
-create policy "Public delete guests" on public.guests
-  for delete using (true);
-
--- Recreate policies for settings
-create policy "Public select settings" on public.settings
-  for select using (true);
-
-create policy "Public insert settings" on public.settings
-  for insert with check (true);
-
-create policy "Public update settings" on public.settings
-  for update using (true);
+-- No public policies: the anon key is shipped in the app, so it must not read or write anything.
+-- All access goes through the Next.js API using SUPABASE_SERVICE_ROLE_KEY, which bypasses RLS.
 
 -- Ensure unique constraint on guests(slug) safely
 do $$

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getSupabaseServer } from '@/lib/supabaseServer'
+import { isAdmin } from '@/lib/adminAuth'
 
 export const dynamic = 'force-dynamic'
 
@@ -85,6 +86,8 @@ export async function GET(request) {
     }
 
     // Default: fetch all guests for admin dashboard
+    if (!(await isAdmin(request))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
     const { data, error } = await supabase
       .from('guests')
       .select('*')
@@ -103,6 +106,7 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
+    if (!(await isAdmin(request))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const supabase = getSupabaseServer()
     const body = await request.json()
     const { name, phone, invited_by, bulkNames } = body
@@ -156,7 +160,8 @@ export async function PATCH(request) {
       return NextResponse.json({ error: 'ID, slug, or name is required' }, { status: 400 })
     }
 
-    const isOpened = typeof has_opened === 'boolean' ? has_opened : true
+    // Guests opening the invitation can only mark it opened; only admin may reset it
+    const isOpened = typeof has_opened === 'boolean' && (await isAdmin(request)) ? has_opened : true
     const updateData = {
       has_opened: isOpened,
       opened_at: isOpened ? new Date().toISOString() : null,
@@ -234,6 +239,7 @@ export async function PATCH(request) {
 
 export async function DELETE(request) {
   try {
+    if (!(await isAdmin(request))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const supabase = getSupabaseServer()
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
