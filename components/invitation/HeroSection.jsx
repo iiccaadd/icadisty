@@ -1,11 +1,14 @@
 'use client'
 import SectionBackground from './SectionBackground'
 import CoupleName from './CoupleName'
-import { formatWeddingDate } from '@/lib/format'
+import { formatWeddingDate, splitName } from '@/lib/format'
 
 export default function HeroSection({ id, groomName, brideName, settings }) {
   const heroBg = settings?.heroBgPhoto || 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1600&auto=format&fit=crop'
   const dateLabel = formatWeddingDate(settings?.weddingDate)
+  // Cover hero shows names without degrees, sized to these shorter names
+  const groom = splitName(groomName).name
+  const bride = splitName(brideName).name
 
   return (
     <section id={id} className="hero-section section">
@@ -18,11 +21,11 @@ export default function HeroSection({ id, groomName, brideName, settings }) {
       />
 
       {/* Hero Content */}
-      <div className="hero-content">
+      <div className="hero-content" style={{ '--name-chars': Math.max(groom.length, bride.length) }}>
         <p className="label-gold">✦ The Wedding of ✦</p>
-        <CoupleName fullName={groomName} as="h1" />
+        <CoupleName fullName={groom} as="h1" />
         <span className="amp">&amp;</span>
-        <CoupleName fullName={brideName} as="h1" />
+        <CoupleName fullName={bride} as="h1" />
         {dateLabel && <p className="hero-date">{dateLabel}</p>}
 
         <div className="hero-actions">
