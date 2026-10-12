@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 
-// Full-screen view of the original (uncropped) photo with prev/next and download
+// Full-screen view of the photo as framed in the gallery, with prev/next and original-file download
 export default function PhotoViewer({ photos, index, onIndexChange, onClose }) {
   const [downloading, setDownloading] = useState(false)
   const photo = photos[index]
@@ -58,7 +58,10 @@ export default function PhotoViewer({ photos, index, onIndexChange, onClose }) {
         </button>
       </div>
 
-      <img src={photo.src} alt={photo.alt} className="photo-viewer-img" />
+      {/* Same frame, position and zoom as the gallery card (set in admin) */}
+      <div className="photo-viewer-frame">
+        <img src={photo.src} alt={photo.alt} className="photo-viewer-img" style={photo.frame} />
+      </div>
       {photo.title && <p className="photo-viewer-caption">{photo.title}</p>}
 
       <div className="photo-viewer-bar">

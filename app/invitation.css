@@ -1298,11 +1298,17 @@
   gap: 16px;
   padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
 }
-.photo-viewer-img {
-  max-width: min(100%, 960px);
-  max-height: calc(100dvh - 200px);
-  object-fit: contain;
+/* Same 290:380 ratio as .gallery-stack-wrapper so the admin crop matches */
+.photo-viewer-frame {
+  aspect-ratio: 290 / 380;
+  width: min(100%, calc((100dvh - 200px) * 290 / 380));
+  overflow: hidden;
   border-radius: 8px;
+}
+.photo-viewer-img {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 .photo-viewer-caption {
   font-family: var(--font-display);
