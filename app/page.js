@@ -14,8 +14,7 @@ import CountdownSection from '@/components/invitation/CountdownSection'
 import GallerySection from '@/components/invitation/GallerySection'
 import RSVPSection from '@/components/invitation/RSVPSection'
 import ClosingSection from '@/components/invitation/ClosingSection'
-import { DEFAULT_SETTINGS, getSectionOrder } from '@/lib/defaultSettings'
-import { displayNames } from '@/lib/format'
+import { DEFAULT_SETTINGS, getSectionOrder, displayNames } from '@/lib/defaultSettings'
 
 const GROOM = process.env.NEXT_PUBLIC_GROOM_NAME || 'Muhammad Irsyad, S.T.'
 const BRIDE = process.env.NEXT_PUBLIC_BRIDE_NAME || 'Adisty Vana Lestari, S.Pd., M.Pd.'
@@ -179,7 +178,7 @@ export default function InvitationPage() {
   const groomName = settings?.groomName || GROOM
   const brideName = settings?.brideName || BRIDE
 
-  const names = displayNames(settings, groomName, brideName)
+  const names = displayNames(settings)
   const sectionOrder = getSectionOrder(settings)
   const sections = {
     opening: <HeroSection id="opening" groomName={names.heroGroom} brideName={names.heroBride} guestName={guestName} settings={settings} />,

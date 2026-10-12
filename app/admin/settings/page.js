@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { DEFAULT_SETTINGS, getEvents, SECTIONS, getSectionOrder } from '@/lib/defaultSettings'
-import { displayNames } from '@/lib/format'
 
 const MAX_PHOTO_SIDE = 2000
 
@@ -678,13 +677,11 @@ export default function AdminSettingsPage() {
 
           {/* Section: Nama di Cover & Section Awal */}
           {(() => {
-            // Placeholders show what the invitation uses while a field is empty
-            const auto = displayNames({}, settings?.groomName || '', settings?.brideName || '')
             const fields = [
-              { key: 'coverGroomName', label: 'Cover — Nama Pria', auto: auto.coverGroom },
-              { key: 'coverBrideName', label: 'Cover — Nama Wanita', auto: auto.coverBride },
-              { key: 'heroGroomName', label: 'Section Awal — Nama Pria', auto: auto.heroGroom },
-              { key: 'heroBrideName', label: 'Section Awal — Nama Wanita', auto: auto.heroBride },
+              { key: 'coverGroomName', label: 'Cover — Nama Pria' },
+              { key: 'coverBrideName', label: 'Cover — Nama Wanita' },
+              { key: 'heroGroomName', label: 'Section Awal — Nama Pria' },
+              { key: 'heroBrideName', label: 'Section Awal — Nama Wanita' },
             ]
             return (
               <div className="admin-card" style={{ background: 'rgba(22, 16, 12, 0.7)' }}>
@@ -693,7 +690,7 @@ export default function AdminSettingsPage() {
                 </h3>
                 <p style={{ margin: '0 0 16px', fontSize: '0.85rem', color: 'var(--admin-muted)' }}>
                   <strong>Cover</strong> = halaman sebelum tombol &ldquo;Buka Undangan&rdquo;. <strong>Section Awal</strong> = halaman pertama setelah undangan dibuka.
-                  Kosongkan kolom untuk memakai nama otomatis (abu-abu di dalam kolom).
+                  Nama di sini terpisah dari Data Mempelai, jadi mengubah Nama Lengkap di bawah tidak mengubah nama ini.
                 </p>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
                   {fields.map((f) => (
@@ -704,9 +701,9 @@ export default function AdminSettingsPage() {
                       <input
                         id={f.key}
                         type="text"
-                        value={settings?.[f.key] || ''}
+                        value={settings?.[f.key] ?? DEFAULT_SETTINGS[f.key]}
                         onChange={(e) => updateField(f.key, e.target.value)}
-                        placeholder={f.auto}
+                        placeholder={DEFAULT_SETTINGS[f.key]}
                         className="admin-input"
                       />
                     </div>
