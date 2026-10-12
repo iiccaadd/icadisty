@@ -5,6 +5,7 @@ import SectionBackground from './SectionBackground'
 import Stack from './Stack'
 
 import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
+import { photoFrameStyle } from '@/lib/format'
 
 export default function GallerySection({ id, settings }) {
   const effectiveSettings = settings || DEFAULT_SETTINGS
@@ -24,6 +25,7 @@ export default function GallerySection({ id, settings }) {
       desc: m.desc || '',
       src: m.photo || m.src || DEFAULT_SETTINGS.galleryMoments[0].photo,
       alt: m.title || `Irsyad & Adisty - Moment ${i + 1}`,
+      frame: photoFrameStyle(m),
     }))
   }, [effectiveSettings])
 
@@ -52,6 +54,7 @@ export default function GallerySection({ id, settings }) {
           src={item.src}
           alt={item.alt}
           className="card-image"
+          style={item.frame}
           loading="lazy"
         />
         <div className="gallery-stack-overlay" />

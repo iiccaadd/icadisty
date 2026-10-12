@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { DEFAULT_SETTINGS, getEvents, SECTIONS, getSectionOrder } from '@/lib/defaultSettings'
+import { photoFrameStyle } from '@/lib/format'
 
 const MAX_PHOTO_SIDE = 2000
 
@@ -323,6 +324,21 @@ export default function AdminSettingsPage() {
   const updateMoment = (index, field, value) => {
     const list = [...getMoments()]
     list[index] = { ...list[index], [field]: value }
+    setSettings((prev) => ({ ...prev, galleryMoments: list }))
+  }
+
+  // Drag on the preview pans the photo: moving right shows more of the left side
+  const dragMoment = (index, e) => {
+    if (e.buttons !== 1) return
+    const m = getMoments()[index]
+    const rect = e.currentTarget.getBoundingClientRect()
+    const clamp = (v) => Math.round(Math.min(100, Math.max(0, v)))
+    const list = [...getMoments()]
+    list[index] = {
+      ...m,
+      posX: clamp((m.posX ?? 50) - (e.movementX / rect.width) * 100),
+      posY: clamp((m.posY ?? 50) - (e.movementY / rect.height) * 100),
+    }
     setSettings((prev) => ({ ...prev, galleryMoments: list }))
   }
 
@@ -1294,26 +1310,69 @@ export default function AdminSettingsPage() {
                   </div>
                 </div>
 
-                {/* Thumbnail Preview */}
+                {/* Thumbnail Preview: same portrait shape as the invitation card; drag to pan */}
                 <div
+                  onPointerMove={(e) => dragMoment(idx, e)}
+                  onPointerDown={(e) => e.currentTarget.setPointerCapture(e.pointerId)}
+                  title="Geser foto untuk mengatur posisi"
                   style={{
-                    height: 150,
-                    borderRadius: 14,
+                    width: '100%',
+                    maxWidth: 220,
+                    aspectRatio: '290 / 380',
+                    margin: '0 auto 10px',
+                    borderRadius: 18,
                     overflow: 'hidden',
-                    marginBottom: 14,
                     border: '1px solid rgba(241, 193, 147, 0.3)',
                     boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
                     background: '#0d0906',
+                    cursor: 'grab',
+                    touchAction: 'none',
                   }}
                 >
                   <img
                     src={moment.photo}
                     alt={moment.title || `Foto ${idx + 1}`}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    draggable={false}
+                    style={{ width: '100%', height: '100%', pointerEvents: 'none', ...photoFrameStyle(moment) }}
                     onError={(e) => {
                       e.target.src = 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop'
                     }}
                   />
+                </div>
+
+                {/* Crop / position */}
+                <div style={{ marginBottom: 14 }}>
+                  {[
+                    ['posX', 'Geser Kiri – Kanan', 0, 100, 1, 50],
+                    ['posY', 'Geser Atas – Bawah', 0, 100, 1, 50],
+                    ['zoom', 'Zoom / Crop', 1, 3, 0.05, 1],
+                  ].map(([field, label, min, max, step, def]) => (
+                    <label key={field} style={{ display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center', gap: 4, fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', marginBottom: 6 }}>
+                      {label}
+                      <span style={{ fontVariantNumeric: 'tabular-nums' }}>{field === 'zoom' ? `${Number(moment.zoom ?? def).toFixed(2)}×` : `${moment[field] ?? def}%`}</span>
+                      <input
+                        type="range"
+                        min={min}
+                        max={max}
+                        step={step}
+                        value={moment[field] ?? def}
+                        onChange={(e) => updateMoment(idx, field, Number(e.target.value))}
+                        style={{ gridColumn: '1 / -1', width: '100%', accentColor: '#F1C193' }}
+                      />
+                    </label>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const list = [...getMoments()]
+                      list[idx] = { ...list[idx], posX: 50, posY: 50, zoom: 1 }
+                      setSettings((prev) => ({ ...prev, galleryMoments: list }))
+                    }}
+                    className="btn-admin-outline"
+                    style={{ padding: '4px 10px', fontSize: 11 }}
+                  >
+                    Reset posisi
+                  </button>
                 </div>
 
                 {/* Title */}
