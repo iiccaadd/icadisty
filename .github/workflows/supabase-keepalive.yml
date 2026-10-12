@@ -1,0 +1,26 @@
+# Backup for the Vercel cron in vercel.json: free Supabase projects pause after 7 days without
+# activity. /api/settings reads Supabase, so calling it counts as activity. A failed run here means
+# the database did not answer and needs a look in the Supabase dashboard.
+name: Supabase keepalive
+
+on:
+  schedule:
+    - cron: '0 3 * * 0,3' # Sunday & Wednesday 03:00 UTC (10:00 WIB); Vercel covers Mon & Thu
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/supabase-keepalive.yml']
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read settings from Supabase through the live site
+        run: |
+          body=$(curl -sS --fail --max-time 30 --retry 3 --retry-delay 20 "https://icadistyundangan.vercel.app/api/settings?keepalive=$(date +%s)")
+          # The API falls back to defaults with a "notice" when Supabase errors, so treat that as a failure
+          if echo "$body" | grep -q '"notice"'; then
+            echo "Supabase did not answer: $(echo "$body" | grep -o '"notice":"[^"]*"')"
+            exit 1
+          fi
+          echo "Supabase answered at $(date -u)"
