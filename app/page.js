@@ -189,7 +189,7 @@ export default function InvitationPage() {
     countdown: <CountdownSection id="countdown" settings={settings} />,
     gallery: <GallerySection id="gallery" settings={settings} />,
     rsvp: <RSVPSection id="rsvp" guestName={guestName} settings={settings} />,
-    closing: <ClosingSection id="closing" groomName={groomName} brideName={brideName} settings={settings} />,
+    closing: <ClosingSection id="closing" groomName={names.closingGroom} brideName={names.closingBride} settings={settings} />,
   }
 
   // Both names share one font size, sized so the longer one still fits on a single line

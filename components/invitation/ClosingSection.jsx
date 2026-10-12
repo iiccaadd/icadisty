@@ -90,7 +90,7 @@ export default function ClosingSection({ id, groomName, brideName, settings }) {
           </div>
         )}
 
-        <div style={{ marginTop: 32 }}>
+        <div style={{ marginTop: 32, '--name-chars': Math.max(groomName.length, brideName.length) }}>
           <CoupleName fullName={groomName} as="h3" />
           <span className="amp">&amp;</span>
           <CoupleName fullName={brideName} as="h3" />

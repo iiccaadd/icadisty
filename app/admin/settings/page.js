@@ -698,14 +698,16 @@ export default function AdminSettingsPage() {
               { key: 'coverBrideName', label: 'Cover — Nama Wanita' },
               { key: 'heroGroomName', label: 'Section Awal — Nama Pria' },
               { key: 'heroBrideName', label: 'Section Awal — Nama Wanita' },
+              { key: 'closingGroomName', label: 'Section Akhir — Nama Pria', fallback: 'heroGroomName' },
+              { key: 'closingBrideName', label: 'Section Akhir — Nama Wanita', fallback: 'heroBrideName' },
             ]
             return (
               <div className="admin-card" style={{ background: 'rgba(22, 16, 12, 0.7)' }}>
                 <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', margin: '0 0 4px', fontSize: '1.25rem' }}>
-                  🏷️ Nama di Cover &amp; Section Awal
+                  🏷️ Nama di Cover, Section Awal &amp; Akhir
                 </h3>
                 <p style={{ margin: '0 0 16px', fontSize: '0.85rem', color: 'var(--admin-muted)' }}>
-                  <strong>Cover</strong> = halaman sebelum tombol &ldquo;Buka Undangan&rdquo;. <strong>Section Awal</strong> = halaman pertama setelah undangan dibuka.
+                  <strong>Cover</strong> = halaman sebelum tombol &ldquo;Buka Undangan&rdquo;. <strong>Section Awal</strong> = halaman pertama setelah undangan dibuka. <strong>Section Akhir</strong> = penutup (Doa &amp; Terima Kasih); kosongkan agar sama dengan Section Awal.
                   Nama di sini terpisah dari Data Mempelai, jadi mengubah Nama Lengkap di bawah tidak mengubah nama ini.
                 </p>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
@@ -717,9 +719,9 @@ export default function AdminSettingsPage() {
                       <input
                         id={f.key}
                         type="text"
-                        value={settings?.[f.key] ?? DEFAULT_SETTINGS[f.key]}
+                        value={f.fallback ? settings?.[f.key] ?? '' : settings?.[f.key] ?? DEFAULT_SETTINGS[f.key]}
                         onChange={(e) => updateField(f.key, e.target.value)}
-                        placeholder={DEFAULT_SETTINGS[f.key]}
+                        placeholder={f.fallback ? settings?.[f.fallback] || DEFAULT_SETTINGS[f.fallback] : DEFAULT_SETTINGS[f.key]}
                         className="admin-input"
                       />
                     </div>
