@@ -1,15 +1,15 @@
 import './globals.css'
-import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
+import { DEFAULT_SETTINGS, displayNames } from '@/lib/defaultSettings'
 import { fetchSupabaseSettings } from '@/lib/supabaseServer'
-import { splitName } from '@/lib/format'
 
 // Re-read names/photo from settings at most once a minute (WhatsApp caches previews anyway)
 export const revalidate = 60
 
 export async function generateMetadata() {
   const settings = { ...DEFAULT_SETTINGS, ...(await fetchSupabaseSettings().catch(() => null)) }
-  // Degrees are dropped: they make the share title too long
-  const title = `The Wedding of ${splitName(settings.groomName).name} & ${splitName(settings.brideName).name}`
+  // Tab and share title use the same names as the cover
+  const { coverGroom, coverBride } = displayNames(settings)
+  const title = `The Wedding of ${coverGroom} & ${coverBride}`
   const description = 'Dengan penuh sukacita kami mengundang Anda untuk hadir dalam acara pernikahan kami.'
   const images = settings.heroBgPhoto ? [settings.heroBgPhoto] : []
 
