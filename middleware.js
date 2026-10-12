@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { isAdmin } from '@/lib/adminAuth'
+import { isAdmin, isFamily } from '@/lib/adminAuth'
 
 export async function middleware(request) {
   const { pathname } = request.nextUrl
@@ -7,7 +7,11 @@ export async function middleware(request) {
   // Protect all /admin routes except /admin/login
   if (pathname.startsWith('/admin')) {
     const isLoginPage = pathname === '/admin/login'
+    if (pathname === '/admin/keluarga') return NextResponse.next()
     const isAuthenticated = await isAdmin(request)
+
+    // Family link sessions only get the guest list
+    if (!isAuthenticated && pathname === '/admin/guests' && (await isFamily(request))) return NextResponse.next()
 
     // If not authenticated and trying to access protected admin page
     if (!isAuthenticated && !isLoginPage) {

@@ -12,6 +12,8 @@ export default function AdminLayout({ children }) {
 
   const [loading, setLoading] = useState(!isLoginPage)
   const [authenticated, setAuthenticated] = useState(false)
+  const [role, setRole] = useState(null)
+  const isAdminRole = role === 'admin'
 
   useEffect(() => {
     if (isLoginPage) {
@@ -26,6 +28,7 @@ export default function AdminLayout({ children }) {
         const data = await res.json()
         if (data.authenticated) {
           setAuthenticated(true)
+          setRole(data.role)
         } else {
           router.replace(`/admin/login?redirect=${encodeURIComponent(pathname)}`)
         }
@@ -73,13 +76,13 @@ export default function AdminLayout({ children }) {
     <div className="admin-body">
       {/* Top Header (Desktop & Mobile Brand) */}
       <header className="admin-header">
-        <Link href="/admin" className="admin-brand">
+        <Link href={isAdminRole ? '/admin' : '/admin/guests'} className="admin-brand">
           <div className="admin-brand-logo">IA</div>
           <div>
             <h1 className="admin-brand-title">Irsyad &amp; Adisty</h1>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <span style={{ fontSize: 9, letterSpacing: '0.15em', color: 'var(--admin-muted)', textTransform: 'uppercase' }}>
-                Admin Portal
+                {isAdminRole ? 'Admin Portal' : 'Portal Keluarga'}
               </span>
               <span className="admin-session-badge">
                 <span className="pulse-dot" /> Aktif
@@ -90,6 +93,7 @@ export default function AdminLayout({ children }) {
 
         {/* Desktop Navigation Links */}
         <nav className="admin-nav admin-nav-desktop">
+          {isAdminRole && <>
           <Link
             href="/admin"
             className={`admin-nav-link ${pathname === '/admin' ? 'active' : ''}`}
@@ -102,12 +106,14 @@ export default function AdminLayout({ children }) {
           >
             💌 RSVP &amp; Doa
           </Link>
+          </>}
           <Link
             href="/admin/guests"
             className={`admin-nav-link ${pathname === '/admin/guests' ? 'active' : ''}`}
           >
             👥 Buku Tamu
           </Link>
+          {isAdminRole && <>
           <Link
             href="/admin/settings"
             className={`admin-nav-link ${pathname === '/admin/settings' ? 'active' : ''}`}
@@ -123,6 +129,7 @@ export default function AdminLayout({ children }) {
           >
             👁️ Preview ↗
           </a>
+          </>}
           <button
             onClick={handleLogout}
             className="admin-nav-link btn-logout"
@@ -138,6 +145,7 @@ export default function AdminLayout({ children }) {
 
       {/* Mobile App Bottom Navigation Bar */}
       <nav className="admin-mobile-bottom-nav" aria-label="Mobile Admin Navigation">
+        {isAdminRole && <>
         <Link
           href="/admin"
           className={`bottom-nav-item ${pathname === '/admin' ? 'active' : ''}`}
@@ -152,6 +160,7 @@ export default function AdminLayout({ children }) {
           <span className="bottom-nav-icon">💌</span>
           <span className="bottom-nav-label">RSVP</span>
         </Link>
+        </>}
         <Link
           href="/admin/guests"
           className={`bottom-nav-item ${pathname === '/admin/guests' ? 'active' : ''}`}
@@ -159,6 +168,7 @@ export default function AdminLayout({ children }) {
           <span className="bottom-nav-icon">👥</span>
           <span className="bottom-nav-label">Tamu</span>
         </Link>
+        {isAdminRole && (
         <Link
           href="/admin/settings"
           className={`bottom-nav-item ${pathname === '/admin/settings' ? 'active' : ''}`}
@@ -166,6 +176,7 @@ export default function AdminLayout({ children }) {
           <span className="bottom-nav-icon">⚙️</span>
           <span className="bottom-nav-label">Setting</span>
         </Link>
+        )}
         <button
           onClick={handleLogout}
           className="bottom-nav-item"

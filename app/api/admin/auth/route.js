@@ -1,13 +1,16 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { ADMIN_COOKIE, adminToken, isAdmin } from '@/lib/adminAuth'
+import { ADMIN_COOKIE, FAMILY_COOKIE, adminToken, familyKey, isAdmin, isFamily } from '@/lib/adminAuth'
 
 export const dynamic = 'force-dynamic'
 
 // Verify active session
 export async function GET(request) {
   try {
-    return NextResponse.json({ authenticated: await isAdmin(request) })
+    const admin = await isAdmin(request)
+    const role = admin ? 'admin' : (await isFamily(request)) ? 'family' : null
+    const familyLink = admin ? `${new URL(request.url).origin}/admin/keluarga?k=${await familyKey()}` : undefined
+    return NextResponse.json({ authenticated: Boolean(role), role, familyLink })
   } catch (err) {
     return NextResponse.json({ authenticated: false, error: err.message }, { status: 500 })
   }
@@ -46,5 +49,6 @@ export async function POST(request) {
 export async function DELETE() {
   const cookieStore = await cookies()
   cookieStore.delete(ADMIN_COOKIE)
+  cookieStore.delete(FAMILY_COOKIE)
   return NextResponse.json({ success: true })
 }

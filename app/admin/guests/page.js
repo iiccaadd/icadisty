@@ -27,9 +27,19 @@ export default function AdminGuestsPage() {
   const [templateStatus, setTemplateStatus] = useState('')
   const [composer, setComposer] = useState(null) // { guest, text }
 
+  // 'admin' or 'family' (shared guest-list link); familyLink is only sent to the admin
+  const [role, setRole] = useState(null)
+  const [familyLink, setFamilyLink] = useState('')
+  const [familyCopied, setFamilyCopied] = useState(false)
+  const isAdminRole = role === 'admin'
+
   useEffect(() => {
     setOrigin(window.location.origin)
     loadGuests()
+    fetch('/api/admin/auth')
+      .then((res) => res.json())
+      .then((json) => { setRole(json.role); setFamilyLink(json.familyLink || '') })
+      .catch(() => {})
     fetch('/api/settings?t=' + Date.now(), { cache: 'no-store' })
       .then((res) => res.json())
       .then((json) => { if (json.data?.waMessageTemplate) setWaTemplate(json.data.waMessageTemplate) })
@@ -210,7 +220,31 @@ export default function AdminGuestsPage() {
         </div>
       </div>
 
-      {/* WhatsApp message template */}
+      {/* Shareable family link (admin only) */}
+      {isAdminRole && familyLink && (
+        <div className="admin-card" style={{ marginBottom: 24 }}>
+          <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', fontSize: '1.2rem', margin: '0 0 4px' }}>
+            👪 Link Keluarga (Isi Daftar Tamu)
+          </h3>
+          <p style={{ fontSize: '0.8rem', color: 'var(--admin-muted)', margin: '0 0 12px' }}>
+            Bagikan link ini ke keluarga. Mereka bisa menambah tamu, menyalin link &amp; kirim WA, tanpa akses ke pengaturan, RSVP, isi pesan, atau hapus tamu.
+            Link hanya bisa dicabut dengan mengganti kata sandi admin.
+          </p>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <input readOnly value={familyLink} aria-label="Link keluarga" className="admin-input" style={{ flex: '1 1 260px' }} onFocus={(e) => e.target.select()} />
+            <button
+              type="button"
+              className="btn-admin"
+              onClick={() => navigator.clipboard.writeText(familyLink).then(() => { setFamilyCopied(true); setTimeout(() => setFamilyCopied(false), 2000) })}
+            >
+              {familyCopied ? '✓ Disalin' : '📋 Salin Link Keluarga'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* WhatsApp message template (admin only) */}
+      {isAdminRole && (
       <div className="admin-card" style={{ marginBottom: 24 }}>
         <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', fontSize: '1.2rem', margin: '0 0 4px' }}>
           ✉️ Isi Pesan Undangan WhatsApp
@@ -241,6 +275,7 @@ export default function AdminGuestsPage() {
           {templateStatus === 'saved' && <span style={{ color: '#81c784', fontSize: 12 }}>✓ Template tersimpan</span>}
         </div>
       </div>
+      )}
 
       {/* Bulk Add Form */}
       {showBulk && (
@@ -361,7 +396,7 @@ export default function AdminGuestsPage() {
                     <th>Status Dibuka</th>
                     <th>Link Undangan</th>
                     <th style={{ textAlign: 'center' }}>Aksi Kirim</th>
-                    <th style={{ textAlign: 'center' }}>Hapus</th>
+                    {isAdminRole && <th style={{ textAlign: 'center' }}>Hapus</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -378,7 +413,8 @@ export default function AdminGuestsPage() {
                       </td>
                       <td>
                         <button
-                          onClick={() => toggleGuestStatus(guest)}
+                          onClick={() => isAdminRole && toggleGuestStatus(guest)}
+                          disabled={!isAdminRole}
                           style={{
                             background: 'none',
                             border: 'none',
@@ -453,7 +489,7 @@ export default function AdminGuestsPage() {
                           💬 Share WA
                         </button>
                       </td>
-                      <td style={{ textAlign: 'center' }}>
+                      {isAdminRole && <td style={{ textAlign: 'center' }}>
                         <button
                           onClick={() => handleDelete(guest.id)}
                           style={{
@@ -469,7 +505,7 @@ export default function AdminGuestsPage() {
                         >
                           🗑️
                         </button>
-                      </td>
+                      </td>}
                     </tr>
                   ))}
                 </tbody>
@@ -536,7 +572,7 @@ export default function AdminGuestsPage() {
                     >
                       👁️ Preview Undangan Tamu ↗
                     </a>
-                    <button
+                    {isAdminRole && <button
                       onClick={() => handleDelete(guest.id)}
                       style={{
                         background: 'rgba(211, 47, 47, 0.15)',
@@ -549,7 +585,7 @@ export default function AdminGuestsPage() {
                       }}
                     >
                       🗑️ Hapus
-                    </button>
+                    </button>}
                   </div>
                 </div>
               ))}

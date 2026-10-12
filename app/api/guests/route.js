@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getSupabaseServer } from '@/lib/supabaseServer'
-import { isAdmin } from '@/lib/adminAuth'
+import { isAdmin, canManageGuests } from '@/lib/adminAuth'
 
 export const dynamic = 'force-dynamic'
 
@@ -86,7 +86,7 @@ export async function GET(request) {
     }
 
     // Default: fetch all guests for admin dashboard
-    if (!(await isAdmin(request))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!(await canManageGuests(request))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const { data, error } = await supabase
       .from('guests')
@@ -106,7 +106,7 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
-    if (!(await isAdmin(request))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!(await canManageGuests(request))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     const supabase = getSupabaseServer()
     const body = await request.json()
     const { name, phone, invited_by, bulkNames } = body
