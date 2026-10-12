@@ -1284,3 +1284,46 @@
   letter-spacing: 0.15em;
   color: rgba(255,255,255,0.6);
 }
+
+/* ─── Full-screen photo viewer (gallery) ─── */
+.photo-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0,0,0,0.94);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+}
+.photo-viewer-img {
+  max-width: min(100%, 960px);
+  max-height: calc(100dvh - 200px);
+  object-fit: contain;
+  border-radius: 8px;
+}
+.photo-viewer-caption {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  color: #fff;
+  text-align: center;
+}
+.photo-viewer-bar {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.photo-viewer-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: var(--fs-h2);
+  line-height: 1;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.25);
+}

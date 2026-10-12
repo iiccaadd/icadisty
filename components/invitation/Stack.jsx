@@ -3,7 +3,7 @@
 import { motion, useMotionValue, useTransform } from 'motion/react'
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
 
-function CardRotate({ children, onSendToBack, sensitivity, disableDrag = false, isTop = false }) {
+function CardRotate({ children, onSendToBack, onDragStart, sensitivity, disableDrag = false, isTop = false }) {
   const x = useMotionValue(0)
   const y = useMotionValue(0)
   const rotateX = useTransform(y, [-100, 100], [40, -40])
@@ -39,6 +39,7 @@ function CardRotate({ children, onSendToBack, sensitivity, disableDrag = false, 
       dragConstraints={{ top: 0, right: 0, bottom: 0, left: 0 }}
       dragElastic={0.55}
       whileTap={{ cursor: 'grabbing' }}
+      onDragStart={onDragStart}
       onDragEnd={handleDragEnd}
     >
       {children}
@@ -59,9 +60,11 @@ const Stack = forwardRef(function Stack(
     mobileClickOnly = false,
     mobileBreakpoint = 768,
     onTopCardChange,
+    onTopCardClick, // (originalIndex) => void; replaces send-to-back on click when given
   },
   ref
 ) {
+  const lastDragAt = useRef(0)
   const [isMobile, setIsMobile] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
 
@@ -200,6 +203,7 @@ const Stack = forwardRef(function Stack(
           <CardRotate
             key={card.id}
             onSendToBack={() => sendToBack(card.id)}
+            onDragStart={() => { lastDragAt.current = Date.now() }}
             sensitivity={sensitivity}
             disableDrag={shouldDisableDrag}
             isTop={isTop}
@@ -208,7 +212,11 @@ const Stack = forwardRef(function Stack(
               className="card"
               onClick={(e) => {
                 e.stopPropagation()
-                if (isTop && shouldEnableClick) {
+                if (!isTop) return
+                // Releasing a swipe also fires click; ignore clicks right after a drag
+                if (onTopCardClick) {
+                  if (Date.now() - lastDragAt.current > 400) onTopCardClick(card.originalIndex)
+                } else if (shouldEnableClick) {
                   sendToBack(card.id)
                 }
               }}

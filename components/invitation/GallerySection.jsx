@@ -3,6 +3,7 @@
 import { useState, useRef, useMemo, useCallback } from 'react'
 import SectionBackground from './SectionBackground'
 import Stack from './Stack'
+import PhotoViewer from './PhotoViewer'
 
 import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
 import { photoFrameStyle } from '@/lib/format'
@@ -30,6 +31,7 @@ export default function GallerySection({ id, settings }) {
   }, [effectiveSettings])
 
   const [currentIdx, setCurrentIdx] = useState(0)
+  const [viewerIdx, setViewerIdx] = useState(null)
   const activeItem = moments[currentIdx] || moments[0] || {}
 
   const handleTopCardChange = useCallback((idx) => {
@@ -127,6 +129,7 @@ export default function GallerySection({ id, settings }) {
                 randomRotation={settings?.galleryRandomRotation ?? true}
                 sensitivity={140}
                 sendToBackOnClick={true}
+                onTopCardClick={setViewerIdx}
                 autoplay={settings?.galleryAutoplay ?? true}
                 autoplayDelay={settings?.galleryAutoplayDelay ?? 3500}
                 pauseOnHover={true}
@@ -137,7 +140,12 @@ export default function GallerySection({ id, settings }) {
             </div>
           </div>
         </div>
+        <p className="caption-text">Ketuk foto untuk melihat penuh &amp; mengunduh</p>
       </div>
+
+      {viewerIdx !== null && (
+        <PhotoViewer photos={moments} index={viewerIdx} onIndexChange={setViewerIdx} onClose={() => setViewerIdx(null)} />
+      )}
     </section>
   )
 }
