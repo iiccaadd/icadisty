@@ -27,6 +27,7 @@ export default function GallerySection({ id, settings }) {
       src: m.photo || m.src || DEFAULT_SETTINGS.galleryMoments[0].photo,
       alt: m.title || `Irsyad & Adisty - Moment ${i + 1}`,
       frame: photoFrameStyle(m),
+      crop: { posX: m.posX, posY: m.posY, zoom: m.zoom },
     }))
   }, [effectiveSettings])
 

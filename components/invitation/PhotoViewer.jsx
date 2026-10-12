@@ -1,7 +1,10 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { photoCropRect } from '@/lib/format'
 
-// Full-screen view of the photo as framed in the gallery, with prev/next and original-file download
+const FRAME_ASPECT = 290 / 380 // .gallery-stack-wrapper / .photo-viewer-frame
+
+// Full-screen view of the photo as framed in the gallery, with prev/next and download of that same crop
 export default function PhotoViewer({ photos, index, onIndexChange, onClose }) {
   const [downloading, setDownloading] = useState(false)
   const photo = photos[index]
@@ -17,17 +20,26 @@ export default function PhotoViewer({ photos, index, onIndexChange, onClose }) {
     return () => window.removeEventListener('keydown', onKey)
   })
 
-  // Download the original file; cross-origin hosts without CORS just open it in a new tab to save from there
+  // Download the admin crop cut from the original at its native resolution (no upscaling);
+  // cross-origin hosts without CORS just open the original in a new tab to save from there
   const download = async () => {
     setDownloading(true)
     try {
       const res = await fetch(photo.src, { mode: 'cors' })
       if (!res.ok) throw new Error(String(res.status))
-      const blob = await res.blob()
-      const ext = (blob.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg')
+      const bitmap = await createImageBitmap(await res.blob())
+      const { sx, sy, sw, sh } = photoCropRect(bitmap.width, bitmap.height, FRAME_ASPECT, photo.crop)
+      const canvas = document.createElement('canvas')
+      canvas.width = Math.round(sw)
+      canvas.height = Math.round(sh)
+      const ctx = canvas.getContext('2d')
+      ctx.imageSmoothingQuality = 'high'
+      ctx.drawImage(bitmap, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height)
+      bitmap.close()
+      const blob = await new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('toBlob'))), 'image/jpeg', 0.95))
       const a = document.createElement('a')
       a.href = URL.createObjectURL(blob)
-      a.download = `Irsyad-Adisty-${String(index + 1).padStart(2, '0')}.${ext}`
+      a.download = `Irsyad-Adisty-${String(index + 1).padStart(2, '0')}.jpg`
       document.body.appendChild(a)
       a.click()
       a.remove()
