@@ -121,7 +121,7 @@ export default function Preloader({
   if (!visible) return null
 
   return (
-    <div className={`preloader ${isOpened ? 'hidden' : ''}`}>
+    <div className={`preloader ${isOpened ? 'hidden' : ''}`} style={{ '--name-chars': Math.max(groomName.length, brideName.length) }}>
       {/* 3D Infinite Spiral Background Layer */}
       <div
         className="preloader-bg-spiral"

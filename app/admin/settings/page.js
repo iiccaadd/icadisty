@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { DEFAULT_SETTINGS, getEvents, SECTIONS, getSectionOrder } from '@/lib/defaultSettings'
+import { displayNames } from '@/lib/format'
 
 const MAX_PHOTO_SIDE = 2000
 
@@ -674,6 +675,46 @@ export default function AdminSettingsPage() {
               />
             </div>
           </div>
+
+          {/* Section: Nama di Cover & Section Awal */}
+          {(() => {
+            // Placeholders show what the invitation uses while a field is empty
+            const auto = displayNames({}, settings?.groomName || '', settings?.brideName || '')
+            const fields = [
+              { key: 'coverGroomName', label: 'Cover — Nama Pria', auto: auto.coverGroom },
+              { key: 'coverBrideName', label: 'Cover — Nama Wanita', auto: auto.coverBride },
+              { key: 'heroGroomName', label: 'Section Awal — Nama Pria', auto: auto.heroGroom },
+              { key: 'heroBrideName', label: 'Section Awal — Nama Wanita', auto: auto.heroBride },
+            ]
+            return (
+              <div className="admin-card" style={{ background: 'rgba(22, 16, 12, 0.7)' }}>
+                <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', margin: '0 0 4px', fontSize: '1.25rem' }}>
+                  🏷️ Nama di Cover &amp; Section Awal
+                </h3>
+                <p style={{ margin: '0 0 16px', fontSize: '0.85rem', color: 'var(--admin-muted)' }}>
+                  <strong>Cover</strong> = halaman sebelum tombol &ldquo;Buka Undangan&rdquo;. <strong>Section Awal</strong> = halaman pertama setelah undangan dibuka.
+                  Kosongkan kolom untuk memakai nama otomatis (abu-abu di dalam kolom).
+                </p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
+                  {fields.map((f) => (
+                    <div key={f.key}>
+                      <label htmlFor={f.key} style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 6 }}>
+                        {f.label}
+                      </label>
+                      <input
+                        id={f.key}
+                        type="text"
+                        value={settings?.[f.key] || ''}
+                        onChange={(e) => updateField(f.key, e.target.value)}
+                        placeholder={f.auto}
+                        className="admin-input"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          })()}
 
           {/* Section 2: Profil & Orang Tua Pria dan Wanita */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 24 }}>

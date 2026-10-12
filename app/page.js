@@ -15,6 +15,7 @@ import GallerySection from '@/components/invitation/GallerySection'
 import RSVPSection from '@/components/invitation/RSVPSection'
 import ClosingSection from '@/components/invitation/ClosingSection'
 import { DEFAULT_SETTINGS, getSectionOrder } from '@/lib/defaultSettings'
+import { displayNames } from '@/lib/format'
 
 const GROOM = process.env.NEXT_PUBLIC_GROOM_NAME || 'Muhammad Irsyad, S.T.'
 const BRIDE = process.env.NEXT_PUBLIC_BRIDE_NAME || 'Adisty Vana Lestari, S.Pd., M.Pd.'
@@ -178,9 +179,10 @@ export default function InvitationPage() {
   const groomName = settings?.groomName || GROOM
   const brideName = settings?.brideName || BRIDE
 
+  const names = displayNames(settings, groomName, brideName)
   const sectionOrder = getSectionOrder(settings)
   const sections = {
-    opening: <HeroSection id="opening" groomName={groomName} brideName={brideName} guestName={guestName} settings={settings} />,
+    opening: <HeroSection id="opening" groomName={names.heroGroom} brideName={names.heroBride} guestName={guestName} settings={settings} />,
     groom: <GroomSection id="groom" groomName={groomName} settings={settings} />,
     bride: <BrideSection id="bride" brideName={brideName} settings={settings} />,
     lovestory: <LoveStorySection id="lovestory" settings={settings} />,
@@ -197,8 +199,8 @@ export default function InvitationPage() {
   return (
     <div style={{ '--name-chars': nameChars }}>
       <Preloader
-        groomName={groomName}
-        brideName={brideName}
+        groomName={names.coverGroom}
+        brideName={names.coverBride}
         guestName={guestName}
         onOpen={handleOpen}
         isOpened={opened}
