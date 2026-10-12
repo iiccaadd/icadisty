@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
+import { fillWaMessage } from '@/lib/format'
 
 export default function AdminGuestsPage() {
   const [guests, setGuests] = useState([])
@@ -20,10 +22,40 @@ export default function AdminGuestsPage() {
   // Copied indicator
   const [copiedId, setCopiedId] = useState(null)
 
+  // WhatsApp message: saved template + the message being edited for one guest before sending
+  const [waTemplate, setWaTemplate] = useState(DEFAULT_SETTINGS.waMessageTemplate)
+  const [templateStatus, setTemplateStatus] = useState('')
+  const [composer, setComposer] = useState(null) // { guest, text }
+
   useEffect(() => {
     setOrigin(window.location.origin)
     loadGuests()
+    fetch('/api/settings?t=' + Date.now(), { cache: 'no-store' })
+      .then((res) => res.json())
+      .then((json) => { if (json.data?.waMessageTemplate) setWaTemplate(json.data.waMessageTemplate) })
+      .catch(() => {})
   }, [])
+
+  const saveTemplate = async () => {
+    setTemplateStatus('saving')
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ settings: { waMessageTemplate: waTemplate } }),
+      })
+      if (!res.ok) throw new Error()
+      setTemplateStatus('saved')
+      setTimeout(() => setTemplateStatus(''), 2500)
+    } catch (e) {
+      setTemplateStatus('')
+      alert('Gagal menyimpan template pesan')
+    }
+  }
+
+  const openComposer = (guest) => {
+    setComposer({ guest, text: fillWaMessage(waTemplate, guest.name, getGuestUrl(guest)) })
+  }
 
   const loadGuests = async () => {
     setLoading(true)
@@ -142,29 +174,8 @@ export default function AdminGuestsPage() {
     })
   }
 
-  const getWhatsAppLink = (guest) => {
-    const groom = 'Muhammad Irsyad'
-    const bride = 'Adisty Vana Lestari'
-    const url = getGuestUrl(guest)
+  const getWhatsAppLink = (guest, message) => {
     const phone = guest.phone ? guest.phone.replace(/^0/, '62').replace(/\D/g, '') : ''
-
-    const message = `Kepada Yth.
-*${guest.name}*,
-
-Tanpa mengurangi rasa hormat, perkenankan kami mengundang Anda untuk menghadiri acara resepsi pernikahan kami:
-
-*${groom} & ${bride}*
-📅 Rabu, 11 November 2026
-📍 Masjid H. Muhammad Sidik Islamic Center Muara Teweh
-
-Detail acara, peta lokasi & konfirmasi kehadiran (RSVP) dapat dilihat melalui link undangan berikut:
-${url}
-
-Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Anda berkenan hadir dan memberikan doa restu.
-
-Terima kasih.
-Salam hangat,
-*Irsyad & Adisty*`
 
     if (phone) {
       return `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`
@@ -196,6 +207,38 @@ Salam hangat,
           <button onClick={loadGuests} className="btn-admin-outline">
             🔄 Refresh
           </button>
+        </div>
+      </div>
+
+      {/* WhatsApp message template */}
+      <div className="admin-card" style={{ marginBottom: 24 }}>
+        <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', fontSize: '1.2rem', margin: '0 0 4px' }}>
+          ✉️ Isi Pesan Undangan WhatsApp
+        </h3>
+        <p style={{ fontSize: '0.8rem', color: 'var(--admin-muted)', margin: '0 0 12px' }}>
+          Teks ini dipakai saat menekan <strong>Share WA</strong>. <code>{'{nama}'}</code> otomatis diganti nama tamu dan <code>{'{link}'}</code> diganti link undangannya.
+          Gunakan <code>*teks*</code> untuk huruf tebal di WhatsApp.
+        </p>
+        <textarea
+          aria-label="Template pesan WhatsApp"
+          value={waTemplate}
+          onChange={(e) => setWaTemplate(e.target.value)}
+          className="admin-input"
+          rows={14}
+          style={{ width: '100%', fontFamily: 'inherit', lineHeight: 1.5, resize: 'vertical' }}
+        />
+        <div style={{ display: 'flex', gap: 10, marginTop: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+          <button type="button" onClick={saveTemplate} className="btn-admin" disabled={templateStatus === 'saving'}>
+            {templateStatus === 'saving' ? 'Menyimpan...' : '💾 Simpan Template'}
+          </button>
+          <button
+            type="button"
+            onClick={() => confirm('Kembalikan teks pesan ke bawaan?') && setWaTemplate(DEFAULT_SETTINGS.waMessageTemplate)}
+            className="btn-admin-outline"
+          >
+            Kembalikan Bawaan
+          </button>
+          {templateStatus === 'saved' && <span style={{ color: '#81c784', fontSize: 12 }}>✓ Template tersimpan</span>}
         </div>
       </div>
 
@@ -389,11 +432,12 @@ Salam hangat,
                         </div>
                       </td>
                       <td style={{ textAlign: 'center' }}>
-                        <a
-                          href={getWhatsAppLink(guest)}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <button
+                          type="button"
+                          onClick={() => openComposer(guest)}
                           style={{
+                            border: 'none',
+                            cursor: 'pointer',
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: 4,
@@ -407,7 +451,7 @@ Salam hangat,
                           }}
                         >
                           💬 Share WA
-                        </a>
+                        </button>
                       </td>
                       <td style={{ textAlign: 'center' }}>
                         <button
@@ -459,10 +503,9 @@ Salam hangat,
 
                   {/* Actions Bar */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 4 }}>
-                    <a
-                      href={getWhatsAppLink(guest)}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      type="button"
+                      onClick={() => openComposer(guest)}
                       className="btn-admin"
                       style={{
                         background: 'linear-gradient(135deg, #25D366, #128C7E)',
@@ -473,7 +516,7 @@ Salam hangat,
                       }}
                     >
                       💬 Kirim WA
-                    </a>
+                    </button>
 
                     <button
                       onClick={() => copyGuestLink(guest)}
@@ -514,6 +557,50 @@ Salam hangat,
           </>
         )}
       </div>
+
+      {/* Edit message for one guest, then send */}
+      {composer && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Pesan WhatsApp untuk ${composer.guest.name}`}
+          onClick={(e) => e.target === e.currentTarget && setComposer(null)}
+          style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}
+        >
+          <div className="admin-card" style={{ width: '100%', maxWidth: 560, maxHeight: '90vh', overflowY: 'auto', margin: 0 }}>
+            <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', fontSize: '1.2rem', margin: '0 0 4px' }}>
+              Kirim ke {composer.guest.name}
+            </h3>
+            <p style={{ fontSize: '0.8rem', color: 'var(--admin-muted)', margin: '0 0 12px' }}>
+              {composer.guest.phone ? `WhatsApp: ${composer.guest.phone}` : 'Tanpa nomor: pilih kontak tujuan di WhatsApp.'} Pesan di bawah bisa diedit khusus untuk tamu ini.
+            </p>
+            <textarea
+              aria-label="Pesan untuk tamu ini"
+              value={composer.text}
+              onChange={(e) => setComposer({ ...composer, text: e.target.value })}
+              className="admin-input"
+              rows={16}
+              style={{ width: '100%', fontFamily: 'inherit', lineHeight: 1.5, resize: 'vertical' }}
+              autoFocus
+            />
+            <div style={{ display: 'flex', gap: 10, marginTop: 12, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+              <button type="button" onClick={() => setComposer(null)} className="btn-admin-outline">
+                Batal
+              </button>
+              <a
+                href={getWhatsAppLink(composer.guest, composer.text)}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setTimeout(() => setComposer(null), 300)}
+                className="btn-admin"
+                style={{ background: 'linear-gradient(135deg, #25D366, #128C7E)', color: '#fff', textDecoration: 'none' }}
+              >
+                💬 Kirim via WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
