@@ -1472,6 +1472,49 @@ export default function AdminSettingsPage() {
             </div>
           </div>
 
+          {/* Gift delivery address */}
+          <div className="admin-card" style={{ background: 'rgba(22, 16, 12, 0.7)' }}>
+            <h3 style={{ fontFamily: '"Playfair Display", serif', color: '#F1C193', margin: '0 0 4px', fontSize: '1.25rem' }}>
+              🎁 Alamat Pengiriman Kado
+            </h3>
+            <p style={{ margin: '0 0 16px', fontSize: '0.85rem', color: 'var(--admin-muted)' }}>
+              Tampil di bawah rekening pada undangan, lengkap dengan tombol menuju alamat. Kosongkan alamat untuk menyembunyikannya.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {[
+                ['giftRecipient', 'Nama Penerima (opsional)', 'Contoh: Adisty Vana Lestari (0812xxxxxxx)', false],
+                ['giftAddress', 'Alamat Lengkap', 'Jl. ..., No. ..., Muara Teweh, Kalimantan Tengah', true],
+                ['giftMaps', 'Link Google Maps (opsional)', 'Kosongkan: tombol mencari otomatis dari alamat di atas', false],
+              ].map(([key, label, placeholder, multiline]) => (
+                <div key={key}>
+                  <label htmlFor={key} style={{ fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--admin-muted)', display: 'block', marginBottom: 6 }}>
+                    {label}
+                  </label>
+                  {multiline ? (
+                    <textarea
+                      id={key}
+                      rows={3}
+                      value={settings?.[key] ?? DEFAULT_SETTINGS[key]}
+                      onChange={(e) => updateField(key, e.target.value)}
+                      placeholder={placeholder}
+                      className="admin-input"
+                      style={{ width: '100%', fontFamily: 'inherit', resize: 'vertical' }}
+                    />
+                  ) : (
+                    <input
+                      id={key}
+                      type="text"
+                      value={settings?.[key] ?? DEFAULT_SETTINGS[key]}
+                      onChange={(e) => updateField(key, e.target.value)}
+                      placeholder={placeholder}
+                      className="admin-input"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Grid Layout: Left Edit Cards, Right Sticky Live Preview */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: 24, alignItems: 'start' }}>
             {/* Left Column: Bank Cards Editor */}

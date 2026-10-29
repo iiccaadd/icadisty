@@ -1,11 +1,12 @@
 'use client'
 import { useState, useMemo } from 'react'
+import BankLogo from './BankLogo'
+import { giftMapsUrl } from '@/lib/format'
 import SectionBackground from './SectionBackground'
 import CoupleName from './CoupleName'
 import { DEFAULT_SETTINGS } from '@/lib/defaultSettings'
 
 export default function ClosingSection({ id, groomName, brideName, settings }) {
-  const [giftOpen, setGiftOpen] = useState(false)
   const [copiedBank, setCopiedBank] = useState(null)
 
   const effectiveSettings = settings || DEFAULT_SETTINGS
@@ -17,6 +18,9 @@ export default function ClosingSection({ id, groomName, brideName, settings }) {
     }
     return DEFAULT_SETTINGS.bankAccounts || []
   }, [effectiveSettings])
+
+  const giftAddress = String(effectiveSettings?.giftAddress || '').trim()
+  const giftRecipient = String(effectiveSettings?.giftRecipient || '').trim()
 
   const copyToClipboard = (text, bankKey) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -50,45 +54,57 @@ export default function ClosingSection({ id, groomName, brideName, settings }) {
           Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu bagi lembaran baru perjalanan hidup kami.
         </p>
 
-        {/* Digital Gift / Wedding Gift Button */}
-        <button onClick={() => setGiftOpen(!giftOpen)} className="btn-gold" aria-expanded={giftOpen}>
-          {giftOpen ? 'Tutup Amplop Digital' : 'Kirim Amplop Digital'}
-        </button>
+        {/* Digital gift: always visible */}
+        <div className="gift-card">
+          <h4>Tanda Kasih Digital</h4>
+          <p className="caption-text">
+            Bagi keluarga &amp; sahabat yang ingin memberikan tanda kasih secara cashless:
+          </p>
 
-        {/* Gift Card Accordion/Modal */}
-        {giftOpen && (
-          <div className="gift-card">
-            <h4>Tanda Kasih Digital</h4>
-            <p className="caption-text">
-              Bagi keluarga &amp; sahabat yang ingin memberikan tanda kasih secara cashless:
-            </p>
-
-            {/* Dynamic Bank Cards */}
-            {banks.map((bank, bIdx) => {
-              const isCopied = copiedBank === bIdx
-              return (
-                <div key={bank.id || bIdx} className="bank-row">
-                  <div style={{ minWidth: 0, flex: 1 }}>
-                    <span className="label-gold" style={{ display: 'block' }}>{bank.bankName || 'BANK'}</span>
-                    <p className="bank-number">{bank.accountNumber}</p>
-                    {bank.accountHolder && (
-                      <span className="caption-text" style={{ display: 'block', wordBreak: 'break-word' }}>
-                        a.n {bank.accountHolder}
-                      </span>
-                    )}
+          {/* Dynamic Bank Cards */}
+          {banks.map((bank, bIdx) => {
+            const isCopied = copiedBank === bIdx
+            return (
+              <div key={bank.id || bIdx} className="bank-row">
+                <div style={{ minWidth: 0, flex: '1 1 180px' }}>
+                  <div className="bank-title">
+                    <BankLogo name={bank.bankName} />
+                    <span className="label-gold">{bank.bankName || 'BANK'}</span>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => copyToClipboard(bank.accountNumber, bIdx)}
-                    className={`bank-copy ${isCopied ? 'copied' : ''}`}
-                  >
-                    {isCopied ? '✓ Tersalin' : 'Salin Rek'}
-                  </button>
+                  <p className="bank-number">{bank.accountNumber}</p>
+                  {bank.accountHolder && (
+                    <span className="caption-text" style={{ display: 'block', wordBreak: 'break-word' }}>
+                      a.n {bank.accountHolder}
+                    </span>
+                  )}
                 </div>
-              )
-            })}
-          </div>
-        )}
+                <button
+                  type="button"
+                  onClick={() => copyToClipboard(bank.accountNumber, bIdx)}
+                  className={`bank-copy ${isCopied ? 'copied' : ''}`}
+                >
+                  {isCopied ? '✓ Tersalin' : 'Salin Rek'}
+                </button>
+              </div>
+            )
+          })}
+
+          {giftAddress && (
+            <div className="bank-row gift-address">
+              <span className="label-gold">Kirim Kado</span>
+              {giftRecipient && <p className="event-detail">{giftRecipient}</p>}
+              <p className="caption-text" style={{ whiteSpace: 'pre-line', wordBreak: 'break-word' }}>{giftAddress}</p>
+              <a
+                href={giftMapsUrl(giftAddress, effectiveSettings?.giftMaps)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-gold-outline"
+              >
+                Buka Alamat di Google Maps
+              </a>
+            </div>
+          )}
+        </div>
 
         <div style={{ marginTop: 32, '--name-chars': Math.max(groomName.length, brideName.length) }}>
           <CoupleName fullName={groomName} as="h3" />

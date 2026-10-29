@@ -22,6 +22,24 @@ export default function MusicButton({ musicUrl }) {
     return () => window.removeEventListener('open_wedding_invitation', handleStartMusic)
   }, [playing])
 
+  // Stop the music when the guest leaves the page (tab switch, app switch, screen lock) and resume on return
+  useEffect(() => {
+    let resume = false
+    const onVisibility = () => {
+      const audio = audioRef.current
+      if (!audio) return
+      if (document.hidden) {
+        resume = !audio.paused
+        audio.pause()
+      } else if (resume) {
+        resume = false
+        audio.play().catch(() => setPlaying(false))
+      }
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => document.removeEventListener('visibilitychange', onVisibility)
+  }, [])
+
   const toggle = () => {
     if (!audioRef.current) return
     if (playing) {
