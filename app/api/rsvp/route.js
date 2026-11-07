@@ -8,7 +8,8 @@ export async function GET(request) {
   try {
     const supabase = getSupabaseServer()
     const { searchParams } = new URL(request.url)
-    const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')) : 100
+    // Capped so the public wishes list cannot be used to pull an unbounded table
+    const limit = Math.min(parseInt(searchParams.get('limit')) || 100, 500)
     const onlyWishes = searchParams.get('wishes') === 'true'
 
     // Public may only read wishes, never phone numbers or the full RSVP list

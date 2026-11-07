@@ -708,9 +708,7 @@
 .rsvp-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
 /* ─── Wishes List ─── */
-.wishes-list { display: flex; flex-direction: column; gap: 16px; max-height: 200px; overflow-y: auto; padding-right: 4px; text-align: left; }
-.wishes-list::-webkit-scrollbar { width: 2px; }
-.wishes-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 2px; }
+.wishes-list { display: flex; flex-direction: column; gap: 16px; text-align: left; }
 .wish-item {
   border-left: 2px solid var(--gold-30);
   padding-left: 12px;

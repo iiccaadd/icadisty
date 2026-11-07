@@ -20,8 +20,8 @@ export default function RSVPSection({ id, guestName, settings }) {
   }, [guestName])
 
   useEffect(() => {
-    // Load recent wishes
-    fetch('/api/rsvp?wishes=true&limit=5')
+    // Load all wishes (newest first)
+    fetch('/api/rsvp?wishes=true&limit=500')
       .then(res => res.json())
       .then(json => { if (json.data) setWishes(json.data) })
       .catch(() => {})
@@ -43,7 +43,7 @@ export default function RSVPSection({ id, guestName, settings }) {
 
       // Reload wishes
       try {
-        const wishRes = await fetch('/api/rsvp?wishes=true&limit=5')
+        const wishRes = await fetch('/api/rsvp?wishes=true&limit=500')
         const wishJson = await wishRes.json()
         if (wishJson.data) setWishes(wishJson.data)
       } catch (e) {}
